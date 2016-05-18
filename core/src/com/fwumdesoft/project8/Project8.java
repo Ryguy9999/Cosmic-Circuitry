@@ -14,6 +14,8 @@ public class Project8 extends ApplicationAdapter {
 	public void create () {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
+		Overworld world = new Overworld(40);
+		System.out.println(world);
 	}
 
 	@Override
