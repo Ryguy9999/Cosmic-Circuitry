@@ -15,8 +15,8 @@ public class Renderer {
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
 		this.player = assets.get("player.png", Texture.class);
-		this.wall = assets.get("wall.png", Texture.class);
-		this.floor = assets.get("floor.png", Texture.class);
+		this.wall = assets.get("station_wall.png", Texture.class);
+		this.floor = assets.get("station_floor.png", Texture.class);
 		this.door = assets.get("door.png", Texture.class);
 	}
 
