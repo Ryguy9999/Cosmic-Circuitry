@@ -2,6 +2,7 @@ package com.fwumdesoft.project8;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.assets.AssetManager;
 
 public class Renderer {
 	private SpriteBatch batch;
@@ -10,7 +11,6 @@ public class Renderer {
 
 	public Renderer(SpriteBatch batch, AssetManager assets, int cellSize, int screenWidth, int screenHeight) {
 		this.batch = batch;
-		this.assets = assets;
 		this.cellSize = cellSize;
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
