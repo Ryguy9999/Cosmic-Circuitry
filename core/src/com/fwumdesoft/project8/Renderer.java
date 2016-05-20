@@ -46,7 +46,7 @@ public class Renderer {
 				}
 			}
 		}
-		batch.draw(player, halfGridWidth * cellSize, halfGridHeight * cellSize);
+		batch.draw(this.player, halfGridWidth * cellSize, halfGridHeight * cellSize);
 		batch.end();
 	}
 }
