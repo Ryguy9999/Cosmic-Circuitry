@@ -17,7 +17,7 @@ public class Renderer {
 		this.player = assets.get("player.png", Texture.class);
 		this.wall = assets.get("station_wall.png", Texture.class);
 		this.floor = assets.get("station_floor.png", Texture.class);
-		this.door = assets.get("door.png", Texture.class);
+		this.door = assets.get("station_door.png", Texture.class);
 	}
 
 	public void renderOverworld(Overworld world) {
