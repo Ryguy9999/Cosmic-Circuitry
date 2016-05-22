@@ -3,7 +3,7 @@ package com.fwumdesoft.project8;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-
+//TODO: Document and clean up, because it's a bit of a ported mess
 public class Overworld {
 	int[][] map;
 	Point playerPos;
