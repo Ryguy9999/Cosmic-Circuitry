@@ -30,7 +30,7 @@ public class Renderer {
 		int yEnd = Math.min(world.map[0].length, player.y + halfGridHeight);
 		batch.begin();
 		for(int y = yStart; y < yEnd; y++) {
-			for(int x = xEnd; x < xEnd; x++) {
+			for(int x = xStart; x < xEnd; x++) {
 				int drawX = (x - player.x + halfGridWidth) * cellSize;
 				int drawY = (y - player.y + halfGridHeight) * cellSize;
 				switch(world.map[y][x]) {
