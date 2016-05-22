@@ -46,8 +46,7 @@ public class Overworld {
 			int position = (int)(Math.random() * 4);
 			int xOffset = 0;
 			int yOffset = 0;
-			int doorX = x, doorY = y;
-			switch(door.facing) {
+			switch(position) {
 			case 0:
 				yOffset = height / 2;
 				break;
@@ -64,7 +63,7 @@ public class Overworld {
 				break;
 			}
 			map[y + yOffset][x + xOffset] = 2;
-			doors.add(new Door(x + xOffset, y + yOffset, door.facing));
+			doors.add(new Door(x + xOffset, y + yOffset, position));
 		}
 		for(int i = x; i < x + width; i++) {
 			for(int j = y; j < y + height; j++) {
