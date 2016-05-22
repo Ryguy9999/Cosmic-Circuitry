@@ -4,12 +4,33 @@ import java.awt.Point;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
+/**
+ * Draws the game to separate drawing from simulation
+ */
 public class Renderer {
 	private SpriteBatch batch;
-	private int cellSize, screenWidth, screenHeight;
+	/**
+	 * The number of pixels of the side of an overworld square
+	 */
+	private int cellSize;
+	/**
+	 * The number of pixels of the screen's width
+	 */
+	private int screenWidth;
+	/**
+	 * The number of pixels of the screen's height
+	 */
+	private int screenHeight;
 	private Texture player, wall, floor, door;
 
+	/**
+	 * Create a Renderer
+	 * @param batch A SpriteBatch which should be disposed of when the Renderer is unnecessary
+	 * @param assets An AssetManager with the game assets loaded
+	 * @param cellSize The size of an overworld square
+	 * @param screenWidth The width of the screen
+	 * @param screenHeight The height of the screen
+	 */
 	public Renderer(SpriteBatch batch, AssetManager assets, int cellSize, int screenWidth, int screenHeight) {
 		this.batch = batch;
 		this.cellSize = cellSize;
@@ -21,6 +42,10 @@ public class Renderer {
 		this.door = assets.get("station_door.png", Texture.class);
 	}
 
+	/**
+	 * Draw the current state of the overworld
+	 * @param world
+	 */
 	public void renderOverworld(Overworld world) {
 		Point player = world.playerPos;
 		int halfGridWidth = (screenWidth / cellSize) / 2;
