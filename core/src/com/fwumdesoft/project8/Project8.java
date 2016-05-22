@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.assets.AssetManager;
 
+/**
+ * The main entry point of the game
+ */
 public class Project8 extends ApplicationAdapter {
 	Renderer rend;
 	Overworld world;
@@ -15,12 +18,14 @@ public class Project8 extends ApplicationAdapter {
 	public void create () {
 		SpriteBatch batch = new SpriteBatch();
 		world = new Overworld(40);
+		
 		AssetManager assets = new AssetManager();
 		assets.load("player.png", Texture.class);
 		assets.load("station_wall.png", Texture.class);
 		assets.load("station_door.png", Texture.class);
 		assets.load("station_floor.png", Texture.class);
 		assets.finishLoading();
+		
 		rend = new Renderer(batch, assets, 32, 640, 480);
 	}
 
