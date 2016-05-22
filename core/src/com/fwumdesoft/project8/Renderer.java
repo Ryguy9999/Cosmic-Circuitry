@@ -1,8 +1,9 @@
 package com.fwumdesoft.project8;
 
+import java.awt.Point;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.assets.AssetManager;
 
 public class Renderer {
 	private SpriteBatch batch;
@@ -21,7 +22,7 @@ public class Renderer {
 	}
 
 	public void renderOverworld(Overworld world) {
-		GridPoint player = world.playerPos;
+		Point player = world.playerPos;
 		int halfGridWidth = (screenWidth / cellSize) / 2;
 		int halfGridHeight = (screenHeight / cellSize) / 2;
 		int xStart = Math.max(0, player.x - halfGridWidth);

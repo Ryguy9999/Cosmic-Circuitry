@@ -1,18 +1,19 @@
 package com.fwumdesoft.project8;
 
-import java.util.List;
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Overworld {
 	int[][] map;
-	GridPoint playerPos;
+	Point playerPos;
 
 	public Overworld(int size) {
 		map = new int[size][size];
 		ArrayList<Door> doors = new ArrayList<>();
 		Door door = new Door(size / 2, size / 2, 0);
 		generateRoom(door, 4, 4, 6, 6, doors);
-		playerPos = new GridPoint(size / 2, size / 2);
+		playerPos = new Point(size / 2, size / 2);
 		for(int i = 0; i < 25; i++) {
 			if(!doors.isEmpty()) {
 				door = doors.remove(0);
