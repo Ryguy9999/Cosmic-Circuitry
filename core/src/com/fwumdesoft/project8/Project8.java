@@ -8,6 +8,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Disposable;
 
 /**
@@ -17,6 +18,8 @@ public class Project8 extends ApplicationAdapter {
 	Renderer rend;
 	Overworld world;
 	List<Disposable> manualCleanup;
+	Inventory inventory;
+
 	@Override
 	public void create () {
 		manualCleanup = new ArrayList<>();
@@ -31,17 +34,20 @@ public class Project8 extends ApplicationAdapter {
 		assets.load("station_wall.png", Texture.class);
 		assets.load("station_door.png", Texture.class);
 		assets.load("station_floor.png", Texture.class);
+		assets.load("resistor.png", Texture.class);
 		assets.finishLoading();
 		manualCleanup.add(assets);
 		
-		rend = new Renderer(batch, assets, 32, 640, 480);
+		rend = new Renderer(batch, new BitmapFont(), assets, 32, 640, 480);
+
+		inventory = new Inventory();
 	}
 
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		rend.renderOverworld(world);
+		rend.renderOverworld(world, inventory);
 	}
 	
 	@Override
