@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Align;
 
 /**
  * Draws the game to separate drawing from simulation
@@ -93,9 +94,10 @@ public class Renderer {
 		shapes.end();
 		batch.begin();
 		batch.draw(resistor, 0, 0, 32, 32);
-		font.draw(batch, "" + inventory.resistors, 32, 0);
+		String resistors = "" + inventory.resistors;
+		font.draw(batch, resistors, 32, 24, 32, Align.center, false);
 		//TODO: Draw computer chip
-		font.draw(batch, "" + inventory.computerChips, 96, 0);
+		font.draw(batch, "" + inventory.computerChips, 96, 24, 32, Align.center, false);
 		batch.end();
 	}
 }
