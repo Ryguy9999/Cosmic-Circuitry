@@ -14,9 +14,9 @@ public class Overworld {
 		Door door = new Door(size / 2, size / 2, 0);
 		generateRoom(door, 4, 4, 6, 6, doors);
 		playerPos = new Point(size / 2, size / 2);
-		for(int i = 0; i < 25; i++) {
+		for(int i = 0; i < 5; i++) {
 			if(!doors.isEmpty()) {
-				door = doors.remove(0);
+				door = doors.remove((int)(Math.random() * doors.size()));
 				generateRoom(door, 4, 4, 6, 6, doors);
 			}
 		}
@@ -37,30 +37,45 @@ public class Overworld {
 
 	private void generateRoom(Door door, int minWidth, int minHeight, int maxWidth, int maxHeight, List<Door> doors) {
 		door.facing = (door.facing + 2) % 4;
-		int width = (int)(Math.random() * minWidth) + (maxWidth - minWidth);
-		int height = (int)(Math.random() * minHeight) + (maxHeight - minHeight);
+		//Must be odd for door to be in middle
+		int width = (int)((minWidth + (Math.random() * (maxWidth - minWidth))) / 2) * 2 + 1;
+		int height = (int)((minHeight + (Math.random() * (maxHeight - minHeight))) / 2) * 2 + 1;
 		int x = door.x, y = door.y;
-		x += door.getFacingX();
-		y += door.getFacingY();
+		switch(door.facing) {
+			case 0:
+				y -= (height / 2);
+				break;
+			case 1:
+				x -= (width / 2);
+				break;
+			case 2:
+				y -= (height / 2);
+				x -= width - 1;
+				break;
+			case 3:
+				y -= height - 1;
+				x -= (width / 2);
+				break;
+		}
 		map[door.x][door.y] = 2;
-		for(int i = 0; i < 3; i++) {
+		for(int i = 0; i < 2; i++) {
 			int position = (int)(Math.random() * 4);
 			int xOffset = 0;
 			int yOffset = 0;
 			switch(position) {
 			case 0:
-				yOffset = height / 2;
+				yOffset =  (height / 2);
 				break;
 			case 1:
-				xOffset= width / 2;
+				xOffset= (width / 2);
 				break;
 			case 2:
-				yOffset = height / 2;
+				yOffset = (height / 2);
 				xOffset = width - 1;
 				break;
 			case 3:
 				yOffset = height - 1;
-				xOffset = width / 2;
+				xOffset = (width / 2);
 				break;
 			}
 			map[y + yOffset][x + xOffset] = 2;
@@ -68,12 +83,14 @@ public class Overworld {
 		}
 		for(int i = x; i < x + width; i++) {
 			for(int j = y; j < y + height; j++) {
-				if(i == x || i == x + width - 1 || j == y || j == y + height - 1) {
-					if(map[j][i] != 2) {
-						map[j][i] = 1;
+				if(map[j][i] == 0) {
+					if(i == x || i == x + width - 1 || j == y || j == y + height - 1) {
+						if(map[j][i] != 2) {
+							map[j][i] = 1;
+						}
+					} else {
+						map[j][i] = 3;
 					}
-				} else {
-					map[j][i] = 3;
 				}
 			}
 		}
