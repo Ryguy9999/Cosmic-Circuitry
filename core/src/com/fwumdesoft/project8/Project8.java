@@ -1,10 +1,12 @@
 package com.fwumdesoft.project8;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -29,12 +31,13 @@ public class Project8 extends ApplicationAdapter {
 		
 		world = new Overworld(40);
 		
+		List<FileHandle> assetsFiles = Arrays.asList(Gdx.files.internal(".").list());
+
 		AssetManager assets = new AssetManager();
-		assets.load("player.png", Texture.class);
-		assets.load("station_wall.png", Texture.class);
-		assets.load("station_door.png", Texture.class);
-		assets.load("station_floor.png", Texture.class);
-		assets.load("resistor.png", Texture.class);
+		assetsFiles.stream()
+			.map(file -> file.name())
+			.filter(string -> string.endsWith("png") || string.endsWith("jpg"))
+			.forEach(name -> assets.load(name, Texture.class));
 		assets.finishLoading();
 		manualCleanup.add(assets);
 		
