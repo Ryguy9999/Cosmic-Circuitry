@@ -44,6 +44,8 @@ public class Project8 extends ApplicationAdapter {
 		rend = new Renderer(batch, new BitmapFont(), assets, 32, 640, 480);
 
 		inventory = new Inventory();
+		
+		Gdx.input.setInputProcessor(new OverworldInput(world));
 	}
 
 	@Override
