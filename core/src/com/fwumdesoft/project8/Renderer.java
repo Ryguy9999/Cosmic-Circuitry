@@ -64,7 +64,7 @@ public class Renderer {
 		int xStart = Math.max(0, player.x - halfGridWidth);
 		int xEnd = Math.min(world.map.length, player.x + halfGridWidth);
 		int yStart = Math.max(0, player.y - halfGridHeight);
-		int yEnd = Math.min(world.map[0].length, player.y + halfGridHeight);
+		int yEnd = Math.min(world.map[0].length, player.y + halfGridHeight + cellSize);
 		batch.begin();
 		for(int y = yStart; y < yEnd; y++) {
 			for(int x = xStart; x < xEnd; x++) {
