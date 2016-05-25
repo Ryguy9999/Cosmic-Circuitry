@@ -34,6 +34,22 @@ public class Overworld {
 		str += "]";
 		return str;
 	}
+	
+	/**
+	 * Move the player in the game, if the space is free </br>
+	 * Does not check intervening spaces
+	 * @param xAmt The x translation
+	 * @param yAmt The y translation
+	 * @return If the player moved or not
+	 */
+	public boolean movePlayer(int xAmt, int yAmt) {
+		boolean spotFree = map[playerPos.y + yAmt][playerPos.x + xAmt] != 3;
+		if(spotFree) {
+			playerPos.x += xAmt;
+			playerPos.y += yAmt;
+		}
+		return spotFree;
+	}
 
 	private void generateRoom(Door door, int minWidth, int minHeight, int maxWidth, int maxHeight, List<Door> doors) {
 		door.facing = (door.facing + 2) % 4;
