@@ -43,7 +43,7 @@ public class Overworld {
 	 * @return If the player moved or not
 	 */
 	public boolean movePlayer(int xAmt, int yAmt) {
-		boolean spotFree = map[playerPos.y + yAmt][playerPos.x + xAmt] != 3;
+		boolean spotFree = map[playerPos.y + yAmt][playerPos.x + xAmt] != 1;
 		if(spotFree) {
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
