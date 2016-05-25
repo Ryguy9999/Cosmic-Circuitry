@@ -27,7 +27,7 @@ public class Renderer {
 	 * The number of pixels of the screen's height
 	 */
 	private int screenHeight;
-	private Texture player, wall, floor, door, resistor;
+	private Texture player, wall, floor, door, resistor, lamp;
 
 	/**
 	 * Create a Renderer
@@ -50,6 +50,7 @@ public class Renderer {
 		this.floor = assets.get("station_floor.png", Texture.class);
 		this.door = assets.get("station_door.png", Texture.class);
 		this.resistor = assets.get("resistor.png", Texture.class);
+		this.lamp = assets.get("lamp.png", Texture.class);
 	}
 
 	/**
@@ -63,7 +64,7 @@ public class Renderer {
 		int xStart = Math.max(0, player.x - halfGridWidth);
 		int xEnd = Math.min(world.map.length, player.x + halfGridWidth);
 		int yStart = Math.max(0, player.y - halfGridHeight);
-		int yEnd = Math.min(world.map[0].length, player.y + halfGridHeight);
+		int yEnd = Math.min(world.map[0].length, player.y + halfGridHeight + cellSize);
 		batch.begin();
 		for(int y = yStart; y < yEnd; y++) {
 			for(int x = xStart; x < xEnd; x++) {
@@ -96,7 +97,7 @@ public class Renderer {
 		batch.draw(resistor, 0, 0, 32, 32);
 		String resistors = "" + inventory.resistors;
 		font.draw(batch, resistors, 32, 24, 32, Align.center, false);
-		//TODO: Draw computer chip
+		batch.draw(lamp, 64, 0, 32, 32);
 		font.draw(batch, "" + inventory.computerChips, 96, 24, 32, Align.center, false);
 		batch.end();
 	}
