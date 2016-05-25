@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.badlogic.gdx.math.Vector2;
+import com.fwumdesoft.project8.CircuitComponent.Type;
 
 public class CircuitSolver{
 	public static void main(String[] args){
@@ -27,10 +28,10 @@ public class CircuitSolver{
 		CircuitComponent w = new CircuitComponent();
 		CircuitComponent v = new CircuitComponent();
 		CircuitComponent r = new CircuitComponent();
-		w.isWire = true;
-		v.isBattery = true;
+		w.type = Type.WIRE;
+		v.type = Type.BATTERY;
 		v.voltageDif = 10;
-		r.isResistor = true;
+		r.type = Type.RESISTOR;
 		r.resistance = 5;
 		CircuitComponent[][] circuit = new CircuitComponent[][]{{n, n, n, n, n, n, n},
 																{w, w, w, v, w, w, n},
@@ -150,7 +151,7 @@ public class CircuitSolver{
 	 */
 	private static void fillBranch(CircuitComponent[][] circuit, Branch branch, Vector2 loc, Vector2 prev, double current){
 		while(!loc.equals(branch.end)){
-			if(!circuit[(int)loc.x][(int)loc.y].isWire)
+			if(circuit[(int)loc.x][(int)loc.y].type != Type.WIRE)
 				circuit[(int)loc.x][(int)loc.y].current = Math.abs(current);
 	
 	    	if(circuit[(int)loc.x+1][(int)loc.y] != null){
@@ -193,10 +194,16 @@ public class CircuitSolver{
 		
 		//Iterate over the current branch until we hit a junction, adding terms for components in the process
 		while(!junctions.contains(loc)){
-			if(circuit[(int)loc.x][(int)loc.y].isResistor)
+			switch(circuit[(int)loc.x][(int)loc.y].type) {
+			case RESISTOR:
 				workingSet.add(new Term(currentFactor * circuit[(int)loc.x][(int)loc.y].resistance, currentBranch));
-			else if(circuit[(int)loc.x][(int)loc.y].isBattery)
+				break;
+			case BATTERY:
 				workingSet.add(new Term(-currentFactor * circuit[(int)loc.x][(int)loc.y].voltageDif, null));
+				break;
+			default: 
+				break;
+			}
 
         	if(circuit[(int)loc.x+1][(int)loc.y] != null){
         		prev.set(loc);
@@ -253,7 +260,7 @@ public class CircuitSolver{
 		Vector2 backup = null;
 		for(int x = 0; x < circuit.length; x++)
 			for(int y = 0; y < circuit[x].length; y++)
-				if(circuit[x][y] != null && circuit[x][y].isWire){
+				if(circuit[x][y] != null && circuit[x][y].type != Type.WIRE){
 					if(backup == null)
 						backup = new Vector2(x, y);
 					
