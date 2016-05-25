@@ -3,6 +3,7 @@ package com.fwumdesoft.project8;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+
 //TODO: Document and clean up, because it's a bit of a ported mess
 public class Overworld {
 	int[][] map, modifiers;
@@ -46,7 +47,23 @@ public class Overworld {
 	{
 		
 	}
-	
+
+	/**
+	 * Move the player in the game, if the space is free </br>
+	 * Does not check intervening spaces
+	 * @param xAmt The x translation
+	 * @param yAmt The y translation
+	 * @return If the player moved or not
+	 */
+	public boolean movePlayer(int xAmt, int yAmt) {
+		boolean spotFree = map[playerPos.y + yAmt][playerPos.x + xAmt] != 1;
+		if(spotFree) {
+			playerPos.x += xAmt;
+			playerPos.y += yAmt;
+		}
+		return spotFree;
+	}
+
 	/*
 	 * map
 	 * 		Space - 0
@@ -58,11 +75,11 @@ public class Overworld {
 	 * 		Door closed - 1
 	 * 		Door broken - 2
 	 * 		Fire suppression - 3
-	 * 		Destroyed wall - 4
-	 * 		Component Bag - 5
-	 * 		Fire - 6
-	 * 		Vacuum - 7
-	 */
+ 	 * 		Destroyed wall - 4
+ 	 * 		Component Bag - 5
+ 	 * 		Fire - 6
+ 	 * 		Vacuum - 7
+ 	 */
 	private void generateRoom(Door door, List<Door> doors) {
 		//The room faces the opposite direction of the door it is connected to
 		// 0 - left, 1 - top, 2 - right, 3 - bottom
@@ -167,5 +184,3 @@ public class Overworld {
 		}
 	}
 }
-
-
