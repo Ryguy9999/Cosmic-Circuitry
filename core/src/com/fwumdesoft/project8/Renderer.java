@@ -159,11 +159,13 @@ public class Renderer {
 	}
 
 	private void renderInventory(Inventory inventory) {
+		//Draw a background for the overlay
 		shapes.begin(ShapeRenderer.ShapeType.Filled);	
 		shapes.setColor(0.5f, 0.5f, 0.5f, 0.75f);
 		shapes.rect(0, 0, 192, 32);
 		shapes.end();
 		batch.begin();
+		//Draw each icon followed by the quantity
 		batch.draw(resistor, 0, 0, 32, 32);
 		font.draw(batch, "" + inventory.resistors.size(), 32, 24, 32, Align.center, false);
 		batch.draw(lamp, 64, 0, 32, 32);
