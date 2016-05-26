@@ -31,12 +31,11 @@ public class Overworld {
 		
 		// Generates a station by generating rooms with doors and connecting
 		// rooms to said doors
-		ArrayList<Door> doors = new ArrayList<>();
 		Door door = new Door(size / 2, size / 2, 0);
-		generateRoom(door, doors);
+		generateRoom(door);
 		playerPos = new Point(size / 2 - 1, size / 2);
 		for(int i = 0; i < 25; i++) {
-			door = generateRoom(door, doors);
+			door = generateRoom(door);
 		}
 	}
 	
@@ -72,7 +71,23 @@ public class Overworld {
 		return spotFree;
 	}
 	
-	private Door generateRoom(Door door, List<Door> doors) {
+	/**
+	 * Interact with the tile
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 */
+	public void interactWith(int x, int y)
+	{
+		
+	}
+	
+	/**
+	 * Generate room connected to door, with a chance to remove the connecting wall to combine
+	 * the rooms. Will also generate a new door for further connections
+	 * @param door
+	 * @return New door generated
+	 */
+	private Door generateRoom(Door door) {
 		// The room faces the opposite direction of the door it is connected to
 		// 0 - left, 1 - top, 2 - right, 3 - bottom
 		door.facing = (door.facing + 2) % 4;
@@ -169,6 +184,12 @@ public class Overworld {
 		return nextDoor;
 	}
 	
+	/**
+	 * 
+	 * @param x x coordinate of tile
+	 * @param y y coordinate of tile
+	 * @return true if the player, fire, vacuum, etc. can spread or move through this tile
+	 */
 	public boolean isOpen(int x, int y)
 	{
 		return map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] == mods.none);
