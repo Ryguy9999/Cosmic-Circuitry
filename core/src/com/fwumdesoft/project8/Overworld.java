@@ -6,14 +6,25 @@ import java.util.List;
 
 //TODO: Document and clean up, because it's a bit of a ported mess
 public class Overworld {
-	int[][] map, modifiers;
+	public static enum tiles {space, wall, door, floor};
+	public static enum mods {none, doorClosed, doorBroken, fireSuppression, destroyedWall, componentBag, fire, vacuum}
+	tiles[][] map; 
+	mods[][] modifiers;
 	Point playerPos;
 	
 	public Overworld(int size) {
 		// contains permanent tiles
-		map = new int[size][size];
+		map = new tiles[size][size];
 		// contains temporary modifiers or stuff that goes on walls
-		modifiers = new int[size][size];
+		modifiers = new mods[size][size];
+		for(int i = 0; i < size; i++)
+		{
+			for(int j = 0; j < size; j++)
+			{
+				map[i][j] = tiles.space;
+				modifiers[i][j] = mods.none;
+			}
+		}
 		
 		// Generates a station by generating rooms with doors and connecting
 		// rooms to said doors
@@ -22,11 +33,7 @@ public class Overworld {
 		generateRoom(door, doors);
 		playerPos = new Point(size / 2 - 1, size / 2);
 		for(int i = 0; i < 25; i++) {
-			if(!doors.isEmpty()) {
-				// randomly pick a door to connect to
-				door = doors.remove((int)(Math.random() * doors.size()));
-				generateRoom(door, doors);
-			}
+			door = generateRoom(door, doors);
 		}
 	}
 	
@@ -58,7 +65,7 @@ public class Overworld {
 	 * @return If the player moved or not
 	 */
 	public boolean movePlayer(int xAmt, int yAmt) {
-		boolean spotFree = map[playerPos.y + yAmt][playerPos.x + xAmt] != 1;
+		boolean spotFree = map[playerPos.y + yAmt][playerPos.x + xAmt] != tiles.wall;
 		if(spotFree) {
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
@@ -66,12 +73,7 @@ public class Overworld {
 		return spotFree;
 	}
 	
-	/*
-	 * map Space - 0 Wall - 1 Door - 2 Floor - 3 modifiers None - 0 Door closed
-	 * - 1 Door broken - 2 Fire suppression - 3 Destroyed wall - 4 Component Bag
-	 * - 5 Fire - 6 Vacuum - 7
-	 */
-	private void generateRoom(Door door, List<Door> doors) {
+	private Door generateRoom(Door door, List<Door> doors) {
 		// The room faces the opposite direction of the door it is connected to
 		// 0 - left, 1 - top, 2 - right, 3 - bottom
 		door.facing = (door.facing + 2) % 4;
@@ -95,76 +97,77 @@ public class Overworld {
 				break;
 		}
 		// Sometimes wall will not generate to make larger connected rooms
-		// If doors is 0 in size, we are generating the first room
-		if(Math.random() < 0.25 && doors.size() != 0) {
-			map[door.y][door.x] = 3;
+		if(Math.random() < 0.25) {
+			map[door.y][door.x] = tiles.floor;
 			switch (door.facing) {
 				case 0:
-					map[door.y + 1][door.x] = 3;
-					map[door.y - 1][door.x] = 3;
+					map[door.y + 1][door.x] = tiles.floor;
+					map[door.y - 1][door.x] = tiles.floor;
 					break;
 				case 1:
-					map[door.y][door.x + 1] = 3;
-					map[door.y][door.x - 1] = 3;
+					map[door.y][door.x + 1] = tiles.floor;
+					map[door.y][door.x - 1] = tiles.floor;
 					break;
 				case 2:
-					map[door.y + 1][door.x] = 3;
-					map[door.y - 1][door.x] = 3;
+					map[door.y + 1][door.x] = tiles.floor;
+					map[door.y - 1][door.x] = tiles.floor;
 					break;
 				case 3:
 					y -= 4;
-					map[door.y][door.x + 1] = 3;
-					map[door.y][door.x - 1] = 3;
+					map[door.y][door.x + 1] = tiles.floor;
+					map[door.y][door.x - 1] = tiles.floor;
 					break;
 			}
 		}
 		else {
-			map[door.y][door.x] = 2;
-			modifiers[door.x][door.y] = (Math.random() < 0.5) ? 1 : 2;
+			map[door.y][door.x] = tiles.door;
+			modifiers[door.x][door.y] = (Math.random() < 0.5) ? mods.none : mods.doorBroken;
 		}
-		// randomly generates 2 more doors (can overlap)
-		for(int i = 0; i < 2; i++) {
-			int position = (int)(Math.random() * 4);
-			int xOffset = 0;
-			int yOffset = 0;
-			switch (position) {
-				case 0:
-					yOffset = 2;
-					break;
-				case 1:
-					xOffset = 2;
-					break;
-				case 2:
-					yOffset = 2;
-					xOffset = 4;
-					break;
-				case 3:
-					yOffset = 4;
-					xOffset = 2;
-					break;
-			}
-			System.out.println((x + xOffset) + "\t" + (y + yOffset));
-			map[y + yOffset][x + xOffset] = 2;
-			modifiers[door.x][door.y] = (Math.random() < 0.5) ? 1 : 2;
-			doors.add(new Door(x + xOffset, y + yOffset, position));
+		// randomly generates 1 more door (can overlap, but not with first door)
+		// for(int i = 0; i < 2; i++) {
+		int position = (int)(Math.random() * 4);
+		while(position == door.facing)
+			position = (int)(Math.random() * 4);
+		int xOffset = 0;
+		int yOffset = 0;
+		switch (position) {
+			case 0:
+				yOffset = 2;
+				break;
+			case 1:
+				xOffset = 2;
+				break;
+			case 2:
+				yOffset = 2;
+				xOffset = 4;
+				break;
+			case 3:
+				yOffset = 4;
+				xOffset = 2;
+				break;
 		}
+		map[y + yOffset][x + xOffset] = tiles.door;
+		modifiers[door.x][door.y] = (Math.random() < 0.5) ? mods.none : mods.doorBroken;
+		Door nextDoor = new Door(x + xOffset, y + yOffset, position);
+		// }
 		// Fills in walls and floor
 		for(int i = x; i < x + 5; i++) {
 			for(int j = y; j < y + 5; j++) {
-				if(map[j][i] == 0) {
+				if(map[j][i] == tiles.space) {
 					// Wall
 					if(i == x || i == x + 4 || j == y || j == y + 4) {
-						if(map[j][i] != 2) {
-							map[j][i] = 1;
+						if(map[j][i] != tiles.door) {
+							map[j][i] = tiles.wall;
 						}
 						// Floor
 					}
 					else {
-						map[j][i] = 3;
+						map[j][i] = tiles.floor;
 					}
 				}
 			}
 		}
+		return nextDoor;
 	}
 	
 	private class Door {

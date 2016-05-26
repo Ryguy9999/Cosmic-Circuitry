@@ -66,10 +66,10 @@ public class Project8 extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		//rend.renderOverworld(world, inventory);
-		rend.renderCircuit(circuit, inventory);
+		rend.renderOverworld(world, inventory);
+		//rend.renderCircuit(circuit, inventory);
 	}
 	
 	@Override
