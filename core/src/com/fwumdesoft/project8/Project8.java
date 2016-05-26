@@ -29,7 +29,7 @@ public class Project8 extends ApplicationAdapter {
 		SpriteBatch batch = new SpriteBatch();
 		manualCleanup.add(batch);
 		
-		world = new Overworld(40);
+		world = new Overworld(200);
 		
 		List<FileHandle> assetsFiles = Arrays.asList(Gdx.files.internal(".").list());
 
