@@ -50,6 +50,7 @@ public class Renderer {
 	 * @param screenHeight The height of the screen
 	 */
 	public Renderer(SpriteBatch batch, BitmapFont font, AssetManager assets, int cellSize, int componentSize, int screenWidth, int screenHeight) {
+		//Initialize member variables
 		this.batch = batch;
 		this.font = font;
 		this.shapes = new ShapeRenderer();
@@ -57,6 +58,7 @@ public class Renderer {
 		this.componentSize = componentSize;
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
+		//Retrieve image assets
 		this.player = assets.get("player.png", Texture.class);
 		this.wall = assets.get("station_wall.png", Texture.class);
 		this.floor = assets.get("station_floor.png", Texture.class);
@@ -72,6 +74,7 @@ public class Renderer {
 	 */
 	public void renderOverworld(Overworld world, Inventory inventory) {
 		Point player = world.playerPos;
+		//Establish the drawable region
 		int halfGridWidth = (screenWidth / cellSize) / 2;
 		int halfGridHeight = (screenHeight / cellSize) / 2;
 		int xStart = Math.max(0, player.x - halfGridWidth);
@@ -81,8 +84,10 @@ public class Renderer {
 		batch.begin();
 		for(int y = yStart; y < yEnd; y++) {
 			for(int x = xStart; x < xEnd; x++) {
+				//Find the position where the square will draw
 				int drawX = (x - player.x + halfGridWidth) * cellSize;
 				int drawY = (y - player.y + halfGridHeight) * cellSize;
+				//Draw the correct texture
 				switch(world.map[y][x]) {
 				case wall:
 					batch.draw(floor, drawX, drawY);
@@ -96,6 +101,8 @@ public class Renderer {
 				}
 			}
 		}
+		//Draw the player, centered on the screen
+		//Because all drawing is centered on the player is guaranteed to be centered
 		batch.draw(this.player, halfGridWidth * cellSize, halfGridHeight * cellSize);
 		batch.end();
 		renderInventory(inventory);
