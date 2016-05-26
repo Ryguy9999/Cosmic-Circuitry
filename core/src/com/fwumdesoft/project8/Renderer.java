@@ -69,6 +69,7 @@ public class Renderer {
 	 */
 	public void renderOverworld(Overworld world, Inventory inventory) {
 		Point player = world.playerPos;
+		System.out.println(world.map[world.playerPos.y][world.playerPos.x]);
 		int halfGridWidth = (screenWidth / cellSize) / 2;
 		int halfGridHeight = (screenHeight / cellSize) / 2;
 		int xStart = Math.max(0, player.x - halfGridWidth);
@@ -81,13 +82,13 @@ public class Renderer {
 				int drawX = (x - player.x + halfGridWidth) * cellSize;
 				int drawY = (y - player.y + halfGridHeight) * cellSize;
 				switch(world.map[y][x]) {
-				case 1:
+				case wall:
 					batch.draw(floor, drawX, drawY);
 					break;
-				case 2:
+				case door:
 					batch.draw(door, drawX, drawY);
 					break;
-				case 3:
+				case floor:
 					batch.draw(wall, drawX, drawY);
 					break;
 				}
