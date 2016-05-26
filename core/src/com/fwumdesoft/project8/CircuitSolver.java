@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 public class CircuitSolver{
 	public static void main(String[] args){
 		SystemOfEquations system = new SystemOfEquations();
-		Branch b1 = new Branch(null, null, null), b2 = new Branch(null, null, null), b3 = new Branch(null, null, null);
+		Branch b1 = new Branch(null, null, null, null), b2 = new Branch(null, null, null, null), b3 = new Branch(null, null, null, null);
 		Equation e1 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[]{new Term(0, b1), new Term(1, b2), new Term(1, b3)})), 5);
 		Equation e2 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[]{new Term(1, b1), new Term(2, b2), new Term(3, b3)})), 14);
 		Equation e3 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[]{new Term(7, b1), new Term(4, b2), new Term(9, b3)})), 42);
@@ -17,7 +17,7 @@ public class CircuitSolver{
 		system.equations.add(e2);
 		system.equations.add(e3);
 		system.equations.add(e4);
-		System.out.println(system.solve());
+//		System.out.println(system.solve());
 		
 		
 		
@@ -26,16 +26,25 @@ public class CircuitSolver{
 		CircuitComponent n = null;
 		CircuitComponent w = new CircuitComponent();
 		CircuitComponent v = new CircuitComponent();
-		CircuitComponent r = new CircuitComponent();
+		CircuitComponent x = new CircuitComponent();
+		CircuitComponent y = new CircuitComponent();
+		CircuitComponent z = new CircuitComponent();
+		CircuitComponent a = new CircuitComponent();
 		w.isWire = true;
 		v.isBattery = true;
 		v.voltageDif = 10;
-		r.isResistor = true;
-		r.resistance = 5;
+		x.isResistor = true;
+		x.resistance = 6;
+		y.isResistor = true;
+		y.resistance = 6;
+		z.isResistor = true;
+		z.resistance = 5;
+		a.isResistor = true;
+		a.resistance = 5;
 		CircuitComponent[][] circuit = new CircuitComponent[][]{{n, n, n, n, n, n, n},
-																{w, w, w, v, w, w, n},
-																{w, n, w, n, n, w, n},
-																{w, w, w, r, w, w, n},
+																{w, a, w, w, w, w, n},
+																{v, n, n, x, n, y, n},
+																{w, w, z, w, w, w, n},
 																{n, n, n, n, n, n, n}};
 		
 		ArrayList<Vector2> junctions = new ArrayList<Vector2>();
@@ -45,8 +54,10 @@ public class CircuitSolver{
 		System.out.println(junctions);
 		System.out.println(branches);
 		
+//		System.out.println(buildEquation(circuit, junctions, branches, branches.get(0).startDirection, branches.get(0).start, branches.get(0), branches.get(0), new ArrayList<Branch>()));
+		
 		solve(circuit);
-		System.out.println(r.resistance + " " + v.voltageDif);
+		System.out.println(x.current + " " + y.current + " " + z.current + " " + a.current + " " + v.current);
 	}
 	
 	/**
@@ -64,54 +75,28 @@ public class CircuitSolver{
 		//Make an equation for each junction using Kirchoff's Junction Rule
 		for(Vector2 junction : junctions){
 			Equation equation = new Equation();
-			if(circuit[(int)junction.x+1][(int)junction.y] != null)
-				for(Branch branch : branches)
-					if(branch.start.equals(junction)){
-						equation.terms.add(new Term(1, branch));
-						break;
-					} else if(branch.end.equals(junction)){
-						equation.terms.add(new Term(-1, branch));
-						break;
-					}
-			if(circuit[(int)junction.x][(int)junction.y+1] != null)
-				for(Branch branch : branches)
-					if(branch.start.equals(junction)){
-						equation.terms.add(new Term(1, branch));
-						break;
-					} else if(branch.end.equals(junction)){
-						equation.terms.add(new Term(-1, branch));
-						break;
-					}
-			if(circuit[(int)junction.x-1][(int)junction.y] != null)
-				for(Branch branch : branches)
-					if(branch.start.equals(junction)){
-						equation.terms.add(new Term(1, branch));
-						break;
-					} else if(branch.end.equals(junction)){
-						equation.terms.add(new Term(-1, branch));
-						break;
-					}
-			if(circuit[(int)junction.x][(int)junction.y-1] != null)
-				for(Branch branch : branches)
-					if(branch.start.equals(junction)){
-						equation.terms.add(new Term(1, branch));
-						break;
-					} else if(branch.end.equals(junction)){
-						equation.terms.add(new Term(-1, branch));
-						break;
-					}
+			for(Branch branch : branches)
+				if(branch.start.equals(junction))
+					equation.terms.add(new Term(1, branch));
+				else if(branch.end.equals(junction))
+					equation.terms.add(new Term(-1, branch));
 			
 			if(!system.equations.contains(equation))
 				system.equations.add(equation);
 		}
+
+		System.out.println("-----");//TODO REmove
+		System.out.println(system);//TODO REmove
+		System.out.println("-----");//TODO REmove
 		
 		ArrayList<Branch> remainingBranches = new ArrayList<Branch>(branches);
 		//Make equations using Kirchoff's Loop Rule, ensuring each branch is used at least once
 		while(remainingBranches.size() > 0){
 			Branch branch = remainingBranches.remove(0);
 	        
-	        ArrayList<Term> terms = buildEquation(circuit, junctions, branches, branch.start, branch.direction, branch, branch,
+	        ArrayList<Term> terms = buildEquation(circuit, junctions, branches, branch.start, branch.startDirection, branch, branch,
 	        		new ArrayList<Branch>());
+	        System.out.println("T"+terms);//XXX
 	        int constant = 0;
 	        for(int t = 0; t < terms.size(); t++)
 	        	if(terms.get(t).branch == null){
@@ -135,9 +120,14 @@ public class CircuitSolver{
 		System.out.println("-----");//TODO REmove
 		
 		ArrayList<Double> result = system.solve();
+		
+		System.out.println("-----");//TODO REmove
+		System.out.println(system);//TODO REmove
+		System.out.println("-----");//TODO REmove
+		
 		//With the branch results (finally!) put the numbers into each branch's component(s)
 		for(int i = 0; i < branches.size(); i++)
-	        fillBranch(circuit,branches.get(i),new Vector2(branches.get(i).direction),new Vector2(branches.get(i).start),result.get(i));
+	        fillBranch(circuit, branches.get(i), result.get(i));
 	}
 	
 	/**
@@ -148,24 +138,26 @@ public class CircuitSolver{
 	 * @param prev The junction "previous" to the start location
 	 * @param current The current value flowing through this branch
 	 */
-	private static void fillBranch(CircuitComponent[][] circuit, Branch branch, Vector2 loc, Vector2 prev, double current){
+	private static void fillBranch(CircuitComponent[][] circuit, Branch branch, double current){
+		Vector2 loc = new Vector2(branch.startDirection), prev = new Vector2(branch.start);
+		
 		while(!loc.equals(branch.end)){
 			if(!circuit[(int)loc.x][(int)loc.y].isWire)
 				circuit[(int)loc.x][(int)loc.y].current = Math.abs(current);
 	
-	    	if(circuit[(int)loc.x+1][(int)loc.y] != null){
+	    	if(!new Vector2(loc.x+1, loc.y).equals(prev) && circuit[(int)loc.x+1][(int)loc.y] != null){
 	    		prev.set(loc);
 	    		loc.x++;
 	    	}
-	    	else if(circuit[(int)loc.x][(int)loc.y+1] != null){
+	    	else if(!new Vector2(loc.x, loc.y+1).equals(prev) && circuit[(int)loc.x][(int)loc.y+1] != null){
 	    		prev.set(loc);
 	    		loc.y++;
 	    	}
-	    	else if(circuit[(int)loc.x-1][(int)loc.y] != null){
+	    	else if(!new Vector2(loc.x-1, loc.y).equals(prev) && circuit[(int)loc.x-1][(int)loc.y] != null){
 	    		prev.set(loc);
 	    		loc.x--;
 	    	}
-	    	else if(circuit[(int)loc.x][(int)loc.y-1] != null){
+	    	else if(!new Vector2(loc.x, loc.y-1).equals(prev) && circuit[(int)loc.x][(int)loc.y-1] != null){
 	    		prev.set(loc);
 	    		loc.y--;
 	    	}
@@ -185,49 +177,59 @@ public class CircuitSolver{
 	 * @return An ArrayList of Terms for an equation, not necessarily in order according to "branches"
 	 */
 	private static ArrayList<Term> buildEquation(CircuitComponent[][] circuit, ArrayList<Vector2> junctions, ArrayList<Branch> branches,
-			Vector2 loc, Vector2 prev, Branch currentBranch, Branch startBranch, ArrayList<Branch> checkedBranches){
+			Vector2 prev, Vector2 loc, Branch currentBranch, Branch startBranch, ArrayList<Branch> checkedBranches)
+	{
 		ArrayList<Term> workingSet = new ArrayList<Term>();
 		checkedBranches.add(currentBranch);
-		int currentFactor = loc.equals(currentBranch.end) ? -1 : 1;
+		int currentFactor = prev.equals(currentBranch.end) ? -1 : 1;
 		loc = new Vector2(loc);
+		prev = new Vector2(prev);
 		
 		//Iterate over the current branch until we hit a junction, adding terms for components in the process
 		while(!junctions.contains(loc)){
+			System.out.println("loc " + loc);//XXX
 			if(circuit[(int)loc.x][(int)loc.y].isResistor)
+			{
 				workingSet.add(new Term(currentFactor * circuit[(int)loc.x][(int)loc.y].resistance, currentBranch));
+				System.out.println("HALP");//XXX
+			}
 			else if(circuit[(int)loc.x][(int)loc.y].isBattery)
+			{
 				workingSet.add(new Term(-currentFactor * circuit[(int)loc.x][(int)loc.y].voltageDif, null));
+				System.out.println("HALP");//XXX
+			}
 
-        	if(circuit[(int)loc.x+1][(int)loc.y] != null){
-        		prev.set(loc);
-        		loc.x++;
-        	}
-        	else if(circuit[(int)loc.x][(int)loc.y+1] != null){
-        		prev.set(loc);
-        		loc.y++;
-        	}
-        	else if(circuit[(int)loc.x-1][(int)loc.y] != null){
-        		prev.set(loc);
-        		loc.x--;
-        	}
-        	else if(circuit[(int)loc.x][(int)loc.y-1] != null){
-        		prev.set(loc);
-        		loc.y--;
-        	}
+			if(!new Vector2(loc.x+1, loc.y).equals(prev) && circuit[(int)loc.x+1][(int)loc.y] != null){
+	    		prev.set(loc);
+	    		loc.x++;
+	    	}
+	    	else if(!new Vector2(loc.x, loc.y+1).equals(prev) && circuit[(int)loc.x][(int)loc.y+1] != null){
+	    		prev.set(loc);
+	    		loc.y++;
+	    	}
+	    	else if(!new Vector2(loc.x-1, loc.y).equals(prev) && circuit[(int)loc.x-1][(int)loc.y] != null){
+	    		prev.set(loc);
+	    		loc.x--;
+	    	}
+	    	else if(!new Vector2(loc.x, loc.y-1).equals(prev) && circuit[(int)loc.x][(int)loc.y-1] != null){
+	    		prev.set(loc);
+	    		loc.y--;
+	    	}
 		}
 		
 		//If the tracing brings us back to the startBranch, then collapse the recursion
 		if(startBranch.start.equals(loc) || startBranch.start.equals(loc) || startBranch.start.equals(loc) ||
 				startBranch.start.equals(loc))
 			return workingSet;
-		
+
+		System.out.println("B" + currentBranch);//XXX
 		//Attempt to recur on each branch in the junction until we find a success
 		ArrayList<Term> result = null;
 		for(Branch branch : branches){
 			if(!checkedBranches.contains(branch) && (branch.start.equals(loc) || branch.end.equals(loc))){
 				checkedBranches.add(branch);
-				result = buildEquation(circuit, junctions, branches, new Vector2(branch.direction), loc, branch, startBranch,
-						checkedBranches);
+				result = buildEquation(circuit, junctions, branches, loc, new Vector2(branch.start.equals(loc) ?
+						branch.startDirection : branch.endDirection), branch, startBranch, checkedBranches);
 				if(result != null)
 					break;
 			}
@@ -297,9 +299,14 @@ public class CircuitSolver{
 	
 	private static void buildBranch(CircuitComponent[][] circuit, ArrayList<Vector2> junctions, ArrayList<Branch> branches,
 			Vector2 prev, Vector2 loc){
+		//If the branch already exists, dont make again
+		for(Branch branch : branches)
+			if(branch.endDirection.equals(loc))
+				return;
 		
 		Vector2 start = new Vector2(prev);
-		Vector2 dir = new Vector2(loc);
+		Vector2 startDir = new Vector2(loc);
+		
 		//Find the end of the branch by iterating until we hit a junction
 		boolean cont = true;
 		while(cont)
@@ -324,13 +331,9 @@ public class CircuitSolver{
 	        		loc.y--;
 	        	}
 		
-		for(Branch branch : branches)
-			if(branch.direction.equals(prev))
-				return;
-		
 		//In the special case of two adjacent junctions, don't make them a branch!
 		if(!junctions.contains(prev))
-			branches.add(new Branch(start, dir, loc));
+			branches.add(new Branch(start, startDir, loc, prev));
 	}
 	
 	/**
@@ -405,15 +408,27 @@ public class CircuitSolver{
 		 * @param branches The list of branches to be rearranged according to
 		 */
 		public void sort(ArrayList<Branch> branches){
-			System.out.println("-----");//TODO REmove
-			System.out.println(this);//TODO REmove
-			for(int b = 0; b < branches.size(); b++)
-				if(terms.contains(branches.get(b)))
-					terms.set(b, terms.set(terms.indexOf(branches.get(b)), terms.get(b)));
+			for(int i = 0; i < terms.size()-1; i++)
+				for(int j = i+1; j < terms.size(); j++)
+					if(terms.get(i).branch == terms.get(j).branch){
+						terms.set(i, terms.get(i).add(terms.get(j)));
+						terms.remove(j--);
+					}
+			
+			for(int b = 0; b < branches.size(); b++){
+				int i = 0;
+				while(i < terms.size())
+				{
+					if(terms.get(i).branch.equals(branches.get(b)))
+						break;
+					i++;
+				}
+
+				if(i < terms.size())
+					terms.set(b, terms.set(i, terms.get(b)));
 				else
 					terms.add(b, new Term(0, branches.get(b)));
-			System.out.println(this);//TODO REmove
-			System.out.println("-----");//TODO REmove
+			}
 		}
 		
 		/**
@@ -494,21 +509,21 @@ public class CircuitSolver{
 	 *
 	 */
 	private static class Branch{
-		public Vector2 start, direction, end;
+		public Vector2 start, startDirection, end, endDirection;
 		
-		public Branch(Vector2 start, Vector2 direction, Vector2 end){
+		public Branch(Vector2 start, Vector2 startDirection, Vector2 end, Vector2 endDirection){
 			this.start = start;
 			this.end = end;
-			this.direction = direction;
+			this.startDirection = startDirection;
+			this.endDirection = endDirection;
 		}
 		
-		@SuppressWarnings("unused")
 		public boolean equals(Branch branch){
-			return start.equals(branch.start) && end.equals(branch.end);
+			return startDirection.equals(branch.startDirection) && endDirection.equals(branch.endDirection);
 		}
 		
 		public String toString(){
-			return start + "->" + end + ":" + direction;
+			return start + ":" + startDirection + "->" + endDirection;
 		}
 	}
 }
