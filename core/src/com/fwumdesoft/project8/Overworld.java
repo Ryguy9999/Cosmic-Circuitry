@@ -4,6 +4,9 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fwumdesoft.project8.Overworld.mods;
+import com.fwumdesoft.project8.Overworld.tiles;
+
 //TODO: Document and clean up, because it's a bit of a ported mess
 public class Overworld {
 	public static enum tiles {space, wall, door, floor};
@@ -50,10 +53,6 @@ public class Overworld {
 		return str;
 	}
 	
-	public void isOpen(int x, int y) {
-	
-	}
-	
 	/**
 	 * Move the player in the game, if the space is free </br>
 	 * Does not check intervening spaces
@@ -65,7 +64,7 @@ public class Overworld {
 	 * @return If the player moved or not
 	 */
 	public boolean movePlayer(int xAmt, int yAmt) {
-		boolean spotFree = map[playerPos.y + yAmt][playerPos.x + xAmt] != tiles.wall;
+		boolean spotFree = isOpen(playerPos.x + xAmt, playerPos.y + yAmt);
 		if(spotFree) {
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
@@ -168,6 +167,11 @@ public class Overworld {
 			}
 		}
 		return nextDoor;
+	}
+	
+	public boolean isOpen(int x, int y)
+	{
+		return map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] == mods.none);
 	}
 	
 	private class Door {

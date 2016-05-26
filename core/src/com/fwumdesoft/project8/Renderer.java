@@ -8,8 +8,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.utils.Align;
 import com.fwumdesoft.project8.CircuitComponent.Type;
+import com.fwumdesoft.project8.Overworld.mods;
+import com.fwumdesoft.project8.Overworld.tiles;
 
 /**
  * Draws the game to separate drawing from simulation
@@ -69,7 +72,6 @@ public class Renderer {
 	 */
 	public void renderOverworld(Overworld world, Inventory inventory) {
 		Point player = world.playerPos;
-		System.out.println(world.map[world.playerPos.y][world.playerPos.x]);
 		int halfGridWidth = (screenWidth / cellSize) / 2;
 		int halfGridHeight = (screenHeight / cellSize) / 2;
 		int xStart = Math.max(0, player.x - halfGridWidth);
