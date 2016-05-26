@@ -15,9 +15,14 @@ public class Inventory {
 	 * The chips the player currently holds
 	 */
 	public List<CircuitComponent> chips;
+	/**
+	 * The batteries the player currently holds
+	 */
+	public List<CircuitComponent> batteries;
 
 	public Inventory() {
 		resistors = new ArrayList<>();
 		chips = new ArrayList<>();
+		batteries = new ArrayList<>();
 	}
 }

@@ -152,13 +152,15 @@ public class Renderer {
 	private void renderInventory(Inventory inventory) {
 		shapes.begin(ShapeRenderer.ShapeType.Filled);	
 		shapes.setColor(0.5f, 0.5f, 0.5f, 0.75f);
-		shapes.rect(0, 0, 128, 32);
+		shapes.rect(0, 0, 192, 32);
 		shapes.end();
 		batch.begin();
 		batch.draw(resistor, 0, 0, 32, 32);
 		font.draw(batch, "" + inventory.resistors.size(), 32, 24, 32, Align.center, false);
 		batch.draw(lamp, 64, 0, 32, 32);
 		font.draw(batch, "" + inventory.chips.size(), 96, 24, 32, Align.center, false);
+		batch.draw(battery, 128, 0, 32, 32);
+		font.draw(batch, "" + inventory.batteries.size(), 160, 24, 32, Align.center, false);
 		batch.end();
 	}
 }
