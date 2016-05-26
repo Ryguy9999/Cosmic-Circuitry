@@ -156,10 +156,9 @@ public class Renderer {
 		shapes.end();
 		batch.begin();
 		batch.draw(resistor, 0, 0, 32, 32);
-		String resistors = "" + inventory.resistors;
-		font.draw(batch, resistors, 32, 24, 32, Align.center, false);
+		font.draw(batch, inventory.resistors.size(), 32, 24, 32, Align.center, false);
 		batch.draw(lamp, 64, 0, 32, 32);
-		font.draw(batch, "" + inventory.computerChips, 96, 24, 32, Align.center, false);
+		font.draw(batch, "" + inventory.computerChips.size(), 96, 24, 32, Align.center, false);
 		batch.end();
 	}
 }
