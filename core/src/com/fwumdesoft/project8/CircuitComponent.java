@@ -1,6 +1,10 @@
 package com.fwumdesoft.project8;
 
-public class CircuitComponent{
+import java.io.Serializable;
+
+public class CircuitComponent implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	public enum Type {WIRE, BATTERY, RESISTOR };
 	public boolean isLamp;
 	public boolean isChangeable;
