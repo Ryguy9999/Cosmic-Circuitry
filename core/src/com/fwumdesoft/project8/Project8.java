@@ -42,10 +42,15 @@ public class Project8 extends ApplicationAdapter {
 		List<FileHandle> assetsFiles = Arrays.asList(Gdx.files.internal(".").list());
 
 		AssetManager assets = new AssetManager();
+		assets.setLoader(CircuitComponent[][].class, new CircuitIO(assets.getFileHandleResolver()));
 		assetsFiles.stream()
 			.map(file -> file.name())
 			.filter(string -> string.endsWith("png") || string.endsWith("jpg"))
 			.forEach(name -> assets.load(name, Texture.class));
+		assetsFiles.stream()
+			.map(file -> file.name())
+			.filter(string -> string.endsWith("circuit"))
+			.forEach(name -> assets.load(name, CircuitComponent[][].class));
 		assets.finishLoading();
 		manualCleanup.add(assets);
 		
@@ -60,7 +65,7 @@ public class Project8 extends ApplicationAdapter {
 		
 		Gdx.input.setInputProcessor(new OverworldInput(world));
 		
-		designer = new CircuitDesigner(640, 480);
+		designer = new CircuitDesigner(assets, 640, 480);
 		mousePosition = new Vector2();
 	}
 

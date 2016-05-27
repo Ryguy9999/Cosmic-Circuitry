@@ -1,15 +1,19 @@
 package com.fwumdesoft.project8;
 
+import javax.swing.JOptionPane;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.assets.AssetManager;
 
 public class CircuitDesigner {
 	private CircuitComponent[][] circuit;
 	private boolean active;
+	private AssetManager assets;
 	
-	public CircuitDesigner(int width, int height) {
+	public CircuitDesigner(AssetManager assets, int width, int height) {
 		circuit = new CircuitComponent[height][width];
 		active = false;
+		this.assets = assets;
 	}
 	
 	
@@ -31,6 +35,16 @@ public class CircuitDesigner {
 			}
 			if(Gdx.input.isKeyJustPressed(Keys.NUM_5)) {
 				putComponent(null, cursorX, cursorY);
+			}
+			if(Gdx.input.isKeyJustPressed(Keys.L)) {
+				String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to load.");
+				circuitName += ".circuit";
+				circuit = assets.get(circuitName, CircuitComponent[][].class);
+			}
+			if(Gdx.input.isKeyJustPressed(Keys.S)) {
+				String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to save.");
+				circuitName += ".circuit";
+				CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
 			}
 		}
 	}
