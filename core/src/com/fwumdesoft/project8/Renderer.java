@@ -95,6 +95,8 @@ public class Renderer {
 				case floor:
 					batch.draw(wall, drawX, drawY);
 					break;
+				default:
+					break;
 				}
 			}
 		}
