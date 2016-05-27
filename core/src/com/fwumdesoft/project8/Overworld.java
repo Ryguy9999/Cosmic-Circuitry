@@ -205,27 +205,5 @@ public class Overworld {
 			this.facing = facing;
 			this.open = false;
 		}
-		
-		public int getFacingX() {
-			switch (facing) {
-				case 0:
-					return -1;
-				case 2:
-					return 1;
-				default:
-					return 0;
-			}
-		}
-		
-		public int getFacingY() {
-			switch (facing) {
-				case 1:
-					return 1;
-				case 3:
-					return -1;
-				default:
-					return 0;
-			}
-		}
 	}
 }
