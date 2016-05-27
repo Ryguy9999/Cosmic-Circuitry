@@ -40,6 +40,7 @@ public class Renderer {
 	 */
 	private TextureRegion[][][][] wireTiles;
 	private TextureRegion unconnectedWire;
+	
 	/**
 	 * Create a Renderer
 	 * @param batch A SpriteBatch which should be disposed of when the Renderer is unnecessary
@@ -79,13 +80,13 @@ public class Renderer {
 		wireTiles[1][0][1][1] = new TextureRegion(wires, size * 2, 0, size, size);
 		wireTiles[0][0][1][1] = new TextureRegion(wires, size * 3, 0, size, size);
 		wireTiles[1][1][0][1] = new TextureRegion(wires, size, size, size, size);
-		wireTiles[1][1][1][1] = new TextureRegion(wires, size  * 2, size, size, size);
+		wireTiles[1][1][1][1] = new TextureRegion(wires, size * 2, size, size, size);
 		wireTiles[0][1][1][1] = new TextureRegion(wires, size * 3, size, size, size);
 		wireTiles[1][1][0][0] = new TextureRegion(wires, size, size * 2, size, size);
 		wireTiles[1][1][1][0] = new TextureRegion(wires, size * 2, size * 2, size, size);
 		wireTiles[0][1][1][0] = new TextureRegion(wires, size * 3, size * 2, size, size);
 	}
-
+	
 	/**
 	 * Draw the current state of the overworld
 	 * @param world
@@ -106,7 +107,8 @@ public class Renderer {
 				int drawX = (x - player.x + halfGridWidth) * cellSize;
 				int drawY = (y - player.y + halfGridHeight) * cellSize;
 				//Draw the correct texture
-				switch(world.map[y][x]) {
+				switch(world.map[y][x])
+				{
 				case wall:
 					batch.draw(floor, drawX, drawY);
 					break;
@@ -132,27 +134,30 @@ public class Renderer {
 		batch.begin();
 		for(int y = 0; y < circuit.length; y++) {
 			for(int x = 0; x < circuit[y].length; x++) {
+				boolean top, left, right, bottom;
+				bottom = y > 0 && circuit[y - 1][x] != null;
+				left = x > 0 && circuit[y][x - 1] != null;
+				right = x < circuit[y].length - 1 && circuit[y][x + 1] != null;
+				top = y < circuit.length - 1 && circuit[y + 1][x] != null;
 				int drawX = x * componentSize;
-				int drawY = y * componentSize ;
+				int drawY = y * componentSize;
 				CircuitComponent comp = circuit[y][x];
 				if(comp == null) {
 					continue;
 				}
 				if(comp.type == Type.WIRE) {
-					boolean top, left, right, bottom;
-					bottom = y > 0 && circuit[y - 1][x] != null;
-					left = x > 0 && circuit[y][x - 1] != null;
-					right = x < circuit[y].length - 1 && circuit[y][x + 1] != null;
-					top = y < circuit.length - 1 && circuit[y + 1][x] != null;
 					TextureRegion region = wireTiles[right ? 1 : 0][top ? 1 : 0][left ? 1 : 0][bottom ? 1 : 0];
 					region = region != null ? region : unconnectedWire;
 					batch.draw(region, drawX, drawY);
 				} else {
+					int rotation = (top && bottom) ? 90 : 0;
+					Texture tex;
 					if(comp.type == Type.RESISTOR) {
-						batch.draw(comp.isLamp ? lamp : resistor, drawX, drawY);
+						tex = comp.isLamp ? lamp : resistor;
 					} else {
-						batch.draw(battery, drawX, drawY);
+						tex = battery;
 					}
+					batch.draw(tex, drawX , drawY, componentSize / 2, componentSize / 2, componentSize, componentSize, 1, 1, rotation, 0, 0, componentSize, componentSize, false, false);
 				}
 			}
 		}
@@ -160,10 +165,10 @@ public class Renderer {
 		batch.end();
 		renderInventory(inventory);
 	}
-
+	
 	private void renderInventory(Inventory inventory) {
 		//Draw a background for the overlay
-		shapes.begin(ShapeRenderer.ShapeType.Filled);	
+		shapes.begin(ShapeRenderer.ShapeType.Filled);
 		shapes.setColor(0.5f, 0.5f, 0.5f, 0.75f);
 		shapes.rect(0, 0, 192, 32);
 		shapes.end();
