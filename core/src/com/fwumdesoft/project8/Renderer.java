@@ -8,11 +8,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.utils.Align;
 import com.fwumdesoft.project8.CircuitComponent.Type;
-import com.fwumdesoft.project8.Overworld.mods;
-import com.fwumdesoft.project8.Overworld.tiles;
 
 /**
  * Draws the game to separate drawing from simulation
