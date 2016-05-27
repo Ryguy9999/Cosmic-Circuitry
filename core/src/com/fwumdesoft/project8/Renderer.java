@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.Align;
@@ -35,7 +36,11 @@ public class Renderer {
 	 */
 	private int screenHeight;
 	private Texture player, wall, floor, door, resistor, lamp, battery;
-
+	/**
+	 * All of the individual wire tileset images
+	 * [right][top][left][bottom]
+	 */
+	private TextureRegion[][][][] wireTiles;
 	/**
 	 * Create a Renderer
 	 * @param batch A SpriteBatch which should be disposed of when the Renderer is unnecessary
@@ -63,6 +68,21 @@ public class Renderer {
 		this.resistor = assets.get("resistor.png", Texture.class);
 		this.lamp = assets.get("lamp.png", Texture.class);
 		this.battery = assets.get("battery.png", Texture.class);
+		//Create wire tileset
+		Texture wires = assets.get("wires.png", Texture.class);
+		wireTiles = new TextureRegion[2][2][2][2];
+		int size = 64;
+		wireTiles[1][0][1][0] = new TextureRegion(wires, 0, 0, size, size);
+		wireTiles[0][1][0][1] = new TextureRegion(wires, 0, size, size, size);
+		wireTiles[1][0][0][1] = new TextureRegion(wires, size, 0, size, size);
+		wireTiles[1][0][1][1] = new TextureRegion(wires, size * 2, 0, size, size);
+		wireTiles[0][0][1][1] = new TextureRegion(wires, size * 3, 0, size, size);
+		wireTiles[1][1][0][1] = new TextureRegion(wires, size, size, size, size);
+		wireTiles[1][1][1][1] = new TextureRegion(wires, size  * 2, size, size, size);
+		wireTiles[0][1][1][1] = new TextureRegion(wires, size * 3, size, size, size);
+		wireTiles[1][1][0][0] = new TextureRegion(wires, size, size * 2, size, size);
+		wireTiles[1][1][1][0] = new TextureRegion(wires, size * 2, size * 2, size, size);
+		wireTiles[0][1][1][0] = new TextureRegion(wires, size * 3, size * 2, size, size);
 	}
 
 	/**
@@ -108,52 +128,33 @@ public class Renderer {
 	}
 	
 	public void renderCircuit(CircuitComponent[][] circuit, Inventory inventory) {
-		//TODO: Clean up the render function
 		batch.begin();
-		Texture texture;
 		for(int y = 0; y < circuit.length; y++) {
 			for(int x = 0; x < circuit[y].length; x++) {
 				int drawX = x * componentSize;
 				int drawY = y * componentSize + 32; //Draw the circuit over the inventory
 				CircuitComponent comp = circuit[y][x];
-				if(comp == null || comp.type == Type.WIRE) {
+				if(comp == null) {
 					continue;
 				}
-				switch(comp.type) {
-				case RESISTOR:
-					texture = resistor;//comp.isLamp ? lamp : resistor;
-					break;
-				case BATTERY:
-					texture = battery;
-					break;
-				default:
-					texture = null;
-					break;
+				if(comp.type == Type.WIRE) {
+					boolean top, left, right, bottom;
+					bottom = y > 0 && circuit[y - 1][x] != null;
+					left = x > 0 && circuit[y][x - 1] != null;
+					right = x < circuit[y].length - 1 && circuit[y][x + 1] != null;
+					top = y < circuit.length - 1 && circuit[y + 1][x] != null;
+					TextureRegion region = wireTiles[right ? 1 : 0][top ? 1 : 0][left ? 1 : 0][bottom ? 1 : 0];
+					batch.draw(region, drawX, drawY);
+				} else {
+					if(comp.type == Type.RESISTOR) {
+						batch.draw(comp.isLamp ? lamp : resistor, drawX, drawY);
+					} else {
+						batch.draw(battery, drawX, drawY);
+					}
 				}
-				batch.draw(texture, drawX, drawY);
 			}
 		}
 		batch.end();
-		shapes.begin(ShapeType.Filled);
-		shapes.setColor(Color.BLACK);
-		for(int y = 0; y < circuit.length; y++) {
-			for(int x = 0; x < circuit[y].length; x++) {
-				int drawX = x * componentSize;
-				int drawY = y * componentSize + 32; //Draw the circuit over the inventory
-				CircuitComponent comp = circuit[y][x];
-				if(comp == null || comp.type != Type.WIRE) {
-					continue;
-				}
-				int centerX = drawX + componentSize / 2;
-				int centerY = drawY + componentSize / 2;
-				GridHelper.doCardinal(circuit, x, y, (newX, newY) -> {
-					if(circuit[newY][newX] != null) {
-						shapes.rect(centerX - 1, centerY - 1, 2, 2);
-					}
-				});
-			}
-		}
-		shapes.end();
 		renderInventory(inventory);
 	}
 
