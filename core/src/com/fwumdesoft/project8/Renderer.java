@@ -33,7 +33,7 @@ public class Renderer {
 	 * The number of pixels of the screen's height
 	 */
 	private int screenHeight;
-	private Texture player, wall, floor, door, resistor, lamp, battery;
+	private Texture player, wall, floor, door, resistor, lamp, battery, cursor;
 	/**
 	 * All of the individual wire tileset images
 	 * [right][top][left][bottom]
@@ -67,6 +67,7 @@ public class Renderer {
 		this.resistor = assets.get("resistor.png", Texture.class);
 		this.lamp = assets.get("lamp.png", Texture.class);
 		this.battery = assets.get("battery.png", Texture.class);
+		this.cursor = assets.get("cursor.png", Texture.class);
 		//Create wire tileset
 		Texture wires = assets.get("wires.png", Texture.class);
 		wireTiles = new TextureRegion[2][2][2][2];
@@ -132,7 +133,7 @@ public class Renderer {
 		for(int y = 0; y < circuit.length; y++) {
 			for(int x = 0; x < circuit[y].length; x++) {
 				int drawX = x * componentSize;
-				int drawY = y * componentSize + 32; //Draw the circuit over the inventory
+				int drawY = y * componentSize ;
 				CircuitComponent comp = circuit[y][x];
 				if(comp == null) {
 					continue;
@@ -155,6 +156,7 @@ public class Renderer {
 				}
 			}
 		}
+		batch.draw(cursor, cursorX * componentSize, cursorY * componentSize);
 		batch.end();
 		renderInventory(inventory);
 	}
