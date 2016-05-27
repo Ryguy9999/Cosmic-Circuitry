@@ -39,6 +39,7 @@ public class Renderer {
 	 * [right][top][left][bottom]
 	 */
 	private TextureRegion[][][][] wireTiles;
+	private TextureRegion unconnectedWire;
 	/**
 	 * Create a Renderer
 	 * @param batch A SpriteBatch which should be disposed of when the Renderer is unnecessary
@@ -70,6 +71,7 @@ public class Renderer {
 		Texture wires = assets.get("wires.png", Texture.class);
 		wireTiles = new TextureRegion[2][2][2][2];
 		int size = 64;
+		unconnectedWire = new TextureRegion(wires, 0, size * 2, size, size);
 		wireTiles[1][0][1][0] = new TextureRegion(wires, 0, 0, size, size);
 		wireTiles[0][1][0][1] = new TextureRegion(wires, 0, size, size, size);
 		wireTiles[1][0][0][1] = new TextureRegion(wires, size, 0, size, size);
@@ -142,6 +144,7 @@ public class Renderer {
 					right = x < circuit[y].length - 1 && circuit[y][x + 1] != null;
 					top = y < circuit.length - 1 && circuit[y + 1][x] != null;
 					TextureRegion region = wireTiles[right ? 1 : 0][top ? 1 : 0][left ? 1 : 0][bottom ? 1 : 0];
+					region = region != null ? region : unconnectedWire;
 					batch.draw(region, drawX, drawY);
 				} else {
 					if(comp.type == Type.RESISTOR) {
