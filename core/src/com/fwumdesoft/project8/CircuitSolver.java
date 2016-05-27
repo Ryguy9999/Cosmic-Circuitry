@@ -25,13 +25,10 @@ public class CircuitSolver{
 		
 		
 		CircuitComponent n = null;
-		CircuitComponent w = new CircuitComponent();
-		CircuitComponent v = new CircuitComponent();
-		CircuitComponent r = new CircuitComponent();
-		w.type = Type.WIRE;
-		v.type = Type.BATTERY;
+		CircuitComponent w = CircuitComponent.wire();
+		CircuitComponent v = CircuitComponent.battery();
+		CircuitComponent r = CircuitComponent.resistor(); 		
 		v.voltageDif = 10;
-		r.type = Type.RESISTOR;
 		r.resistance = 5;
 		CircuitComponent[][] circuit = new CircuitComponent[][]{{n, n, n, n, n, n, n},
 																{w, w, w, w, w, w, n},
