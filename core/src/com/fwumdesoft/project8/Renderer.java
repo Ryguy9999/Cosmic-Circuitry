@@ -127,7 +127,7 @@ public class Renderer {
 		renderInventory(inventory);
 	}
 	
-	public void renderCircuit(CircuitComponent[][] circuit, Inventory inventory) {
+	public void renderCircuit(CircuitComponent[][] circuit, Inventory inventory, int cursorX, int cursorY) {
 		batch.begin();
 		for(int y = 0; y < circuit.length; y++) {
 			for(int x = 0; x < circuit[y].length; x++) {

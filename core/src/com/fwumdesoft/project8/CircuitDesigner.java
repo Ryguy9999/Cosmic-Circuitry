@@ -2,52 +2,42 @@ package com.fwumdesoft.project8;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class CircuitDesigner {
 	private CircuitComponent[][] circuit;
 	private boolean active;
-	private Vector2 mousePosition;
-	private int squareSize;
 	
-	public CircuitDesigner(int width, int height, int size) {
+	public CircuitDesigner(int width, int height) {
 		circuit = new CircuitComponent[height][width];
 		active = false;
-		mousePosition = new Vector2();
-		squareSize = size;
 	}
 	
 	
-	public void update(Viewport port) {
+	public void update(int cursorX, int cursorY) {
 		if(Gdx.input.isKeyJustPressed(Keys.END))
 			active = !active;
 		if(active) {
-			mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
-			port.unproject(mousePosition);
 			if(Gdx.input.isKeyJustPressed(Keys.NUM_1)) {
-				putComponent(CircuitComponent.wire(), mousePosition);
+				putComponent(CircuitComponent.wire(), cursorX, cursorY);
 			}
 			if(Gdx.input.isKeyJustPressed(Keys.NUM_2)) {
-				putComponent(CircuitComponent.resistor(), mousePosition);
+				putComponent(CircuitComponent.resistor(), cursorX, cursorY);
 			}
 			if(Gdx.input.isKeyJustPressed(Keys.NUM_3)) {
-				putComponent(CircuitComponent.lamp(), mousePosition);
+				putComponent(CircuitComponent.lamp(), cursorX, cursorY);
 			}
 			if(Gdx.input.isKeyJustPressed(Keys.NUM_4)) {
-				putComponent(CircuitComponent.battery(), mousePosition);
+				putComponent(CircuitComponent.battery(), cursorX, cursorY);
 			}
 			if(Gdx.input.isKeyJustPressed(Keys.NUM_5)) {
-				putComponent(null, mousePosition);
+				putComponent(null, cursorX, cursorY);
 			}
 		}
 	}
 	
-	private void putComponent(CircuitComponent component, Vector2 mouse) {
-		int x = (int)(mouse.x / squareSize);
-		int y = (int)(mouse.y / squareSize);
-		if(y < circuit.length && x < circuit[y].length)
-			circuit[y][x] = component;
+	private void putComponent(CircuitComponent component, int cursorX, int cursorY) {
+		if(cursorY < circuit.length && cursorX < circuit[cursorY].length)
+			circuit[cursorY][cursorX] = component;
 	}
 	
 	public CircuitComponent[][] getCircuit() {
