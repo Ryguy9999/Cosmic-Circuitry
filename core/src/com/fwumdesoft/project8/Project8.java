@@ -69,7 +69,7 @@ public class Project8 extends ApplicationAdapter {
 		mousePosition = new Vector2();
 	}
 
-	private boolean isCircuit = false;
+	private boolean isCircuit = true;
 	
 	@Override
 	public void render () {

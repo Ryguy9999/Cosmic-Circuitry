@@ -83,4 +83,17 @@ public class CircuitComponent implements Serializable {
 	public static CircuitComponent battery() {
 		return new CircuitComponent(Type.BATTERY);
 	}
+	
+	public void setMainValue(double value) {
+		switch(type) {
+		case BATTERY:
+			voltageDif = value;
+			break;
+		case RESISTOR:
+			resistance = value;
+			break;
+		case WIRE:
+			throw new RuntimeException("Wire has no main value");
+		}
+	}
 }

@@ -4,6 +4,8 @@ import javax.swing.JOptionPane;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.fwumdesoft.project8.CircuitComponent.Type;
+
 /**
  * An editor for circuits
  */
@@ -88,8 +90,18 @@ public class CircuitDesigner {
 	 * @param cursorY The position of the cursor
 	 */
 	private void putComponent(CircuitComponent component, int cursorX, int cursorY) {
-		if(cursorY < circuit.length && cursorX < circuit[cursorY].length)
-			circuit[cursorY][cursorX] = component;
+		if(cursorY < circuit.length && cursorX < circuit[cursorY].length) {
+			try {
+				if(component.type != Type.WIRE) {
+					String input = JOptionPane.showInputDialog("Enter the value of the component.");
+					double value = Double.parseDouble(input);
+					component.setMainValue(value);
+				}
+				circuit[cursorY][cursorX] = component;
+			} catch(NumberFormatException | NullPointerException e) {
+				JOptionPane.showMessageDialog(null, "Failed to parse number.");
+			}
+		}
 	}
 	
 	/**
