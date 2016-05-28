@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -37,8 +38,6 @@ public class Project8 extends ApplicationAdapter {
 		SpriteBatch batch = new SpriteBatch();
 		manualCleanup.add(batch);
 		
-		world = new Overworld(200);
-		
 		List<FileHandle> assetsFiles = Arrays.asList(Gdx.files.internal(".").list());
 
 		AssetManager assets = new AssetManager();
@@ -54,6 +53,7 @@ public class Project8 extends ApplicationAdapter {
 		assets.finishLoading();
 		manualCleanup.add(assets);
 		
+		world = new Overworld(200, assets.getAll(CircuitComponent[][].class, new Array<>()));
 		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480);
 
 		inventory = new Inventory();

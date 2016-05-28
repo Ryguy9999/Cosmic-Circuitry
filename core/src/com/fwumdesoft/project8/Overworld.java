@@ -1,11 +1,7 @@
 package com.fwumdesoft.project8;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.fwumdesoft.project8.Overworld.mods;
-import com.fwumdesoft.project8.Overworld.tiles;
+import com.badlogic.gdx.utils.Array;
 
 //TODO: Document and clean up, because it's a bit of a ported mess
 public class Overworld {
@@ -14,8 +10,9 @@ public class Overworld {
 	tiles[][] map; 
 	mods[][] modifiers;
 	Point playerPos;
+	Array<CircuitComponent[][]> circuits;
 	
-	public Overworld(int size) {
+	public Overworld(int size, Array<CircuitComponent[][]> circuits) {
 		// contains permanent tiles
 		map = new tiles[size][size];
 		// contains temporary modifiers or stuff that goes on walls
@@ -37,6 +34,8 @@ public class Overworld {
 		for(int i = 0; i < 25; i++) {
 			door = generateRoom(door);
 		}
+		
+		this.circuits = circuits;
 	}
 	
 	public String toString() {
