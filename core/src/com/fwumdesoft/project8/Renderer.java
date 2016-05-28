@@ -4,7 +4,6 @@ import java.awt.Point;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -41,7 +40,6 @@ public class Renderer {
 	 */
 	private TextureRegion[][][][] wireTiles;
 	private TextureRegion unconnectedWire;
-	private Sprite tempSprite;
 	
 	/**
 	 * Create a Renderer
@@ -87,8 +85,6 @@ public class Renderer {
 		wireTiles[1][1][0][0] = new TextureRegion(wires, size, size * 2, size, size);
 		wireTiles[1][1][1][0] = new TextureRegion(wires, size * 2, size * 2, size, size);
 		wireTiles[0][1][1][0] = new TextureRegion(wires, size * 3, size * 2, size, size);
-		
-		tempSprite = new Sprite();
 	}
 	
 	/**
@@ -187,10 +183,6 @@ public class Renderer {
 		batch.draw(battery, 128, 0, 32, 32);
 		font.draw(batch, "" + inventory.batteries.size(), 160, 24, 32, Align.center, false);
 		batch.end();
-	}
-	
-	private void draw(SpriteBatch batch, Texture t, float x, float y, float rotation) {
-		draw(batch, t, x, y, 0, 0, rotation);
 	}
 	
 	private void draw(SpriteBatch batch, Texture t, float x, float y, float originX, float originY, float rotation) {
