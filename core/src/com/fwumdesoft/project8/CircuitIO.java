@@ -13,14 +13,24 @@ import com.badlogic.gdx.assets.loaders.SynchronousAssetLoader;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * Handles saving and loading of circuits to and from files
+ */
 public class CircuitIO extends SynchronousAssetLoader<CircuitComponent[][], CircuitIO.CircuitParameters> {
 	
+	/**
+	 * Create a new CircuitIO object
+	 * @param resolver A resolver that should be acquired from an AssetManager
+	 */
 	public CircuitIO(FileHandleResolver resolver) {
 		super(resolver);
 		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
+	/**
+	 * Don't use this method, it's called by the AssetManager
+	 */
 	public CircuitComponent[][] load(AssetManager assetManager, String fileName, FileHandle file, CircuitParameters parameter) {
 		Object o = null;
 		try {
@@ -34,10 +44,15 @@ public class CircuitIO extends SynchronousAssetLoader<CircuitComponent[][], Circ
 		return (CircuitComponent[][])o;
 	}
 	
-	public static void write(FileHandle file, CircuitComponent[][] component) {
+	/**
+	 * Write a circuit to a file
+	 * @param file The file to write to
+	 * @param circuit The circuit to write
+	 */
+	public static void write(FileHandle file, CircuitComponent[][] circuit) {
 		try {
 			ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(file.file()));
-			stream.writeObject(component);
+			stream.writeObject(circuit);
 			stream.close();
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -47,6 +62,9 @@ public class CircuitIO extends SynchronousAssetLoader<CircuitComponent[][], Circ
 
 	@SuppressWarnings("rawtypes")
 	@Override
+	/**
+	 * Don't call this
+	 */
 	public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, CircuitParameters parameter) {
 		return null;
 	}
