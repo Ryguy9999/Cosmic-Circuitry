@@ -69,17 +69,22 @@ public class Project8 extends ApplicationAdapter {
 		mousePosition = new Vector2();
 	}
 
+	private boolean isCircuit = false;
+	
 	@Override
 	public void render () {
-		mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
-		viewport.unproject(mousePosition);
-		int circuitX = (int)(mousePosition.x / 64);
-		int circuitY = (int)(mousePosition.y / 64);
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//		rend.renderOverworld(world, inventory);
-		designer.update(circuitX, circuitY);
-		rend.renderCircuit(designer.getCircuit(), inventory, circuitX, circuitY);
+		if(isCircuit) {
+			mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
+			viewport.unproject(mousePosition);
+			int circuitX = (int)(mousePosition.x / 64);
+			int circuitY = (int)(mousePosition.y / 64);
+			designer.update(circuitX, circuitY);
+			rend.renderCircuit(designer.getCircuit(), inventory, circuitX, circuitY);
+		} else {
+			rend.renderOverworld(world, inventory);
+		}
 	}
 	
 	@Override
