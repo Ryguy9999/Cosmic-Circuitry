@@ -1,11 +1,11 @@
 package com.fwumdesoft.project8;
 
+import java.awt.Point;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 
 public class OverworldInput extends InputAdapter {
 	private Overworld world;
-	private int faceX, faceY;
 	
 	public OverworldInput(Overworld world) {
 		this.world = world;
@@ -26,7 +26,7 @@ public class OverworldInput extends InputAdapter {
 			move(0, -1);
 			break;
 		case Keys.SPACE:
-			world.interactWith(faceX, faceY);
+			world.interact();
 			break;
 		default:
 			return false;
@@ -36,7 +36,5 @@ public class OverworldInput extends InputAdapter {
 	
 	private void move(int x, int y) {
 		world.movePlayer(x, y);
-		faceX = x;
-		faceY = y;
 	}
 }

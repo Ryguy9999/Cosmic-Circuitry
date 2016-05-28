@@ -9,7 +9,7 @@ public class Overworld {
 	public static enum mods {none, doorClosed, doorBroken, fireSuppression, destroyedWall, componentBag, fire, vacuum}
 	tiles[][] map; 
 	mods[][] modifiers;
-	Point playerPos;
+	Point playerPos, playerFace;
 	Array<CircuitComponent[][]> circuits;
 	
 	public Overworld(int size, Array<CircuitComponent[][]> circuits) {
@@ -31,6 +31,8 @@ public class Overworld {
 		Door door = new Door(size / 2, size / 2, 0);
 		generateRoom(door);
 		playerPos = new Point(size / 2 - 1, size / 2);
+		this.playerFace = new Point();
+		
 		for(int i = 0; i < 25; i++) {
 			door = generateRoom(door);
 		}
@@ -63,6 +65,7 @@ public class Overworld {
 	 */
 	public boolean movePlayer(int xAmt, int yAmt) {
 		boolean spotFree = isOpen(playerPos.x + xAmt, playerPos.y + yAmt);
+		playerFace.setLocation(xAmt, yAmt);
 		if(spotFree) {
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
@@ -71,13 +74,10 @@ public class Overworld {
 	}
 	
 	/**
-	 * Interact with the tile
-	 * @param x x coordinate
-	 * @param y y coordinate
+	 * Interact with the tile the player is facing
 	 */
-	public void interactWith(int x, int y)
-	{
-		
+	public void interact() {
+		//TODO: method stub
 	}
 	
 	/**
