@@ -1,6 +1,5 @@
 package com.fwumdesoft.project8;
 
-import java.awt.Point;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 
