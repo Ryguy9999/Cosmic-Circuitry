@@ -4,6 +4,7 @@ import java.awt.Point;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -40,6 +41,7 @@ public class Renderer {
 	 */
 	private TextureRegion[][][][] wireTiles;
 	private TextureRegion unconnectedWire;
+	private Sprite tempSprite;
 	
 	/**
 	 * Create a Renderer
@@ -85,6 +87,8 @@ public class Renderer {
 		wireTiles[1][1][0][0] = new TextureRegion(wires, size, size * 2, size, size);
 		wireTiles[1][1][1][0] = new TextureRegion(wires, size * 2, size * 2, size, size);
 		wireTiles[0][1][1][0] = new TextureRegion(wires, size * 3, size * 2, size, size);
+		
+		tempSprite = new Sprite();
 	}
 	
 	/**
@@ -125,7 +129,9 @@ public class Renderer {
 		}
 		//Draw the player, centered on the screen
 		//Because all drawing is centered on the player is guaranteed to be centered
-		batch.draw(this.player, halfGridWidth * cellSize, halfGridHeight * cellSize);
+		float rotation = (float)Math.atan2(world.playerFace.y, world.playerFace.x);
+		rotation = (float)Math.toDegrees(rotation);
+		draw(batch, this.player, halfGridWidth * cellSize, halfGridHeight * cellSize, cellSize / 2, cellSize / 2, rotation);
 		batch.end();
 		renderInventory(inventory);
 	}
@@ -157,7 +163,7 @@ public class Renderer {
 					} else {
 						tex = battery;
 					}
-					batch.draw(tex, drawX , drawY, componentSize / 2, componentSize / 2, componentSize, componentSize, 1, 1, rotation, 0, 0, componentSize, componentSize, false, false);
+					draw(batch, tex, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
 				}
 			}
 		}
@@ -181,5 +187,13 @@ public class Renderer {
 		batch.draw(battery, 128, 0, 32, 32);
 		font.draw(batch, "" + inventory.batteries.size(), 160, 24, 32, Align.center, false);
 		batch.end();
+	}
+	
+	private void draw(SpriteBatch batch, Texture t, float x, float y, float rotation) {
+		draw(batch, t, x, y, 0, 0, rotation);
+	}
+	
+	private void draw(SpriteBatch batch, Texture t, float x, float y, float originX, float originY, float rotation) {
+		batch.draw(t, x, y, originX, originY, t.getWidth(), t.getHeight(), 1, 1, rotation, 0, 0, t.getWidth(), t.getHeight(), false, false);
 	}
 }
