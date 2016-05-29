@@ -72,7 +72,7 @@ public class CircuitComponent implements Serializable {
 	 * @return A new lamp component
 	 */
 	public static CircuitComponent lamp() {
-		CircuitComponent comp = new CircuitComponent(Type.WIRE);
+		CircuitComponent comp = new CircuitComponent(Type.RESISTOR);
 		comp.isLamp = true;
 		return comp;
 	}
