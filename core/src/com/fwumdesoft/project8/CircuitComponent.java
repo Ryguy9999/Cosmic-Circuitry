@@ -96,4 +96,15 @@ public class CircuitComponent implements Serializable {
 			throw new RuntimeException("Wire has no main value");
 		}
 	}
+	
+	public double getMainValue() {
+		switch(type) {
+		case BATTERY:
+			return voltageDif;
+		case RESISTOR:
+			return resistance;
+		default:
+			throw new RuntimeException("Wire has no main value");
+		}
+	}
 }
