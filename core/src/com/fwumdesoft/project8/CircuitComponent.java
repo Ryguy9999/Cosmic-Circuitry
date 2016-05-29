@@ -42,6 +42,16 @@ public class CircuitComponent implements Serializable {
 	 * Given for resistors and lamps, should be 0 otherwise
 	 */
 	public double resistance;
+	/**
+	 * The goal current of the component</br>
+	 * Intended for lamps whose target current must be reached to "solve" the circuit
+	 */
+	public double targetCurrent;
+	/**
+	 * The allowed margin for the target current</br>
+	 * This value goes with the targetCurrent for lamps, allowing a margin of error for the player
+	 */
+	public double targetMargin;
 	
 	/**
 	 * Create a component
@@ -50,7 +60,7 @@ public class CircuitComponent implements Serializable {
 	private CircuitComponent(Type type){
 		isChangeable = false;
 		isLamp = false;
-		voltageDif = current = resistance = 0;
+		voltageDif = current = resistance = targetCurrent = targetMargin = 0;
 		this.type = type;
 	}
 	
