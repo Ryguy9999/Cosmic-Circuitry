@@ -9,10 +9,14 @@ public class CircuitSolver {
 	public static void main(String[] args) {
 		SystemOfEquations system = new SystemOfEquations();
 		Branch b1 = new Branch(null, null, null, null), b2 = new Branch(null, null, null, null), b3 = new Branch(null, null, null, null);
-		Equation e1 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[] {new Term(0, b1), new Term(1, b2), new Term(1, b3)})), 5);
-		Equation e2 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[] {new Term(1, b1), new Term(2, b2), new Term(3, b3)})), 14);
-		Equation e3 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[] {new Term(7, b1), new Term(4, b2), new Term(9, b3)})), 42);
-		Equation e4 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[] {new Term(7, b1), new Term(4, b2), new Term(0, b3)})), 15);
+		Equation e1 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[] {new Term(0, b1), new Term(1, b2), 
+				new Term(1, b3)})), 5);
+		Equation e2 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[] {new Term(1, b1), new Term(2, b2),
+				new Term(3, b3)})), 14);
+		Equation e3 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[] {new Term(7, b1), new Term(4, b2),
+				new Term(9, b3)})), 42);
+		Equation e4 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[] {new Term(7, b1), new Term(4, b2),
+				new Term(0, b3)})), 15);
 		system.equations.add(e1);
 		system.equations.add(e2);
 		system.equations.add(e3);
@@ -35,7 +39,8 @@ public class CircuitSolver {
 		System.out.println(junctions);
 		System.out.println(branches);
 		
-//		System.out.println(buildEquation(circuit, junctions, branches, branches.get(0).startDirection, branches.get(0).start, branches.get(0), branches.get(0), new ArrayList<Branch>()));
+//		System.out.println(buildEquation(circuit, junctions, branches, branches.get(0).startDirection, branches.get(0).start,
+//		branches.get(0), branches.get(0), new ArrayList<Branch>()));
 		
 		solve(circuit);
 		System.out.println(r.current + " " + v.current);
@@ -111,7 +116,12 @@ public class CircuitSolver {
 		
 		while(!loc.equals(branch.end)) {
 			if(circuit[(int)loc.x][(int)loc.y].type != Type.WIRE)
+			{
 				circuit[(int)loc.x][(int)loc.y].current = Math.abs(current);
+				if(circuit[(int)loc.x][(int)loc.y].isLamp && Math.abs(Math.abs(current) - circuit[(int)loc.x][(int)loc.y].targetCurrent)
+						< circuit[(int)loc.x][(int)loc.y].targetMargin)
+					circuit[(int)loc.x][(int)loc.y].isActive = true;
+			}
 				
 			if(!new Vector2(loc.x + 1, loc.y).equals(prev) && circuit[(int)loc.x + 1][(int)loc.y] != null) {
 				prev.set(loc);

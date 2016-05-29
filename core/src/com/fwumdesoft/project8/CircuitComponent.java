@@ -19,6 +19,11 @@ public class CircuitComponent implements Serializable {
 	 */
 	public boolean isLamp;
 	/**
+	 * If the component is active </br>
+	 * Only applicable if the component is a lamp
+	 */
+	public boolean isActive;
+	/**
 	 * If the component can be edited by the player
 	 */
 	public boolean isChangeable;
@@ -60,6 +65,7 @@ public class CircuitComponent implements Serializable {
 	private CircuitComponent(Type type){
 		isChangeable = false;
 		isLamp = false;
+		isActive = false;
 		voltageDif = current = resistance = targetCurrent = targetMargin = 0;
 		this.type = type;
 	}
