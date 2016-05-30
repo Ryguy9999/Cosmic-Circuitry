@@ -27,6 +27,7 @@ public class Inventory {
 	}
 	
 	public void addComponent(CircuitComponent comp) {
+		comp.isChangeable = true;
 		switch(comp.type) {
 		case RESISTOR:
 			if(comp.isLamp)
@@ -38,6 +39,7 @@ public class Inventory {
 			batteries.add(comp);
 			break;
 		case WIRE:
+			comp.isChangeable = false;
 			throw new IllegalArgumentException("Wire cannot be added to the inventory.");
 		}
 	}
