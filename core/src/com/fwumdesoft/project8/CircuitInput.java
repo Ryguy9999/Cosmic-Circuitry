@@ -20,7 +20,7 @@ import com.fwumdesoft.project8.CircuitComponent.Type;
  * S: Save
  * L: Load
  */
-public class CircuitDesigner {
+public class CircuitInput {
 	/**
 	 * The circuit to edit
 	 */
@@ -28,11 +28,15 @@ public class CircuitDesigner {
 	/**
 	 * If the designer is currently editing
 	 */
-	private boolean active;
+	private boolean editing;
 	/**
 	 * The game assets to load the circuit from
 	 */
 	private AssetManager assets;
+	/**
+	 * The inventory of the player
+	 */
+	private Inventory inventory;
 	
 	/**
 	 * Create a new circuit designer
@@ -40,9 +44,10 @@ public class CircuitDesigner {
 	 * @param width The width of the circuit
 	 * @param height The height of the circuit
 	 */
-	public CircuitDesigner(AssetManager assets, int width, int height) {
-		circuit = new CircuitComponent[height][width];
-		active = false;
+	public CircuitInput(CircuitComponent[][] circuit, AssetManager assets, Inventory inventory) {
+		this.circuit = circuit;
+		this.inventory = inventory;
+		this.editing = false;
 		this.assets = assets;
 	}
 	
@@ -53,8 +58,8 @@ public class CircuitDesigner {
 	 */
 	public void update(int cursorX, int cursorY) {
 		if(Gdx.input.isKeyJustPressed(Keys.END))
-			active = !active;
-		if(active) {
+			editing = !editing;
+		if(editing) {
 			if(Gdx.input.isKeyJustPressed(Keys.NUM_1)) {
 				putComponent(CircuitComponent.wire(), cursorX, cursorY);
 			}
@@ -80,6 +85,8 @@ public class CircuitDesigner {
 				circuitName += ".circuit";
 				CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
 			}
+		} else {
+			 
 		}
 	}
 	
