@@ -25,4 +25,20 @@ public class Inventory {
 		chips = new ArrayList<>();
 		batteries = new ArrayList<>();
 	}
+	
+	public void addComponent(CircuitComponent comp) {
+		switch(comp.type) {
+		case RESISTOR:
+			if(comp.isLamp)
+				chips.add(comp);
+			else
+				resistors.add(comp);
+			break;
+		case BATTERY:
+			batteries.add(comp);
+			break;
+		case WIRE:
+			throw new IllegalArgumentException("Wire cannot be added to the inventory.");
+		}
+	}
 }
