@@ -91,32 +91,44 @@ public class CircuitInput {
 			}
 		} else {
 			List<CircuitComponent> type = null;
+			String componentName = "";
 			if(Gdx.input.isKeyJustPressed(Keys.R)) {
 				type = inventory.resistors;
+				componentName = "resistor";
 			} else if(Gdx.input.isKeyJustPressed(Keys.B)) {
 				type = inventory.batteries;
+				componentName = "battery";
 			} else if(Gdx.input.isKeyJustPressed(Keys.L)) {
 				type = inventory.chips;
+				componentName = "lamp";
 			}
 			CircuitComponent place = null;
 			if(type != null) {
-				if(cursorY >= 0 && cursorY < circuit.length && cursorX >= 0 && cursorX < circuit[cursorY].length)
+				if(!(cursorY >= 0 && cursorY < circuit.length && cursorX >= 0 && cursorX < circuit[cursorY].length)
+						|| !circuit[cursorY][cursorX].isChangeable)
 					return;
-				String input = JOptionPane.showInputDialog("Enter the value of the component to place.");
+				String input = JOptionPane.showInputDialog("Enter the value of the " + componentName + " to place.");
 				try {
 					double value = Double.parseDouble(input);
 					for(CircuitComponent comp : type) {
-						if(comp.getMainValue() == value) 
+						if(comp.getMainValue() == value)
 							place = comp;
 					}
 				} catch(NumberFormatException | NullPointerException e) {
 					JOptionPane.showMessageDialog(null, "Failed to parse number.");
+					return;
 				}
+			} else {
+				return;
 			}
 			if(place != null) {
 				CircuitComponent old = circuit[cursorY][cursorX];
-				inventory.addComponent(old);
+				if(old.type != null)
+					inventory.addComponent(old);
 				circuit[cursorY][cursorX] = place;
+				inventory.removeComponent(place);
+			} else {
+				JOptionPane.showMessageDialog(null, "No " + componentName + " of that value was found.");
 			}
 		}
 	}
