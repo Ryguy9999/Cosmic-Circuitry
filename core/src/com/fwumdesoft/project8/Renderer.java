@@ -8,8 +8,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 import com.fwumdesoft.project8.CircuitComponent.Type;
+import com.fwumdesoft.project8.Overworld.mods;
+import com.fwumdesoft.project8.Overworld.tiles;
 
 /**
  * Draws the game to separate drawing from simulation
@@ -40,7 +43,7 @@ public class Renderer {
 	 * [right][top][left][bottom]
 	 */
 	private TextureRegion[][][][] wireTiles;
-	private TextureRegion unconnectedWire;
+	private TextureRegion unconnectedWire, openDoor, closedDoor;
 	
 	/**
 	 * Create a Renderer
@@ -86,6 +89,8 @@ public class Renderer {
 		wireTiles[1][1][0][0] = new TextureRegion(wires, size, size * 2, size, size);
 		wireTiles[1][1][1][0] = new TextureRegion(wires, size * 2, size * 2, size, size);
 		wireTiles[0][1][1][0] = new TextureRegion(wires, size * 3, size * 2, size, size);
+		closedDoor = new TextureRegion(door, 0, 0, 32, 32);
+		openDoor = new TextureRegion(door, 128, 0, 32, 32);
 	}
 	
 	/**
@@ -114,7 +119,16 @@ public class Renderer {
 					batch.draw(floor, drawX, drawY);
 					break;
 				case door:
-					batch.draw(door, drawX, drawY);
+					TextureRegion t;
+					if(world.modifiers[y][x] == mods.doorBroken || world.modifiers[y][x] == mods.doorClosed 
+							|| Vector2.dst2(x, y, world.playerPos.x, world.playerPos.y) > 2)
+						t = closedDoor;
+					else
+						t = openDoor;
+					float rotation = 0;
+					if(y > 0 && world.map[y - 1][x] != tiles.wall)
+						rotation = 90;
+					draw(batch, t, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
 					break;
 				case floor:
 					batch.draw(wall, drawX, drawY);
@@ -201,5 +215,9 @@ public class Renderer {
 	
 	private void draw(SpriteBatch batch, Texture t, float x, float y, float originX, float originY, float rotation) {
 		batch.draw(t, x, y, originX, originY, t.getWidth(), t.getHeight(), 1, 1, rotation, 0, 0, t.getWidth(), t.getHeight(), false, false);
+	}
+	
+	private void draw(SpriteBatch batch, TextureRegion t, float x, float y, float originX, float originY, float rotation) {
+		batch.draw(t, x, y, originX, originY, t.getRegionWidth(), t.getRegionHeight(), 1, 1, rotation, false);
 	}
 }
