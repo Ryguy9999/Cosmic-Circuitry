@@ -58,6 +58,8 @@ public class Project8 extends ApplicationAdapter {
 		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480);
 
 		inventory = new Inventory();
+		inventory.addComponent(CircuitComponent.battery());
+		inventory.addComponent(CircuitComponent.resistor());
 		
 		Camera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.x = Gdx.graphics.getWidth() / 2;
