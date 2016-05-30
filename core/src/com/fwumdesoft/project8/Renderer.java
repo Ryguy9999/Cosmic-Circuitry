@@ -116,7 +116,7 @@ public class Renderer {
 				switch(world.map[y][x])
 				{
 				case wall:
-					batch.draw(floor, drawX, drawY);
+					batch.draw(wall, drawX, drawY);
 					break;
 				case door:
 					TextureRegion t;
@@ -131,7 +131,7 @@ public class Renderer {
 					draw(batch, t, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
 					break;
 				case floor:
-					batch.draw(wall, drawX, drawY);
+					batch.draw(floor, drawX, drawY);
 					break;
 				default:
 					break;
