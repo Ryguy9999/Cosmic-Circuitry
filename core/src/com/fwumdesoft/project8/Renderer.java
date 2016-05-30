@@ -175,12 +175,15 @@ public class Renderer {
 				} else {
 					int rotation = (top && bottom) ? 90 : 0;
 					Texture tex;
+					if(comp.isChangeable) {
+						draw(batch, blank, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
+					}
 					if(comp.type == Type.RESISTOR) {
 						tex = comp.isLamp ? lamp : resistor;
 					} else if(comp.type == Type.BATTERY){
 						tex = battery;
 					} else {
-						tex = blank;
+						continue;
 					}
 					draw(batch, tex, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
 				}
