@@ -12,7 +12,7 @@ public class CircuitComponent implements Serializable {
 	/**
 	 * The three main types of components when it comes to the equations and solutions
 	 */
-	public enum Type {WIRE, BATTERY, RESISTOR, BLANK };
+	public enum Type {WIRE, BATTERY, RESISTOR };
 	/**
 	 * If the component is a lamp </br>
 	 * Only applicable if the component is a resistor
@@ -105,13 +105,6 @@ public class CircuitComponent implements Serializable {
 	 */
 	public static CircuitComponent battery() {
 		return new CircuitComponent(Type.BATTERY);
-	}
-	
-	/**
-	 * @return A new blank component
-	 */
-	public static CircuitComponent blank() {
-		return new CircuitComponent(Type.BLANK);
 	}
 	
 	public void setMainValue(double value) {

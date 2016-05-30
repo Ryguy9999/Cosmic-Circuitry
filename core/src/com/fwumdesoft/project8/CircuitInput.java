@@ -102,7 +102,7 @@ public class CircuitInput {
 	private void putComponent(CircuitComponent component, int cursorX, int cursorY) {
 		if(cursorY < circuit.length && cursorX < circuit[cursorY].length) {
 			try {
-				if(component.type != Type.WIRE) {
+				if(component != null && component.type != null && component.type != Type.WIRE) {
 					String input = JOptionPane.showInputDialog("Enter the value of the component.");
 					double value = Double.parseDouble(input);
 					component.setMainValue(value);
