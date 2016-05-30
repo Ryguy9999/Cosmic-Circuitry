@@ -68,6 +68,8 @@ public class CircuitComponent implements Serializable {
 		isActive = false;
 		voltageDif = current = resistance = targetCurrent = targetMargin = 0;
 		this.type = type;
+		if(hasMainValue())
+			setMainValue(1);
 	}
 	
 	/**
@@ -139,5 +141,13 @@ public class CircuitComponent implements Serializable {
 		default:
 			throw new RuntimeException(this + " has no main value");
 		}
+	}
+	
+	/**
+	 * Finds if the component has a main value
+	 * @return If the component has a main value
+	 */
+	public boolean hasMainValue() {
+		return type == Type.BATTERY || type == Type.RESISTOR;
 	}
 }
