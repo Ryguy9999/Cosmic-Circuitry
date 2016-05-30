@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
@@ -73,6 +74,8 @@ public class Project8 extends ApplicationAdapter {
 	
 	@Override
 	public void render () {
+		if(Gdx.input.isKeyJustPressed(Keys.GRAVE))
+			isCircuit = !isCircuit;
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if(isCircuit) {
