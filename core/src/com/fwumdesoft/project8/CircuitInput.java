@@ -73,6 +73,9 @@ public class CircuitInput {
 				putComponent(CircuitComponent.battery(), cursorX, cursorY);
 			}
 			if(Gdx.input.isKeyJustPressed(Keys.NUM_5)) {
+				putComponent(CircuitComponent.blank(), cursorX, cursorY);
+			}
+			if(Gdx.input.isKeyJustPressed(Keys.NUM_6)) {
 				putComponent(null, cursorX, cursorY);
 			}
 			if(Gdx.input.isKeyJustPressed(Keys.L)) {

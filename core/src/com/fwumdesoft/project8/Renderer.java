@@ -37,7 +37,7 @@ public class Renderer {
 	 * The number of pixels of the screen's height
 	 */
 	private int screenHeight;
-	private Texture player, wall, floor, door, resistor, lamp, battery, cursor;
+	private Texture player, wall, floor, door, resistor, lamp, battery, cursor, blank;
 	/**
 	 * All of the individual wire tileset images
 	 * [right][top][left][bottom]
@@ -73,6 +73,7 @@ public class Renderer {
 		this.lamp = assets.get("lamp.png", Texture.class);
 		this.battery = assets.get("battery.png", Texture.class);
 		this.cursor = assets.get("cursor.png", Texture.class);
+		this.blank = assets.get("blank.png", Texture.class);
 		//Create wire tileset
 		Texture wires = assets.get("wires.png", Texture.class);
 		wireTiles = new TextureRegion[2][2][2][2];
@@ -176,8 +177,10 @@ public class Renderer {
 					Texture tex;
 					if(comp.type == Type.RESISTOR) {
 						tex = comp.isLamp ? lamp : resistor;
-					} else {
+					} else if(comp.type == Type.BATTERY){
 						tex = battery;
+					} else {
+						tex = blank;
 					}
 					draw(batch, tex, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
 				}
