@@ -23,7 +23,7 @@ public class CircuitSolver {
 		system.equations.add(e4);
 //		System.out.println(system.solve());
 		
-		CircuitComponent n = null;
+		CircuitComponent n = CircuitComponent.blank();
 		CircuitComponent w = CircuitComponent.wire();
 		CircuitComponent v = CircuitComponent.battery();
 		CircuitComponent r = CircuitComponent.resistor();
@@ -65,15 +65,17 @@ public class CircuitSolver {
 		for(Vector2 junction : junctions) {
 			Equation equation = new Equation();
 			for(Branch branch : branches)
+			{
 				if(branch.start.equals(junction))
 					equation.terms.add(new Term(1, branch));
-				else if(branch.end.equals(junction))
+				if(branch.end.equals(junction))
 					equation.terms.add(new Term(-1, branch));
+			}
 					
 			if(!system.equations.contains(equation))
 				system.equations.add(equation);
 		}
-		
+
 		ArrayList<Branch> remainingBranches = new ArrayList<Branch>(branches);
 		//Make equations using Kirchoff's Loop Rule, ensuring each branch is used at least once
 		while(remainingBranches.size() > 0) {
@@ -94,12 +96,11 @@ public class CircuitSolver {
 				
 			system.equations.add(equation);
 		}
-		
+
 		//Organize each equation's terms, including 0's for branchs that dont exist
 		for(Equation equation : system.equations)
 			equation.sort(branches);
 		
-		System.out.println(system);//XXX
 		ArrayList<Double> result = system.solve();
 		
 		//With the branch results (finally!) put the numbers into each branch's component(s)
@@ -127,17 +128,18 @@ public class CircuitSolver {
 					circuit[(int)loc.x][(int)loc.y].isActive = true;
 			}
 				
-			if(loc.x + 1 < circuit.length && !new Vector2(loc.x + 1, loc.y).equals(prev) && circuit[(int)loc.x + 1][(int)loc.y] != null){
+			if(loc.x + 1 < circuit.length && !new Vector2(loc.x + 1, loc.y).equals(prev) &&
+					circuit[(int)loc.x + 1][(int)loc.y].type != null){
 				prev.set(loc);
 				loc.x++;
 			} else if(loc.y + 1 < circuit[0].length && !new Vector2(loc.x, loc.y + 1).equals(prev) &&
-					circuit[(int)loc.x][(int)loc.y + 1] != null) {
+					circuit[(int)loc.x][(int)loc.y + 1].type != null) {
 				prev.set(loc);
 				loc.y++;
-			} else if(loc.x - 1 >= 0 && !new Vector2(loc.x - 1, loc.y).equals(prev) && circuit[(int)loc.x - 1][(int)loc.y] != null) {
+			} else if(loc.x - 1 >= 0 && !new Vector2(loc.x - 1, loc.y).equals(prev) && circuit[(int)loc.x - 1][(int)loc.y].type != null){
 				prev.set(loc);
 				loc.x--;
-			} else if(loc.y - 1 >= 0 && !new Vector2(loc.x, loc.y - 1).equals(prev) && circuit[(int)loc.x][(int)loc.y - 1] != null) {
+			} else if(loc.y - 1 >= 0 && !new Vector2(loc.x, loc.y - 1).equals(prev) && circuit[(int)loc.x][(int)loc.y - 1].type != null){
 				prev.set(loc);
 				loc.y--;
 			}
@@ -178,17 +180,18 @@ public class CircuitSolver {
 				break;
 			}
 			
-			if(loc.x + 1 < circuit.length &&!new Vector2(loc.x + 1, loc.y).equals(prev) && circuit[(int)loc.x + 1][(int)loc.y] != null) {
+			if(loc.x + 1 < circuit.length &&!new Vector2(loc.x + 1, loc.y).equals(prev) &&
+					circuit[(int)loc.x + 1][(int)loc.y].type != null) {
 				prev.set(loc);
 				loc.x++;
 			} else if(loc.y + 1 < circuit[0].length && !new Vector2(loc.x, loc.y + 1).equals(prev) &&
-					circuit[(int)loc.x][(int)loc.y + 1] != null) {
+					circuit[(int)loc.x][(int)loc.y + 1].type != null) {
 				prev.set(loc);
 				loc.y++;
-			} else if(loc.x - 1 >= 0 && !new Vector2(loc.x - 1, loc.y).equals(prev) && circuit[(int)loc.x - 1][(int)loc.y] != null) {
+			} else if(loc.x - 1 >= 0 && !new Vector2(loc.x - 1, loc.y).equals(prev) && circuit[(int)loc.x - 1][(int)loc.y].type != null){
 				prev.set(loc);
 				loc.x--;
-			} else if(loc.y - 1 >= 0 && !new Vector2(loc.x, loc.y - 1).equals(prev) && circuit[(int)loc.x][(int)loc.y - 1] != null) {
+			} else if(loc.y - 1 >= 0 && !new Vector2(loc.x, loc.y - 1).equals(prev) && circuit[(int)loc.x][(int)loc.y - 1].type != null){
 				prev.set(loc);
 				loc.y--;
 			}
@@ -231,16 +234,16 @@ public class CircuitSolver {
 		Vector2 backup = null;
 		for(int x = 0; x < circuit.length; x++)
 			for(int y = 0; y < circuit[x].length; y++)
-				if(circuit[x][y] != null)
+				if(circuit[x][y].type != null)
 					if(circuit[x][y].type != Type.WIRE) {
 						int count = 0;
-						if(x + 1 < circuit.length && circuit[x + 1][y] != null)
+						if(x + 1 < circuit.length && circuit[x + 1][y].type != null)
 							count++;
-						if(y + 1 < circuit[x].length && circuit[x][y + 1] != null)
+						if(y + 1 < circuit[x].length && circuit[x][y + 1].type != null)
 							count++;
-						if(x - 1 >= 0 && circuit[x - 1][y] != null)
+						if(x - 1 >= 0 && circuit[x - 1][y].type != null)
 							count++;
-						if(y - 1 >= 0 && circuit[x][y - 1] != null)
+						if(y - 1 >= 0 && circuit[x][y - 1].type != null)
 							count++;
 							
 						if(count > 2)
@@ -262,13 +265,13 @@ public class CircuitSolver {
 	 */
 	private static void buildBranches(CircuitComponent[][] circuit, ArrayList<Vector2> junctions, ArrayList<Branch> branches) {
 		for(Vector2 junction : junctions) {
-			if(junction.x + 1 < circuit.length && circuit[(int)junction.x + 1][(int)junction.y] != null)
+			if(junction.x + 1 < circuit.length && circuit[(int)junction.x + 1][(int)junction.y].type != null)
 				buildBranch(circuit, junctions, branches, new Vector2(junction), new Vector2(junction.x + 1, junction.y));
-			if(junction.y + 1 < circuit[0].length && circuit[(int)junction.x][(int)junction.y + 1] != null)
+			if(junction.y + 1 < circuit[0].length && circuit[(int)junction.x][(int)junction.y + 1].type != null)
 				buildBranch(circuit, junctions, branches, new Vector2(junction), new Vector2(junction.x, junction.y + 1));
-			if(junction.x - 1 >= 0 && circuit[(int)junction.x - 1][(int)junction.y] != null)
+			if(junction.x - 1 >= 0 && circuit[(int)junction.x - 1][(int)junction.y].type != null)
 				buildBranch(circuit, junctions, branches, new Vector2(junction), new Vector2(junction.x - 1, junction.y));
-			if(junction.y - 1 >= 0 && circuit[(int)junction.x][(int)junction.y - 1] != null)
+			if(junction.y - 1 >= 0 && circuit[(int)junction.x][(int)junction.y - 1].type != null)
 				buildBranch(circuit, junctions, branches, new Vector2(junction), new Vector2(junction.x, junction.y - 1));
 		}
 	}
@@ -289,17 +292,17 @@ public class CircuitSolver {
 			if(junctions.contains(loc))
 				cont = false;
 			else if(loc.x + 1 < circuit.length && !new Vector2(loc.x + 1, loc.y).equals(prev)
-					&& circuit[(int)loc.x + 1][(int)loc.y] != null) {
+					&& circuit[(int)loc.x + 1][(int)loc.y].type != null) {
 				prev.set(loc);
 				loc.x++;
 			} else if(loc.y + 1 < circuit[(int)loc.x].length && !new Vector2(loc.x, loc.y + 1).equals(prev)
-					&& circuit[(int)loc.x][(int)loc.y + 1] != null) {
+					&& circuit[(int)loc.x][(int)loc.y + 1].type != null) {
 				prev.set(loc);
 				loc.y++;
-			} else if(loc.x - 1 >= 0 && !new Vector2(loc.x - 1, loc.y).equals(prev) && circuit[(int)loc.x - 1][(int)loc.y] != null) {
+			} else if(loc.x - 1 >= 0 && !new Vector2(loc.x - 1, loc.y).equals(prev) && circuit[(int)loc.x - 1][(int)loc.y].type != null){
 				prev.set(loc);
 				loc.x--;
-			} else if(loc.y - 1 >= 0 && !new Vector2(loc.x, loc.y - 1).equals(prev) && circuit[(int)loc.x][(int)loc.y - 1] != null) {
+			} else if(loc.y - 1 >= 0 && !new Vector2(loc.x, loc.y - 1).equals(prev) && circuit[(int)loc.x][(int)loc.y - 1].type != null){
 				prev.set(loc);
 				loc.y--;
 			}

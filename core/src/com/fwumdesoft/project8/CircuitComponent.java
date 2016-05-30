@@ -71,6 +71,13 @@ public class CircuitComponent implements Serializable {
 	}
 	
 	/**
+	 * @return A new blank component
+	 */
+	public static CircuitComponent blank() {
+		return new CircuitComponent(null);
+	}
+	
+	/**
 	 * @return A new wire component
 	 */
 	public static CircuitComponent wire() {
