@@ -74,7 +74,9 @@ public class CircuitComponent implements Serializable {
 	 * @return A new blank component
 	 */
 	public static CircuitComponent blank() {
-		return new CircuitComponent(null);
+		CircuitComponent comp = new CircuitComponent(null);
+		comp.isChangeable = true;
+		return comp;
 	}
 	
 	/**
