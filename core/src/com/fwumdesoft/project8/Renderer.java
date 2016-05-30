@@ -1,6 +1,7 @@
 package com.fwumdesoft.project8;
 
 import java.awt.Point;
+import java.util.List;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -172,17 +173,30 @@ public class Renderer {
 		//Draw a background for the overlay
 		shapes.begin(ShapeRenderer.ShapeType.Filled);
 		shapes.setColor(0.5f, 0.5f, 0.5f, 0.75f);
-		shapes.rect(0, 0, 192, 32);
+		shapes.rect(0, 0, 512, 96);
 		shapes.end();
 		batch.begin();
 		//Draw each icon followed by the quantity
 		batch.draw(resistor, 0, 0, 32, 32);
-		font.draw(batch, "" + inventory.resistors.size(), 32, 24, 32, Align.center, false);
-		batch.draw(lamp, 64, 0, 32, 32);
-		font.draw(batch, "" + inventory.chips.size(), 96, 24, 32, Align.center, false);
-		batch.draw(battery, 128, 0, 32, 32);
-		font.draw(batch, "" + inventory.batteries.size(), 160, 24, 32, Align.center, false);
+		drawInventoryList(inventory.resistors, "", 0);
+		batch.draw(lamp, 0, 32, 32, 32);
+		drawInventoryList(inventory.chips, "", 32);
+		batch.draw(battery, 0, 64, 32, 32);
+		drawInventoryList(inventory.batteries, "", 64);		
 		batch.end();
+	}
+	
+	private int[] circuitAccumulator = new int[9];
+	
+	private void drawInventoryList(List<CircuitComponent> inventoryItems, String label, int height) {
+		for(int i = 0; i < inventoryItems.size(); i++) {
+			circuitAccumulator[(int)inventoryItems.get(i).getMainValue()] += 1;
+		}
+		for(int i = 0; i < circuitAccumulator.length; i++) {
+			String value = (i + 1) + label + ": " + circuitAccumulator[i];
+			font.draw(batch, value, 48 * (i + 1), 24 + height, 32, Align.center, false);
+			circuitAccumulator[i] = 0; //Reset the accumulator
+		}
 	}
 	
 	private void draw(SpriteBatch batch, Texture t, float x, float y, float originX, float originY, float rotation) {
