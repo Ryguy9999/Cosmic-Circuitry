@@ -28,7 +28,7 @@ public class Project8 extends ApplicationAdapter {
 	Overworld world;
 	List<Disposable> manualCleanup;
 	Inventory inventory;
-	CircuitInput designer;
+	CircuitInput input;
 	Viewport viewport;
 	Vector2 mousePosition;
 	
@@ -68,7 +68,7 @@ public class Project8 extends ApplicationAdapter {
 		
 		Gdx.input.setInputProcessor(new OverworldInput(world));
 		
-		designer = new CircuitInput(new CircuitComponent[10][5], assets, inventory);
+		input = new CircuitInput(new CircuitComponent[10][5], assets, inventory);
 		mousePosition = new Vector2();
 	}
 
@@ -85,8 +85,8 @@ public class Project8 extends ApplicationAdapter {
 			viewport.unproject(mousePosition);
 			int circuitX = (int)(mousePosition.x / 64);
 			int circuitY = (int)(mousePosition.y / 64);
-			designer.update(circuitX, circuitY);
-			rend.renderCircuit(designer.getCircuit(), inventory, circuitX, circuitY);
+			input.update(circuitX, circuitY);
+			rend.renderCircuit(input.getCircuit(), inventory, circuitX, circuitY);
 		} else {
 			rend.renderOverworld(world, inventory);
 		}
