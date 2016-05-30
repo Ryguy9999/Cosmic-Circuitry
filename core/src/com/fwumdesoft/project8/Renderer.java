@@ -121,7 +121,7 @@ public class Renderer {
 				case door:
 					TextureRegion t;
 					if(world.modifiers[y][x] == mods.doorBroken || world.modifiers[y][x] == mods.doorClosed 
-							|| Vector2.dst2(x, y, world.playerPos.x, world.playerPos.y) > 2)
+							|| Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > 3)
 						t = closedDoor;
 					else
 						t = openDoor;
