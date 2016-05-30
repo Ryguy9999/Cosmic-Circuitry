@@ -1,14 +1,18 @@
 package com.fwumdesoft.project8;
 
 import java.awt.Point;
+import java.util.List;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 import com.fwumdesoft.project8.CircuitComponent.Type;
+import com.fwumdesoft.project8.Overworld.mods;
+import com.fwumdesoft.project8.Overworld.tiles;
 
 /**
  * Draws the game to separate drawing from simulation
@@ -39,7 +43,7 @@ public class Renderer {
 	 * [right][top][left][bottom]
 	 */
 	private TextureRegion[][][][] wireTiles;
-	private TextureRegion unconnectedWire;
+	private TextureRegion unconnectedWire, openDoor, closedDoor;
 	
 	/**
 	 * Create a Renderer
@@ -85,6 +89,8 @@ public class Renderer {
 		wireTiles[1][1][0][0] = new TextureRegion(wires, size, size * 2, size, size);
 		wireTiles[1][1][1][0] = new TextureRegion(wires, size * 2, size * 2, size, size);
 		wireTiles[0][1][1][0] = new TextureRegion(wires, size * 3, size * 2, size, size);
+		closedDoor = new TextureRegion(door, 0, 0, 32, 32);
+		openDoor = new TextureRegion(door, 128, 0, 32, 32);
 	}
 	
 	/**
@@ -110,13 +116,22 @@ public class Renderer {
 				switch(world.map[y][x])
 				{
 				case wall:
-					batch.draw(floor, drawX, drawY);
+					batch.draw(wall, drawX, drawY);
 					break;
 				case door:
-					batch.draw(door, drawX, drawY);
+					TextureRegion t;
+					if(world.modifiers[y][x] == mods.doorBroken || world.modifiers[y][x] == mods.doorClosed 
+							|| Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > 3)
+						t = closedDoor;
+					else
+						t = openDoor;
+					float rotation = 0;
+					if(y > 0 && world.map[y - 1][x] != tiles.wall)
+						rotation = 90;
+					draw(batch, t, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
 					break;
 				case floor:
-					batch.draw(wall, drawX, drawY);
+					batch.draw(floor, drawX, drawY);
 					break;
 				default:
 					break;
@@ -172,20 +187,37 @@ public class Renderer {
 		//Draw a background for the overlay
 		shapes.begin(ShapeRenderer.ShapeType.Filled);
 		shapes.setColor(0.5f, 0.5f, 0.5f, 0.75f);
-		shapes.rect(0, 0, 192, 32);
+		shapes.rect(0, 0, 512, 96);
 		shapes.end();
 		batch.begin();
 		//Draw each icon followed by the quantity
 		batch.draw(resistor, 0, 0, 32, 32);
-		font.draw(batch, "" + inventory.resistors.size(), 32, 24, 32, Align.center, false);
-		batch.draw(lamp, 64, 0, 32, 32);
-		font.draw(batch, "" + inventory.chips.size(), 96, 24, 32, Align.center, false);
-		batch.draw(battery, 128, 0, 32, 32);
-		font.draw(batch, "" + inventory.batteries.size(), 160, 24, 32, Align.center, false);
+		drawInventoryList(inventory.resistors, "", 0);
+		batch.draw(lamp, 0, 32, 32, 32);
+		drawInventoryList(inventory.chips, "", 32);
+		batch.draw(battery, 0, 64, 32, 32);
+		drawInventoryList(inventory.batteries, "", 64);		
 		batch.end();
+	}
+	
+	private int[] circuitAccumulator = new int[9];
+	
+	private void drawInventoryList(List<CircuitComponent> inventoryItems, String label, int height) {
+		for(int i = 0; i < inventoryItems.size(); i++) {
+			circuitAccumulator[(int)inventoryItems.get(i).getMainValue()] += 1;
+		}
+		for(int i = 0; i < circuitAccumulator.length; i++) {
+			String value = (i + 1) + label + ": " + circuitAccumulator[i];
+			font.draw(batch, value, 48 * (i + 1), 24 + height, 32, Align.center, false);
+			circuitAccumulator[i] = 0; //Reset the accumulator
+		}
 	}
 	
 	private void draw(SpriteBatch batch, Texture t, float x, float y, float originX, float originY, float rotation) {
 		batch.draw(t, x, y, originX, originY, t.getWidth(), t.getHeight(), 1, 1, rotation, 0, 0, t.getWidth(), t.getHeight(), false, false);
+	}
+	
+	private void draw(SpriteBatch batch, TextureRegion t, float x, float y, float originX, float originY, float rotation) {
+		batch.draw(t, x, y, originX, originY, t.getRegionWidth(), t.getRegionHeight(), 1, 1, rotation, false);
 	}
 }
