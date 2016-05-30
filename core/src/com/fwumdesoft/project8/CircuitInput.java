@@ -1,5 +1,6 @@
 package com.fwumdesoft.project8;
 
+import java.util.List;
 import javax.swing.JOptionPane;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -89,7 +90,34 @@ public class CircuitInput {
 				CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
 			}
 		} else {
-			 
+			List<CircuitComponent> type = null;
+			if(Gdx.input.isKeyJustPressed(Keys.R)) {
+				type = inventory.resistors;
+			} else if(Gdx.input.isKeyJustPressed(Keys.B)) {
+				type = inventory.batteries;
+			} else if(Gdx.input.isKeyJustPressed(Keys.L)) {
+				type = inventory.chips;
+			}
+			CircuitComponent place = null;
+			if(type != null) {
+				if(cursorY >= 0 && cursorY < circuit.length && cursorX >= 0 && cursorX < circuit[cursorY].length)
+					return;
+				String input = JOptionPane.showInputDialog("Enter the value of the component to place.");
+				try {
+					double value = Double.parseDouble(input);
+					for(CircuitComponent comp : type) {
+						if(comp.getMainValue() == value) 
+							place = comp;
+					}
+				} catch(NumberFormatException | NullPointerException e) {
+					JOptionPane.showMessageDialog(null, "Failed to parse number.");
+				}
+			}
+			if(place != null) {
+				CircuitComponent old = circuit[cursorY][cursorX];
+				inventory.addComponent(old);
+				circuit[cursorY][cursorX] = place;
+			}
 		}
 	}
 	
