@@ -41,4 +41,20 @@ public class Inventory {
 			throw new IllegalArgumentException("Wire cannot be added to the inventory.");
 		}
 	}
+	
+	public void removeComponent(CircuitComponent comp) {
+		switch(comp.type) {
+		case RESISTOR:
+			if(comp.isLamp)
+				chips.remove(comp);
+			else
+				resistors.remove(comp);
+			break;
+		case BATTERY:
+			batteries.remove(comp);
+			break;
+		case WIRE:
+			throw new IllegalArgumentException("Wire cannot be removed from the inventory.");
+		}
+	}
 }
