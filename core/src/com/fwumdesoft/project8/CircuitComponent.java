@@ -19,6 +19,11 @@ public class CircuitComponent implements Serializable {
 	 */
 	public boolean isLamp;
 	/**
+	 * If the component is active </br>
+	 * Only applicable if the component is a lamp
+	 */
+	public boolean isActive;
+	/**
 	 * If the component can be edited by the player
 	 */
 	public boolean isChangeable;
@@ -42,6 +47,16 @@ public class CircuitComponent implements Serializable {
 	 * Given for resistors and lamps, should be 0 otherwise
 	 */
 	public double resistance;
+	/**
+	 * The goal current of the component</br>
+	 * Intended for lamps whose target current must be reached to "solve" the circuit
+	 */
+	public double targetCurrent;
+	/**
+	 * The allowed margin for the target current</br>
+	 * This value goes with the targetCurrent for lamps, allowing a margin of error for the player
+	 */
+	public double targetMargin;
 	
 	/**
 	 * Create a component
@@ -50,7 +65,8 @@ public class CircuitComponent implements Serializable {
 	private CircuitComponent(Type type){
 		isChangeable = false;
 		isLamp = false;
-		voltageDif = current = resistance = 0;
+		isActive = false;
+		voltageDif = current = resistance = targetCurrent = targetMargin = 0;
 		this.type = type;
 	}
 	
@@ -72,7 +88,7 @@ public class CircuitComponent implements Serializable {
 	 * @return A new lamp component
 	 */
 	public static CircuitComponent lamp() {
-		CircuitComponent comp = new CircuitComponent(Type.WIRE);
+		CircuitComponent comp = new CircuitComponent(Type.RESISTOR);
 		comp.isLamp = true;
 		return comp;
 	}
