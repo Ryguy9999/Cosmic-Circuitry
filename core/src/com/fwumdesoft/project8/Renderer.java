@@ -94,6 +94,11 @@ public class Renderer {
 	}
 	
 	/**
+	 * The distance the player needs to be from a door for it to open
+	 */
+	private final int doorOpenDistance = 2;
+	
+	/**
 	 * Draw the current state of the overworld
 	 * @param world
 	 */
@@ -121,7 +126,7 @@ public class Renderer {
 				case door:
 					TextureRegion t;
 					if(world.modifiers[y][x] == mods.doorBroken || world.modifiers[y][x] == mods.doorClosed 
-							|| Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > 3)
+							|| Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > doorOpenDistance)
 						t = closedDoor;
 					else
 						t = openDoor;
