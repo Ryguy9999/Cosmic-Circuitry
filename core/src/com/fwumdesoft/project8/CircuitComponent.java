@@ -107,6 +107,10 @@ public class CircuitComponent implements Serializable {
 		return new CircuitComponent(Type.BATTERY);
 	}
 	
+	/**
+	 * Set the main value (resistance for a resistor, voltage for a battery)
+	 * @param value The value
+	 */
 	public void setMainValue(double value) {
 		switch(type) {
 		case BATTERY:
@@ -120,6 +124,10 @@ public class CircuitComponent implements Serializable {
 		}
 	}
 	
+	/**
+	 * Get the resistance for a resistor, voltage for a battery, etc.
+	 * @return The value
+	 */
 	public double getMainValue() {
 		switch(type) {
 		case BATTERY:
