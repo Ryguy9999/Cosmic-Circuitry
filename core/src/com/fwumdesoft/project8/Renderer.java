@@ -215,7 +215,7 @@ public class Renderer {
 	
 	private void drawInventoryList(List<CircuitComponent> inventoryItems, String label, int height) {
 		for(int i = 0; i < inventoryItems.size(); i++) {
-			circuitAccumulator[(int)inventoryItems.get(i).getMainValue()] += 1;
+			circuitAccumulator[(int)inventoryItems.get(i).getMainValue() - 1] += 1;
 		}
 		for(int i = 0; i < circuitAccumulator.length; i++) {
 			String value = (i + 1) + label + ": " + circuitAccumulator[i];
