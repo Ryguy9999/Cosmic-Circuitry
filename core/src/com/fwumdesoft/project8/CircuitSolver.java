@@ -65,15 +65,17 @@ public class CircuitSolver {
 		for(Vector2 junction : junctions) {
 			Equation equation = new Equation();
 			for(Branch branch : branches)
+			{
 				if(branch.start.equals(junction))
 					equation.terms.add(new Term(1, branch));
-				else if(branch.end.equals(junction))
+				if(branch.end.equals(junction))
 					equation.terms.add(new Term(-1, branch));
+			}
 					
 			if(!system.equations.contains(equation))
 				system.equations.add(equation);
 		}
-		
+
 		ArrayList<Branch> remainingBranches = new ArrayList<Branch>(branches);
 		//Make equations using Kirchoff's Loop Rule, ensuring each branch is used at least once
 		while(remainingBranches.size() > 0) {
@@ -94,12 +96,11 @@ public class CircuitSolver {
 				
 			system.equations.add(equation);
 		}
-		
+
 		//Organize each equation's terms, including 0's for branchs that dont exist
 		for(Equation equation : system.equations)
 			equation.sort(branches);
 		
-		System.out.println(system);//XXX
 		ArrayList<Double> result = system.solve();
 		
 		//With the branch results (finally!) put the numbers into each branch's component(s)
