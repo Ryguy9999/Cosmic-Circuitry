@@ -3,15 +3,19 @@ package com.fwumdesoft.project8;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 
-public class OverworldInput extends InputAdapter {
+public class OverworldInput extends InputAdapter
+{
 	private Overworld world;
-	
-	public OverworldInput(Overworld world) {
+
+	public OverworldInput(Overworld world)
+	{
 		this.world = world;
 	}
-	
-	public boolean keyDown (int keycode) {
-		switch(keycode) {
+
+	public boolean keyDown(int keycode)
+	{
+		switch (keycode)
+		{
 		case Keys.A:
 			move(-1, 0);
 			break;
@@ -32,8 +36,9 @@ public class OverworldInput extends InputAdapter {
 		}
 		return true;
 	}
-	
-	private void move(int x, int y) {
+
+	private void move(int x, int y)
+	{
 		world.movePlayer(x, y);
 	}
 }
