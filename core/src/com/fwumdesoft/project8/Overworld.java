@@ -1,6 +1,8 @@
 package com.fwumdesoft.project8;
 
 import java.awt.Point;
+import java.util.HashMap;
+
 import com.badlogic.gdx.utils.Array;
 
 //TODO: Document and clean up, because it's a bit of a ported mess
@@ -20,6 +22,8 @@ public class Overworld
 	mods[][] modifiers;
 	Point playerPos, playerFace;
 	Array<CircuitComponent[][]> circuits;
+	HashMap<Point, Circuit> worldCircuits;
+	Circuit currentCircuit;
 
 	public Overworld(int size, Array<CircuitComponent[][]> circuits)
 	{
@@ -42,6 +46,8 @@ public class Overworld
 		playerPos = new Point(size / 2 - 1, size / 2);
 		boolean firstDoor = true;
 		this.playerFace = new Point();
+		worldCircuits = new HashMap<Point, Circuit>();
+		currentCircuit = null;
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -97,6 +103,7 @@ public class Overworld
 	public void interact()
 	{
 		// TODO: method stub
+		currentCircuit = worldCircuits.get(playerFace);
 	}
 
 	/**
