@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.Array;
 /**
  * Handles saving and loading of circuits to and from files
  */
-public class CircuitIO extends SynchronousAssetLoader<CircuitComponent[][], CircuitIO.CircuitParameters> {
+public class CircuitIO extends SynchronousAssetLoader<Circuit, CircuitIO.CircuitParameters> {
 	
 	/**
 	 * Create a new CircuitIO object
@@ -31,7 +31,7 @@ public class CircuitIO extends SynchronousAssetLoader<CircuitComponent[][], Circ
 	/**
 	 * Don't use this method, it's called by the AssetManager
 	 */
-	public CircuitComponent[][] load(AssetManager assetManager, String fileName, FileHandle file, CircuitParameters parameter) {
+	public Circuit load(AssetManager assetManager, String fileName, FileHandle file, CircuitParameters parameter) {
 		Object o = null;
 		try {
 			ObjectInputStream stream = new ObjectInputStream(new FileInputStream(file.file()));
@@ -41,7 +41,7 @@ public class CircuitIO extends SynchronousAssetLoader<CircuitComponent[][], Circ
 			e.printStackTrace();
 			System.exit(1);
 		}
-		return (CircuitComponent[][])o;
+		return (Circuit)o;
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class CircuitIO extends SynchronousAssetLoader<CircuitComponent[][], Circ
 	 * @param file The file to write to
 	 * @param circuit The circuit to write
 	 */
-	public static void write(FileHandle file, CircuitComponent[][] circuit) {
+	public static void write(FileHandle file, Circuit circuit) {
 		try {
 			ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(file.file()));
 			stream.writeObject(circuit);
@@ -69,7 +69,7 @@ public class CircuitIO extends SynchronousAssetLoader<CircuitComponent[][], Circ
 		return null;
 	}
 
-	static class CircuitParameters extends AssetLoaderParameters<CircuitComponent[][]> {
+	static class CircuitParameters extends AssetLoaderParameters<Circuit> {
 		
 	}
 	
