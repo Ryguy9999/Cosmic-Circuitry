@@ -29,16 +29,18 @@ public class CircuitSolver
 		CircuitComponent n = null;
 		CircuitComponent w = CircuitComponent.wire();
 		CircuitComponent v = CircuitComponent.battery();
-		CircuitComponent r = CircuitComponent.resistor();
+		CircuitComponent x = CircuitComponent.resistor();
+		CircuitComponent y = CircuitComponent.resistor();
 		v.voltageDif = 10;
-		r.resistance = 5;
+		x.resistance = 10;
+		y.resistance = 10;
 		CircuitComponent[][] circuit = new CircuitComponent[][]
 		{
 				{ w, w, w, v, w, w, w },
 				{ w, n, n, n, n, n, w },
+				{ w, w, w, y, w, w, w },
 				{ w, n, n, n, n, n, w },
-				{ w, n, n, n, n, n, w },
-				{ w, w, w, r, w, w, w } };
+				{ w, w, w, x, w, w, w } };
 
 		ArrayList<Vector2> junctions = new ArrayList<Vector2>();
 		ArrayList<Branch> branches = new ArrayList<Branch>();
@@ -52,7 +54,7 @@ public class CircuitSolver
 		// branches.get(0), branches.get(0), new ArrayList<Branch>()));
 
 		solve(circuit);
-		System.out.println(r.current + " " + v.current);
+		System.out.println("X: " + x.current + " Y: " + y.current + " V: " + v.current);
 	}
 
 	/**
@@ -297,7 +299,7 @@ public class CircuitSolver
 		for (int x = 0; x < circuit.length; x++)
 			for (int y = 0; y < circuit[x].length; y++)
 				if (circuit[x][y] != null)
-					if (circuit[x][y].type != Type.WIRE)
+					if (circuit[x][y].type == Type.WIRE)
 					{
 						int count = 0;
 						if (x + 1 < circuit.length && circuit[x + 1][y] != null)
