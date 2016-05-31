@@ -6,11 +6,12 @@ import java.util.ArrayList;
 /**
  * A class to represent the player's picked up items
  */
-public class Inventory {
+public class Inventory
+{
 	/**
 	 * The resistors the player currently holds
 	 */
-	public List<CircuitComponent> resistors; 
+	public List<CircuitComponent> resistors;
 	/**
 	 * The chips the player currently holds
 	 */
@@ -20,17 +21,20 @@ public class Inventory {
 	 */
 	public List<CircuitComponent> batteries;
 
-	public Inventory() {
+	public Inventory()
+	{
 		resistors = new ArrayList<>();
 		chips = new ArrayList<>();
 		batteries = new ArrayList<>();
 	}
-	
-	public void addComponent(CircuitComponent comp) {
+
+	public void addComponent(CircuitComponent comp)
+	{
 		comp.isChangeable = true;
-		switch(comp.type) {
+		switch (comp.type)
+		{
 		case RESISTOR:
-			if(comp.isLamp)
+			if (comp.isLamp)
 				chips.add(comp);
 			else
 				resistors.add(comp);
@@ -43,11 +47,13 @@ public class Inventory {
 			throw new IllegalArgumentException("Wire cannot be added to the inventory.");
 		}
 	}
-	
-	public void removeComponent(CircuitComponent comp) {
-		switch(comp.type) {
+
+	public void removeComponent(CircuitComponent comp)
+	{
+		switch (comp.type)
+		{
 		case RESISTOR:
-			if(comp.isLamp)
+			if (comp.isLamp)
 				chips.remove(comp);
 			else
 				resistors.remove(comp);
