@@ -161,7 +161,15 @@ public class Renderer {
 	}
 	
 	public void renderCircuit(CircuitComponent[][] circuit, Inventory inventory, int cursorX, int cursorY) {
+		if(showInventory) {
+			shapes.begin(ShapeRenderer.ShapeType.Filled);
+			shapes.setColor(0, 0, 0, 1);
+			shapes.rect(464, 0, 640, 96);
+			shapes.end();
+		}
 		batch.begin();
+		if(Gdx.input.isKeyJustPressed(Keys.I))
+			CircuitSolver.solve(circuit);
 		for(int y = 0; y < circuit.length; y++) {
 			for(int x = 0; x < circuit[y].length; x++) {
 				boolean top, left, right, bottom;
@@ -196,6 +204,26 @@ public class Renderer {
 				}
 			}
 		}
+		if(showInventory && cursorX >= 0 && cursorY >= 0 && cursorY < circuit.length && cursorX < circuit[cursorY].length) {
+			CircuitComponent comp = circuit[cursorY][cursorX];
+			if(comp != null && comp.type != null) {
+				String outValue = "";
+				switch(comp.type) {
+				case BATTERY:
+				case RESISTOR:
+					outValue += "R: " + comp.resistance + "\n";
+					outValue += "A: " + comp.current + "\n";
+					outValue += "V: " + comp.voltageDif + "\n";
+					break;
+				case WIRE:
+					break;
+				}
+				if(comp.isLamp) {
+					outValue += "Target A: " + comp.targetCurrent + "+/-" + comp.targetMargin;
+				}
+				font.draw(batch, outValue, 465, 90);
+			}
+		}
 		batch.draw(cursor, cursorX * componentSize, cursorY * componentSize);
 		batch.end();
 		renderInventory(inventory);
@@ -209,7 +237,7 @@ public class Renderer {
 		//Draw a background for the overlay
 		shapes.begin(ShapeRenderer.ShapeType.Filled);
 		shapes.setColor(0.5f, 0.5f, 0.5f, 0.75f);
-		shapes.rect(0, 0, 512, 96);
+		shapes.rect(0, 0, 464, 96);
 		shapes.end();
 		batch.begin();
 		//Draw each icon followed by the quantity
