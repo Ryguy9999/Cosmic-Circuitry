@@ -25,7 +25,7 @@ public class CircuitInput {
 	/**
 	 * The circuit to edit
 	 */
-	private CircuitComponent[][] circuit;
+	private Circuit circuit;
 	/**
 	 * If the designer is currently editing
 	 */
@@ -45,7 +45,7 @@ public class CircuitInput {
 	 * @param width The width of the circuit
 	 * @param height The height of the circuit
 	 */
-	public CircuitInput(CircuitComponent[][] circuit, AssetManager assets, Inventory inventory) {
+	public CircuitInput(Circuit circuit, AssetManager assets, Inventory inventory) {
 		this.circuit = circuit;
 		this.inventory = inventory;
 		this.editing = false;
@@ -82,7 +82,7 @@ public class CircuitInput {
 			if(Gdx.input.isKeyJustPressed(Keys.L)) {
 				String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to load.");
 				circuitName += ".circuit";
-				circuit = assets.get(circuitName, CircuitComponent[][].class);
+				circuit = assets.get(circuitName, Circuit.class);
 			}
 			if(Gdx.input.isKeyJustPressed(Keys.S)) {
 				String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to save.");
@@ -104,8 +104,8 @@ public class CircuitInput {
 			}
 			CircuitComponent place = null;
 			if(type != null) {
-				if(!(cursorY >= 0 && cursorY < circuit.length && cursorX >= 0 && cursorX < circuit[cursorY].length)
-						|| !circuit[cursorY][cursorX].isChangeable)
+				if(!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0 && cursorX < circuit.grid[cursorY].length)
+						|| !circuit.grid[cursorY][cursorX].isChangeable)
 					return;
 				String input = JOptionPane.showInputDialog("Enter the value of the " + componentName + " to place.");
 				try {
@@ -122,10 +122,10 @@ public class CircuitInput {
 				return;
 			}
 			if(place != null) {
-				CircuitComponent old = circuit[cursorY][cursorX];
+				CircuitComponent old = circuit.grid[cursorY][cursorX];
 				if(old.type != null)
 					inventory.addComponent(old);
-				circuit[cursorY][cursorX] = place;
+				circuit.grid[cursorY][cursorX] = place;
 				inventory.removeComponent(place);
 			} else {
 				JOptionPane.showMessageDialog(null, "No " + componentName + " of that value was found.");
@@ -140,14 +140,14 @@ public class CircuitInput {
 	 * @param cursorY The position of the cursor
 	 */
 	private void putComponent(CircuitComponent component, int cursorX, int cursorY) {
-		if(cursorY < circuit.length && cursorX < circuit[cursorY].length) {
+		if(cursorY < circuit.grid.length && cursorX < circuit.grid[cursorY].length) {
 			try {
 				if(component != null && component.type != null && component.type != Type.WIRE) {
 					String input = JOptionPane.showInputDialog("Enter the value of the component.");
 					double value = Double.parseDouble(input);
 					component.setMainValue(value);
 				}
-				circuit[cursorY][cursorX] = component;
+				circuit.grid[cursorY][cursorX] = component;
 			} catch(NumberFormatException | NullPointerException e) {
 				JOptionPane.showMessageDialog(null, "Failed to parse number.");
 			}
@@ -159,6 +159,6 @@ public class CircuitInput {
 	 * @return The circuit object
 	 */
 	public CircuitComponent[][] getCircuit() {
-		return circuit;
+		return circuit.grid;
 	}
 }

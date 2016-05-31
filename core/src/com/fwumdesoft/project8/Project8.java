@@ -50,7 +50,7 @@ public class Project8 extends ApplicationAdapter {
 		assetsFiles.stream()
 			.map(file -> file.name())
 			.filter(string -> string.endsWith("circuit"))
-			.forEach(name -> assets.load(name, CircuitComponent[][].class));
+			.forEach(name -> assets.load(name, Circuit.class));
 		assets.finishLoading();
 		manualCleanup.add(assets);
 		
@@ -68,7 +68,7 @@ public class Project8 extends ApplicationAdapter {
 		
 		Gdx.input.setInputProcessor(new OverworldInput(world));
 		
-		input = new CircuitInput(new CircuitComponent[10][5], assets, inventory);
+		input = new CircuitInput(new Circuit(new CircuitComponent[10][5], 0), assets, inventory);
 		mousePosition = new Vector2();
 	}
 
