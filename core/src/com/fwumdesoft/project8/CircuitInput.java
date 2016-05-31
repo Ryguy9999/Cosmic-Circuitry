@@ -61,82 +61,90 @@ public class CircuitInput {
 		if(Gdx.input.isKeyJustPressed(Keys.END))
 			editing = !editing;
 		if(editing) {
-			if(Gdx.input.isKeyJustPressed(Keys.NUM_1)) {
-				putComponent(CircuitComponent.wire(), cursorX, cursorY);
-			}
-			if(Gdx.input.isKeyJustPressed(Keys.NUM_2)) {
-				putComponent(CircuitComponent.resistor(), cursorX, cursorY);
-			}
-			if(Gdx.input.isKeyJustPressed(Keys.NUM_3)) {
-				putComponent(CircuitComponent.lamp(), cursorX, cursorY);
-			}
-			if(Gdx.input.isKeyJustPressed(Keys.NUM_4)) {
-				putComponent(CircuitComponent.battery(), cursorX, cursorY);
-			}
-			if(Gdx.input.isKeyJustPressed(Keys.NUM_5)) {
-				putComponent(CircuitComponent.blank(), cursorX, cursorY);
-			}
-			if(Gdx.input.isKeyJustPressed(Keys.NUM_6)) {
-				putComponent(null, cursorX, cursorY);
-			}
-			if(Gdx.input.isKeyJustPressed(Keys.L)) {
-				String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to load.");
-				circuitName += ".circuit";
-				circuit = assets.get(circuitName, Circuit.class);
-			}
-			if(Gdx.input.isKeyJustPressed(Keys.S)) {
-				String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to save.");
-				circuitName += ".circuit";
-				CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
-			}
+			edit(cursorX, cursorY);
 		} else {
-			if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-				if(!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0 && cursorX < circuit.grid[cursorY].length)
-						|| !circuit.grid[cursorY][cursorX].isChangeable)
-					return;
-				inventory.addComponent(circuit.grid[cursorY][cursorX]);
-				circuit.grid[cursorY][cursorX] = CircuitComponent.blank();
-			}
-			List<CircuitComponent> type = null;
-			String componentName = "";
-			if(Gdx.input.isKeyJustPressed(Keys.R)) {
-				type = inventory.resistors;
-				componentName = "resistor";
-			} else if(Gdx.input.isKeyJustPressed(Keys.B)) {
-				type = inventory.batteries;
-				componentName = "battery";
-			} else if(Gdx.input.isKeyJustPressed(Keys.L)) {
-				type = inventory.chips;
-				componentName = "lamp";
-			}
-			CircuitComponent place = null;
-			if(type != null) {
-				if(!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0 && cursorX < circuit.grid[cursorY].length)
-						|| !circuit.grid[cursorY][cursorX].isChangeable)
-					return;
-				String input = JOptionPane.showInputDialog("Enter the value of the " + componentName + " to place.");
-				try {
-					double value = Double.parseDouble(input);
-					for(CircuitComponent comp : type) {
-						if(comp.getMainValue() == value)
-							place = comp;
-					}
-				} catch(NumberFormatException | NullPointerException e) {
-					JOptionPane.showMessageDialog(null, "Failed to parse number.");
-					return;
+			interact(cursorX, cursorY);
+		}
+	}
+	
+	private void edit(int cursorX, int cursorY) {
+		if(Gdx.input.isKeyJustPressed(Keys.NUM_1)) {
+			putComponent(CircuitComponent.wire(), cursorX, cursorY);
+		}
+		if(Gdx.input.isKeyJustPressed(Keys.NUM_2)) {
+			putComponent(CircuitComponent.resistor(), cursorX, cursorY);
+		}
+		if(Gdx.input.isKeyJustPressed(Keys.NUM_3)) {
+			putComponent(CircuitComponent.lamp(), cursorX, cursorY);
+		}
+		if(Gdx.input.isKeyJustPressed(Keys.NUM_4)) {
+			putComponent(CircuitComponent.battery(), cursorX, cursorY);
+		}
+		if(Gdx.input.isKeyJustPressed(Keys.NUM_5)) {
+			putComponent(CircuitComponent.blank(), cursorX, cursorY);
+		}
+		if(Gdx.input.isKeyJustPressed(Keys.NUM_6)) {
+			putComponent(null, cursorX, cursorY);
+		}
+		if(Gdx.input.isKeyJustPressed(Keys.L)) {
+			String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to load.");
+			circuitName += ".circuit";
+			circuit = assets.get(circuitName, Circuit.class);
+		}
+		if(Gdx.input.isKeyJustPressed(Keys.S)) {
+			String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to save.");
+			circuitName += ".circuit";
+			CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
+		}
+	}
+	
+	private void interact(int cursorX, int cursorY) {
+		if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+			if(!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0 && cursorX < circuit.grid[cursorY].length)
+					|| !circuit.grid[cursorY][cursorX].isChangeable)
+				return;
+			inventory.addComponent(circuit.grid[cursorY][cursorX]);
+			circuit.grid[cursorY][cursorX] = CircuitComponent.blank();
+		}
+		List<CircuitComponent> type = null;
+		String componentName = "";
+		if(Gdx.input.isKeyJustPressed(Keys.R)) {
+			type = inventory.resistors;
+			componentName = "resistor";
+		} else if(Gdx.input.isKeyJustPressed(Keys.B)) {
+			type = inventory.batteries;
+			componentName = "battery";
+		} else if(Gdx.input.isKeyJustPressed(Keys.L)) {
+			type = inventory.chips;
+			componentName = "lamp";
+		}
+		CircuitComponent place = null;
+		if(type != null) {
+			if(!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0 && cursorX < circuit.grid[cursorY].length)
+					|| !circuit.grid[cursorY][cursorX].isChangeable)
+				return;
+			String input = JOptionPane.showInputDialog("Enter the value of the " + componentName + " to place.");
+			try {
+				double value = Double.parseDouble(input);
+				for(CircuitComponent comp : type) {
+					if(comp.getMainValue() == value)
+						place = comp;
 				}
-			} else {
+			} catch(NumberFormatException | NullPointerException e) {
+				JOptionPane.showMessageDialog(null, "Failed to parse number.");
 				return;
 			}
-			if(place != null) {
-				CircuitComponent old = circuit.grid[cursorY][cursorX];
-				if(old.type != null)
-					inventory.addComponent(old);
-				circuit.grid[cursorY][cursorX] = place;
-				inventory.removeComponent(place);
-			} else {
-				JOptionPane.showMessageDialog(null, "No " + componentName + " of that value was found.");
-			}
+		} else {
+			return;
+		}
+		if(place != null) {
+			CircuitComponent old = circuit.grid[cursorY][cursorX];
+			if(old.type != null)
+				inventory.addComponent(old);
+			circuit.grid[cursorY][cursorX] = place;
+			inventory.removeComponent(place);
+		} else {
+			JOptionPane.showMessageDialog(null, "No " + componentName + " of that value was found.");
 		}
 	}
 	
