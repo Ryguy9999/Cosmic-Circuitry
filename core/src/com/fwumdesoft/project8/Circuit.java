@@ -13,6 +13,8 @@ public class Circuit
 	
 	public boolean isSolved()
 	{
+		CircuitSolver.solve(grid);
+		
 		int count = 0;
 		for(CircuitComponent[] row : grid)
 			for(CircuitComponent comp : row)
