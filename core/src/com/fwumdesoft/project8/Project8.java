@@ -42,7 +42,7 @@ public class Project8 extends ApplicationAdapter {
 		List<FileHandle> assetsFiles = Arrays.asList(Gdx.files.internal(".").list());
 
 		AssetManager assets = new AssetManager();
-		assets.setLoader(CircuitComponent[][].class, new CircuitIO(assets.getFileHandleResolver()));
+		assets.setLoader(Circuit.class, new CircuitIO(assets.getFileHandleResolver()));
 		assetsFiles.stream()
 			.map(file -> file.name())
 			.filter(string -> string.endsWith("png") || string.endsWith("jpg"))
@@ -54,7 +54,7 @@ public class Project8 extends ApplicationAdapter {
 		assets.finishLoading();
 		manualCleanup.add(assets);
 		
-		world = new Overworld(200, assets.getAll(CircuitComponent[][].class, new Array<>()));
+		world = new Overworld(500, assets.getAll(CircuitComponent[][].class, new Array<>()));
 		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480);
 
 		inventory = new Inventory();
