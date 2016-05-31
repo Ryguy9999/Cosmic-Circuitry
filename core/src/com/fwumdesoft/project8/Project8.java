@@ -78,9 +78,9 @@ public class Project8 extends ApplicationAdapter {
 	public void render () {
 		if(Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
-		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if(isCircuit) {
+			Gdx.gl.glClearColor(1, 1, 1, 1);
 			mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
 			viewport.unproject(mousePosition);
 			int circuitX = (int)(mousePosition.x / 64);
@@ -88,6 +88,7 @@ public class Project8 extends ApplicationAdapter {
 			input.update(circuitX, circuitY);
 			rend.renderCircuit(input.getCircuit(), inventory, circuitX, circuitY);
 		} else {
+			Gdx.gl.glClearColor(0, 0, 0, 1);
 			rend.renderOverworld(world, inventory);
 		}
 	}
