@@ -31,9 +31,9 @@ public class CircuitSolver
 		CircuitComponent v = CircuitComponent.battery();
 		CircuitComponent x = CircuitComponent.resistor();
 		CircuitComponent y = CircuitComponent.resistor();
-		v.voltageDif = 10;
-		x.resistance = 10;
-		y.resistance = 10;
+		v.voltageDif = 1;
+		x.resistance = 1;
+		y.resistance = 1;
 		CircuitComponent[][] circuit = new CircuitComponent[][]
 		{
 				{ w, w, w, v, w, w, w },
@@ -117,6 +117,7 @@ public class CircuitSolver
 		for (Equation equation : system.equations)
 			equation.sort(branches);
 
+		System.out.println(system);//XXX
 		ArrayList<Double> result = system.solve();
 
 		// With the branch results (finally!) put the numbers into each branch's
