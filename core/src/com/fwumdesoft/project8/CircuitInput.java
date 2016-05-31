@@ -90,6 +90,13 @@ public class CircuitInput {
 				CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
 			}
 		} else {
+			if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+				if(!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0 && cursorX < circuit.grid[cursorY].length)
+						|| !circuit.grid[cursorY][cursorX].isChangeable)
+					return;
+				inventory.addComponent(circuit.grid[cursorY][cursorX]);
+				circuit.grid[cursorY][cursorX] = CircuitComponent.blank();
+			}
 			List<CircuitComponent> type = null;
 			String componentName = "";
 			if(Gdx.input.isKeyJustPressed(Keys.R)) {
