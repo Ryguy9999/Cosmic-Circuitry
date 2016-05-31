@@ -2,6 +2,8 @@ package com.fwumdesoft.project8;
 
 import java.awt.Point;
 import java.util.List;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -44,7 +46,11 @@ public class Renderer {
 	 */
 	private TextureRegion[][][][] wireTiles;
 	private TextureRegion unconnectedWire, openDoor, closedDoor;
-	
+	/**
+	 * If the class should draw the inventory </br>
+	 * Toggled by tab
+	 */
+	private boolean showInventory;
 	/**
 	 * Create a Renderer
 	 * @param batch A SpriteBatch which should be disposed of when the Renderer is unnecessary
@@ -92,6 +98,7 @@ public class Renderer {
 		wireTiles[0][1][1][0] = new TextureRegion(wires, size * 3, size * 2, size, size);
 		closedDoor = new TextureRegion(door, 0, 0, 32, 32);
 		openDoor = new TextureRegion(door, 128, 0, 32, 32);
+		showInventory = true;
 	}
 	
 	/**
@@ -195,6 +202,10 @@ public class Renderer {
 	}
 	
 	private void renderInventory(Inventory inventory) {
+		if(Gdx.input.isKeyJustPressed(Keys.TAB))
+			showInventory = !showInventory;
+		if(!showInventory)
+			return;
 		//Draw a background for the overlay
 		shapes.begin(ShapeRenderer.ShapeType.Filled);
 		shapes.setColor(0.5f, 0.5f, 0.5f, 0.75f);
