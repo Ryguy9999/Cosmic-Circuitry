@@ -2,6 +2,8 @@ package com.fwumdesoft.project8;
 
 import java.awt.Point;
 import java.util.List;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -17,7 +19,8 @@ import com.fwumdesoft.project8.Overworld.tiles;
 /**
  * Draws the game to separate drawing from simulation
  */
-public class Renderer {
+public class Renderer
+{
 	private SpriteBatch batch;
 	private ShapeRenderer shapes;
 	private BitmapFont font;
@@ -39,24 +42,39 @@ public class Renderer {
 	private int screenHeight;
 	private Texture player, wall, floor, door, resistor, lamp, battery, cursor, blank;
 	/**
-	 * All of the individual wire tileset images
-	 * [right][top][left][bottom]
+	 * All of the individual wire tileset images [right][top][left][bottom]
 	 */
 	private TextureRegion[][][][] wireTiles;
 	private TextureRegion unconnectedWire, openDoor, closedDoor;
-	
+	/**
+	 * If the class should draw the inventory </br>
+	 * Toggled by tab
+	 */
+	private boolean showInventory;
+
 	/**
 	 * Create a Renderer
-	 * @param batch A SpriteBatch which should be disposed of when the Renderer is unnecessary
-	 * @param font The font used to render the UI
-	 * @param assets An AssetManager with the game assets loaded
-	 * @param cellSize The size of an overworld square
-	 * @param componentSize The size of a circuit component
-	 * @param screenWidth The width of the screen
-	 * @param screenHeight The height of the screen
+	 * 
+	 * @param batch
+	 *            A SpriteBatch which should be disposed of when the Renderer is
+	 *            unnecessary
+	 * @param font
+	 *            The font used to render the UI
+	 * @param assets
+	 *            An AssetManager with the game assets loaded
+	 * @param cellSize
+	 *            The size of an overworld square
+	 * @param componentSize
+	 *            The size of a circuit component
+	 * @param screenWidth
+	 *            The width of the screen
+	 * @param screenHeight
+	 *            The height of the screen
 	 */
-	public Renderer(SpriteBatch batch, BitmapFont font, AssetManager assets, int cellSize, int componentSize, int screenWidth, int screenHeight) {
-		//Initialize member variables
+	public Renderer(SpriteBatch batch, BitmapFont font, AssetManager assets, int cellSize, int componentSize,
+			int screenWidth, int screenHeight)
+	{
+		// Initialize member variables
 		this.batch = batch;
 		this.font = font;
 		this.shapes = new ShapeRenderer();
@@ -64,7 +82,7 @@ public class Renderer {
 		this.componentSize = componentSize;
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
-		//Retrieve image assets
+		// Retrieve image assets
 		this.player = assets.get("player.png", Texture.class);
 		this.wall = assets.get("station_wall.png", Texture.class);
 		this.floor = assets.get("station_floor.png", Texture.class);
@@ -74,7 +92,7 @@ public class Renderer {
 		this.battery = assets.get("battery.png", Texture.class);
 		this.cursor = assets.get("cursor.png", Texture.class);
 		this.blank = assets.get("blank.png", Texture.class);
-		//Create wire tileset
+		// Create wire tileset
 		Texture wires = assets.get("wires.png", Texture.class);
 		wireTiles = new TextureRegion[2][2][2][2];
 		int size = 64;
@@ -92,20 +110,23 @@ public class Renderer {
 		wireTiles[0][1][1][0] = new TextureRegion(wires, size * 3, size * 2, size, size);
 		closedDoor = new TextureRegion(door, 0, 0, 32, 32);
 		openDoor = new TextureRegion(door, 128, 0, 32, 32);
+		showInventory = true;
 	}
-	
+
 	/**
 	 * The distance the player needs to be from a door for it to open
 	 */
-	private final int doorOpenDistance = 2;
-	
+	private final int doorOpenDistance = 1;
+
 	/**
 	 * Draw the current state of the overworld
+	 * 
 	 * @param world
 	 */
-	public void renderOverworld(Overworld world, Inventory inventory) {
+	public void renderOverworld(Overworld world, Inventory inventory)
+	{
 		Point player = world.playerPos;
-		//Establish the drawable region
+		// Establish the drawable region
 		int halfGridWidth = (screenWidth / cellSize) / 2;
 		int halfGridHeight = (screenHeight / cellSize) / 2;
 		int xStart = Math.max(0, player.x - halfGridWidth);
@@ -113,26 +134,28 @@ public class Renderer {
 		int yStart = Math.max(0, player.y - halfGridHeight);
 		int yEnd = Math.min(world.map[0].length, player.y + halfGridHeight + cellSize);
 		batch.begin();
-		for(int y = yStart; y < yEnd; y++) {
-			for(int x = xStart; x < xEnd; x++) {
-				//Find the position where the square will draw
+		for (int y = yStart; y < yEnd; y++)
+		{
+			for (int x = xStart; x < xEnd; x++)
+			{
+				// Find the position where the square will draw
 				int drawX = (x - player.x + halfGridWidth) * cellSize;
 				int drawY = (y - player.y + halfGridHeight) * cellSize;
-				//Draw the correct texture
-				switch(world.map[y][x])
+				// Draw the correct texture
+				switch (world.map[y][x])
 				{
 				case wall:
 					batch.draw(wall, drawX, drawY);
 					break;
 				case door:
 					TextureRegion t;
-					if(world.modifiers[y][x] == mods.doorBroken || world.modifiers[y][x] == mods.doorClosed 
+					if (world.modifiers[y][x] == mods.doorBroken || world.modifiers[y][x] == mods.doorClosed
 							|| Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > doorOpenDistance)
 						t = closedDoor;
 					else
 						t = openDoor;
 					float rotation = 0;
-					if(y > 0 && world.map[y - 1][x] != tiles.wall)
+					if (y > 0 && world.map[y - 1][x] != tiles.wall)
 						rotation = 90;
 					draw(batch, t, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
 					break;
@@ -144,19 +167,33 @@ public class Renderer {
 				}
 			}
 		}
-		//Draw the player, centered on the screen
-		//Because all drawing is centered on the player is guaranteed to be centered
-		float rotation = (float)Math.atan2(world.playerFace.y, world.playerFace.x);
-		rotation = (float)Math.toDegrees(rotation);
-		draw(batch, this.player, halfGridWidth * cellSize, halfGridHeight * cellSize, cellSize / 2, cellSize / 2, rotation);
+		// Draw the player, centered on the screen
+		// Because all drawing is centered on the player is guaranteed to be
+		// centered
+		float rotation = (float) Math.atan2(world.playerFace.y, world.playerFace.x);
+		rotation = (float) Math.toDegrees(rotation);
+		draw(batch, this.player, halfGridWidth * cellSize, halfGridHeight * cellSize, cellSize / 2, cellSize / 2,
+				rotation);
 		batch.end();
 		renderInventory(inventory);
 	}
-	
-	public void renderCircuit(CircuitComponent[][] circuit, Inventory inventory, int cursorX, int cursorY) {
+
+	public void renderCircuit(CircuitComponent[][] circuit, Inventory inventory, int cursorX, int cursorY)
+	{
+		if (showInventory)
+		{
+			shapes.begin(ShapeRenderer.ShapeType.Filled);
+			shapes.setColor(0, 0, 0, 1);
+			shapes.rect(464, 0, 640, 96);
+			shapes.end();
+		}
 		batch.begin();
-		for(int y = 0; y < circuit.length; y++) {
-			for(int x = 0; x < circuit[y].length; x++) {
+		if (Gdx.input.isKeyJustPressed(Keys.I))
+			CircuitSolver.solve(circuit);
+		for (int y = 0; y < circuit.length; y++)
+		{
+			for (int x = 0; x < circuit[y].length; x++)
+			{
 				boolean top, left, right, bottom;
 				bottom = y > 0 && circuit[y - 1][x] != null;
 				left = x > 0 && circuit[y][x - 1] != null;
@@ -165,70 +202,114 @@ public class Renderer {
 				int drawX = x * componentSize;
 				int drawY = y * componentSize;
 				CircuitComponent comp = circuit[y][x];
-				if(comp == null) {
+				if (comp == null)
+				{
 					continue;
 				}
-				if(comp.type == Type.WIRE) {
+				if (comp.type == Type.WIRE)
+				{
 					TextureRegion region = wireTiles[right ? 1 : 0][top ? 1 : 0][left ? 1 : 0][bottom ? 1 : 0];
 					region = region != null ? region : unconnectedWire;
 					batch.draw(region, drawX, drawY);
-				} else {
+				} else
+				{
 					int rotation = (top && bottom) ? 90 : 0;
 					Texture tex;
-					if(comp.isChangeable) {
+					if (comp.isChangeable)
+					{
 						draw(batch, blank, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
 					}
-					if(comp.type == Type.RESISTOR) {
+					if (comp.type == Type.RESISTOR)
+					{
 						tex = comp.isLamp ? lamp : resistor;
-					} else if(comp.type == Type.BATTERY){
+					} else if (comp.type == Type.BATTERY)
+					{
 						tex = battery;
-					} else {
+					} else
+					{
 						continue;
 					}
 					draw(batch, tex, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
 				}
 			}
 		}
+		if (showInventory && cursorX >= 0 && cursorY >= 0 && cursorY < circuit.length
+				&& cursorX < circuit[cursorY].length)
+		{
+			CircuitComponent comp = circuit[cursorY][cursorX];
+			if (comp != null && comp.type != null)
+			{
+				String outValue = "";
+				switch (comp.type)
+				{
+				case BATTERY:
+				case RESISTOR:
+					outValue += "R: " + comp.resistance + "\n";
+					outValue += "A: " + comp.current + "\n";
+					outValue += "V: " + comp.voltageDif + "\n";
+					break;
+				case WIRE:
+					break;
+				}
+				if (comp.isLamp)
+				{
+					outValue += "Target A: " + comp.targetCurrent + "+/-" + comp.targetMargin;
+				}
+				font.draw(batch, outValue, 465, 90);
+			}
+		}
 		batch.draw(cursor, cursorX * componentSize, cursorY * componentSize);
 		batch.end();
 		renderInventory(inventory);
 	}
-	
-	private void renderInventory(Inventory inventory) {
-		//Draw a background for the overlay
+
+	private void renderInventory(Inventory inventory)
+	{
+		if (Gdx.input.isKeyJustPressed(Keys.TAB))
+			showInventory = !showInventory;
+		if (!showInventory)
+			return;
+		// Draw a background for the overlay
 		shapes.begin(ShapeRenderer.ShapeType.Filled);
 		shapes.setColor(0.5f, 0.5f, 0.5f, 0.75f);
-		shapes.rect(0, 0, 512, 96);
+		shapes.rect(0, 0, 464, 96);
 		shapes.end();
 		batch.begin();
-		//Draw each icon followed by the quantity
+		// Draw each icon followed by the quantity
 		batch.draw(resistor, 0, 0, 32, 32);
 		drawInventoryList(inventory.resistors, "", 0);
 		batch.draw(lamp, 0, 32, 32, 32);
 		drawInventoryList(inventory.chips, "", 32);
 		batch.draw(battery, 0, 64, 32, 32);
-		drawInventoryList(inventory.batteries, "", 64);		
+		drawInventoryList(inventory.batteries, "", 64);
 		batch.end();
 	}
-	
+
 	private int[] circuitAccumulator = new int[9];
-	
-	private void drawInventoryList(List<CircuitComponent> inventoryItems, String label, int height) {
-		for(int i = 0; i < inventoryItems.size(); i++) {
-			circuitAccumulator[(int)inventoryItems.get(i).getMainValue() - 1] += 1;
+
+	private void drawInventoryList(List<CircuitComponent> inventoryItems, String label, int height)
+	{
+		for (int i = 0; i < inventoryItems.size(); i++)
+		{
+			circuitAccumulator[(int) inventoryItems.get(i).getMainValue() - 1] += 1;
 		}
-		for(int i = 0; i < circuitAccumulator.length; i++) {
+		for (int i = 0; i < circuitAccumulator.length; i++)
+		{
 			String value = (i + 1) + label + ": " + circuitAccumulator[i];
 			font.draw(batch, value, 48 * (i + 1), 24 + height, 32, Align.center, false);
-			circuitAccumulator[i] = 0; //Reset the accumulator
+			circuitAccumulator[i] = 0; // Reset the accumulator
 		}
 	}
-	
-	private void draw(SpriteBatch batch, Texture t, float x, float y, float originX, float originY, float rotation) {
-		batch.draw(t, x, y, originX, originY, t.getWidth(), t.getHeight(), 1, 1, rotation, 0, 0, t.getWidth(), t.getHeight(), false, false);
+
+	private void draw(SpriteBatch batch, Texture t, float x, float y, float originX, float originY, float rotation)
+	{
+		batch.draw(t, x, y, originX, originY, t.getWidth(), t.getHeight(), 1, 1, rotation, 0, 0, t.getWidth(),
+				t.getHeight(), false, false);
 	}
-	
-	private void draw(SpriteBatch batch, TextureRegion t, float x, float y, float originX, float originY, float rotation) {
+
+	private void draw(SpriteBatch batch, TextureRegion t, float x, float y, float originX, float originY,
+			float rotation)
+	{
 		batch.draw(t, x, y, originX, originY, t.getRegionWidth(), t.getRegionHeight(), 1, 1, rotation, false);
 	}
 }
