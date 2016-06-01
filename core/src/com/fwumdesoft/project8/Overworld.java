@@ -86,6 +86,28 @@ public class Overworld {
 		// TODO: method stub
 	}
 	
+	public void turn() {
+		//spread fire
+		for(int y = 0; y < modifiers.length; y++)
+		{
+			for(int x = 0; x < modifiers[y].length; x++)
+			{
+				if(modifiers[y][x] == mods.fire)
+				{
+					int spreadX = (int)(Math.random() * 3) - 1;
+					int spreadY = (int)(Math.random() * 3) - 1;
+					while((spreadX == 0 && spreadY == 0) && map[y + spreadY][x + spreadX] == tiles.wall)
+					{
+						spreadX = (int)(Math.random() * 3) - 1;
+						spreadY = (int)(Math.random() * 3) - 1;
+					}
+					modifiers[y + spreadY][x + spreadX] = mods.fire;
+				}
+			}
+		}
+		
+	}
+	
 	/**
 	 * Generate room connected to door, with a chance to remove the connecting
 	 * wall to combine the rooms. Will also generate a new door for further
@@ -134,11 +156,6 @@ public class Overworld {
 					break;
 			}
 		}
-		// else {
-		// map[door.y][door.x] = tiles.door;
-		// modifiers[door.x][door.y] = (Math.random() < 0.2)? mods.doorBroken :
-		// mods.none;
-		// }
 		// randomly generates 1 more door (can overlap, but not with first door)
 		int position = (int)(Math.random() * 4);
 		while(position == door.facing)
@@ -175,6 +192,7 @@ public class Overworld {
 				// Floor
 				else {
 					map[j][i] = tiles.floor;
+					modifiers[j][i] = (Math.random() < 0.05)? mods.fire : mods.none;
 				}
 			}
 		}
@@ -183,22 +201,17 @@ public class Overworld {
 	
 	/**
 	 * Captain's log: Star Date sometime I have given up. The doors won't go
-	 * away. We've tried anything I have accepted that this is as good a
+	 * away. We've tried everything. I have accepted that this is as good a
 	 * solution as any for the time being. Save yourself, don't try to fix the
 	 * doors. *static* Or else *static* will *static* <end transmission>
 	 */
 	private void removeStrayDoors() {
-		for(int i = 0; i < map.length; i++)
-		{
-			for(int j = 0; j < map[i].length; j++)
-			{
-				if(map[j][i] == tiles.door)
-				{
+		for(int i = 0; i < map.length; i++) {
+			for(int j = 0; j < map[i].length; j++) {
+				if(map[j][i] == tiles.door) {
 					boolean connectingWall = false;
-					for(int x = -1; x < 2; x++)
-					{
-						for(int y = -1; y < 2; y++)
-						{
+					for(int x = -1; x < 2; x++) {
+						for(int y = -1; y < 2; y++) {
 							if(map[j + y][i + x] == tiles.wall)
 								connectingWall = true;
 						}
