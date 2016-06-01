@@ -219,4 +219,9 @@ public class CircuitInput
 	{
 		return circuit.grid;
 	}
+	
+	public void setCircuit(Circuit circ)
+	{
+		circuit = circ;
+	}
 }
