@@ -23,9 +23,10 @@ public class Overworld
 	Array<Circuit> circuits;
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
+	Inventory inventory;
 	private final double BAG_CHANCE = 0.04;
 
-	public Overworld(int size, Array<Circuit> circuits)
+	public Overworld(int size, Array<Circuit> circuits, Inventory inventory)
 	{
 		// contains permanent tiles
 		map = new tiles[size][size];
@@ -46,6 +47,7 @@ public class Overworld
 		playerPos = new Point(size / 2 - 1, size / 2);
 		boolean firstDoor = true;
 		this.playerFace = new Point();
+		this.inventory = inventory;
 		worldCircuits = new HashMap<Point, Circuit>();
 		currentCircuit = null;
 
@@ -106,6 +108,14 @@ public class Overworld
 			currentCircuit = worldCircuits.get(playerFace);
 		else
 			currentCircuit = null;
+		
+		if(modifiers[playerPos.x + playerFace.x][playerPos.y + playerFace.y] == mods.componentBag)
+		{
+			modifiers[playerPos.x + playerFace.x][playerPos.y + playerFace.y] = null;
+			inventory.addComponent(CircuitComponent.randomComponent());
+			while(Math.random() < 1.0/3.0)
+				inventory.addComponent(CircuitComponent.randomComponent());
+		}
 	}
 	
 	public void circuitSuccess() {
