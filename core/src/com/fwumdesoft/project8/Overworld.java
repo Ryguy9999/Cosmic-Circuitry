@@ -23,6 +23,7 @@ public class Overworld
 	Array<Circuit> circuits;
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
+	private final double BAG_CHANCE = 0.04;
 
 	public Overworld(int size, Array<Circuit> circuits)
 	{
@@ -230,6 +231,11 @@ public class Overworld
 				}
 			}
 		}
+		for(int i = x + 1; i < x + 4; i++)
+			for(int j = y + 1; j < y + 4; j++)
+				if(Math.random() < BAG_CHANCE && map[j][i] == tiles.floor)
+					modifiers[j][i] = mods.componentBag;
+		
 		return nextDoor;
 	}
 
