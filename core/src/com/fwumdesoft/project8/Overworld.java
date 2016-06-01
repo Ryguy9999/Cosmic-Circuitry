@@ -20,11 +20,11 @@ public class Overworld
 	tiles[][] map;
 	mods[][] modifiers;
 	Point playerPos, playerFace;
-	Array<CircuitComponent[][]> circuits;
+	Array<Circuit> circuits;
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
 
-	public Overworld(int size, Array<CircuitComponent[][]> circuits)
+	public Overworld(int size, Array<Circuit> circuits)
 	{
 		// contains permanent tiles
 		map = new tiles[size][size];
