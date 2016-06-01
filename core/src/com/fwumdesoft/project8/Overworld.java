@@ -11,7 +11,7 @@ public class Overworld
 	public static enum tiles
 	{
 		space, wall, door, floor
-	};
+	}
 
 	public static enum mods
 	{
