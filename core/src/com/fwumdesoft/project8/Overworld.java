@@ -5,13 +5,12 @@ import java.util.HashMap;
 
 import com.badlogic.gdx.utils.Array;
 
-//TODO: Document and clean up, because it's a bit of a ported mess
 public class Overworld
 {
 	public static enum tiles
 	{
 		space, wall, door, floor
-	};
+	}
 
 	public static enum mods
 	{
@@ -102,8 +101,14 @@ public class Overworld
 	 */
 	public void interact()
 	{
-		// TODO: method stub
-		currentCircuit = worldCircuits.get(playerFace);
+		if(worldCircuits.containsKey(new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y)))
+			currentCircuit = worldCircuits.get(playerFace);
+		else
+			currentCircuit = null;
+	}
+	
+	public void circuitSuccess() {
+		//TODO: Method stub
 	}
 	
 	public void turn() {

@@ -91,6 +91,12 @@ public class Project8 extends ApplicationAdapter
 		{
 			Gdx.gl.glClearColor(0, 0, 0, 1);
 			rend.renderOverworld(world, inventory);
+			if(world.currentCircuit != null) 
+			{
+				input.setCircuit(world.currentCircuit);
+				isCircuit = true;
+				world.currentCircuit = null;
+			}
 		}
 	}
 
