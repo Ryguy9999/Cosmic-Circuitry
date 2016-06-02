@@ -201,8 +201,6 @@ public class Renderer
 			shapes.end();
 		}
 		batch.begin();
-		if (Gdx.input.isKeyJustPressed(Keys.I))
-			CircuitSolver.solve(circuit);
 		for (int y = 0; y < circuit.length; y++)
 		{
 			for (int x = 0; x < circuit[y].length; x++)
