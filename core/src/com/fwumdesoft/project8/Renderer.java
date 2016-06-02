@@ -25,6 +25,10 @@ public class Renderer
 	private ShapeRenderer shapes;
 	private BitmapFont font;
 	/**
+	 * The camera offset for the circuits
+	 */
+	private Vector2 circuitOffset;
+	/**
 	 * The number of pixels of the side of an overworld square
 	 */
 	private int cellSize;
@@ -105,6 +109,7 @@ public class Renderer
 		this.battery = assets.get("battery.png", Texture.class);
 		this.cursor = assets.get("cursor.png", Texture.class);
 		this.blank = assets.get("blank.png", Texture.class);
+		this.circuitOffset = new Vector2();
 		// Create wire tileset
 		Texture wires = assets.get("wires.png", Texture.class);
 		wireTiles = new TextureRegion[2][2][2][2];
@@ -218,8 +223,8 @@ public class Renderer
 				left = x > 0 && circuit[y][x - 1] != null;
 				right = x < circuit[y].length - 1 && circuit[y][x + 1] != null;
 				top = y < circuit.length - 1 && circuit[y + 1][x] != null;
-				int drawX = x * componentSize;
-				int drawY = y * componentSize;
+				int drawX = x * componentSize + circuitOffset.x;
+				int drawY = y * componentSize + circuitOffset.y;
 				CircuitComponent comp = circuit[y][x];
 				if (comp == null)
 				{
@@ -303,6 +308,11 @@ public class Renderer
 		batch.draw(battery, 0, 64, 32, 32);
 		drawInventoryList(inventory.batteries, "", 64);
 		batch.end();
+	}
+
+	public void resetCircuitCamera()
+	{
+		circuitOffset.set(0, 0);
 	}
 
 	private int[] circuitAccumulator = new int[9];
