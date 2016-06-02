@@ -23,9 +23,11 @@ public class Overworld
 	Array<Circuit> circuits;
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
+	Inventory inventory;
 
-	public Overworld(int size, Array<Circuit> circuits)
+	public Overworld(int size, Array<Circuit> circuits, Inventory inventory)
 	{
+		this.inventory = inventory;
 		// contains permanent tiles
 		map = new tiles[size][size];
 		// contains temporary modifiers or stuff that goes on walls
@@ -92,6 +94,7 @@ public class Overworld
 		{
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
+			turn();
 		}
 		return spotFree;
 	}
@@ -117,11 +120,11 @@ public class Overworld
 		{
 			for(int x = 0; x < modifiers[y].length; x++)
 			{
-				if(modifiers[y][x] == mods.fire)
+				if(modifiers[y][x] == mods.fire && Math.random() < 0.05)
 				{
 					int spreadX = (int)(Math.random() * 3) - 1;
 					int spreadY = (int)(Math.random() * 3) - 1;
-					while((spreadX == 0 && spreadY == 0) && map[y + spreadY][x + spreadX] == tiles.wall)
+					while((spreadX == 0 && spreadY == 0) && map[y + spreadY][x + spreadX] != tiles.floor)
 					{
 						spreadX = (int)(Math.random() * 3) - 1;
 						spreadY = (int)(Math.random() * 3) - 1;
@@ -129,6 +132,26 @@ public class Overworld
 					modifiers[y + spreadY][x + spreadX] = mods.fire;
 				}
 			}
+		}
+		
+		//pickups
+		if(modifiers[playerPos.y][playerPos.x] == mods.componentBag)
+		{
+			//generate a component to give the player
+			CircuitComponent c = null;
+			int type = (int)(Math.random() * 3);
+			switch (type) {
+				case 0:
+					c = CircuitComponent.battery();
+					break;
+				case 1:
+					c = CircuitComponent.lamp();
+					break;
+				case 2:
+					c = CircuitComponent.resistor();
+					break;
+			}
+			c.setMainValue((int)(Math.random() * 10) + 1);
 		}
 		
 	}
@@ -226,7 +249,12 @@ public class Overworld
 				else
 				{
 					map[j][i] = tiles.floor;
-					modifiers[j][i] = (Math.random() < 0.05)? mods.fire : mods.none;
+					if(Math.random() < 0.005)
+						modifiers[j][i] = mods.fire;
+					else if(Math.random() < 0.1)
+						modifiers[j][i] = mods.componentBag;
+					else
+						modifiers[j][i] = mods.none;
 				}
 			}
 		}
@@ -274,7 +302,8 @@ public class Overworld
 	 */
 	public boolean isOpen(int x, int y)
 	{
-		return map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] == mods.none);
+		System.out.println((map[y][x] == tiles.floor) + "\t" + (map[y][x] == tiles.door) + "\t" +  (modifiers[y][x] != mods.doorBroken));
+		return map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.doorBroken);
 	}
 
 	private class Door
