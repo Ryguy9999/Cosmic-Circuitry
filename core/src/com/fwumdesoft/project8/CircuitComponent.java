@@ -139,6 +139,8 @@ public class CircuitComponent implements Serializable
 	{
 		CircuitComponent comp = new CircuitComponent(Type.RESISTOR);
 		comp.isLamp = true;
+		comp.resistance = 1;
+		comp.targetMargin = 0.75f;
 		return comp;
 	}
 
@@ -164,7 +166,10 @@ public class CircuitComponent implements Serializable
 			voltageDif = value;
 			break;
 		case RESISTOR:
-			resistance = value;
+			if(isLamp)
+				targetCurrent = value;
+			else
+				resistance = value;
 			break;
 		default:
 			throw new RuntimeException(this + " has no main value");
@@ -183,7 +188,10 @@ public class CircuitComponent implements Serializable
 		case BATTERY:
 			return voltageDif;
 		case RESISTOR:
-			return resistance;
+			if(!isLamp)
+				return resistance;
+			else
+				return targetCurrent;
 		default:
 			throw new RuntimeException(this + " has no main value");
 		}

@@ -302,6 +302,9 @@ public class CircuitSolver
 				if (circuit[x][y] != null)
 					if (circuit[x][y].type == Type.WIRE)
 					{
+						if (backup == null)
+							backup = new Vector2(x, y);
+					
 						int count = 0;
 						if (x + 1 < circuit.length && circuit[x + 1][y] != null)
 							count++;
@@ -314,8 +317,7 @@ public class CircuitSolver
 
 						if (count > 2)
 							junctions.add(new Vector2(x, y));
-					} else if (backup == null)
-						backup = new Vector2(x, y);
+					}
 
 		if (junctions.size() == 0)
 			junctions.add(backup);

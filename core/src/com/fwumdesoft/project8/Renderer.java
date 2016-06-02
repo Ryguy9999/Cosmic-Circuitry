@@ -266,7 +266,8 @@ public class Renderer
 				}
 				if (comp.isLamp)
 				{
-					outValue += "Target A: " + comp.targetCurrent + "+/-" + comp.targetMargin;
+					outValue += "Target A: " + comp.targetCurrent + "+/-" + comp.targetMargin + "\n";
+					outValue += Math.abs(comp.targetCurrent - comp.current) < comp.targetMargin ? "On" : "Off";
 				}
 				font.draw(batch, outValue, 465, 90);
 			}
