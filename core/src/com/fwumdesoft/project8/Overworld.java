@@ -14,7 +14,7 @@ public class Overworld
 
 	public static enum mods
 	{
-		none, doorClosed, doorBroken, fireSuppression, destroyedWall, componentBag, fire, vacuum
+		none, doorClosed, doorBroken, fireSuppression, destroyedWall, componentPile, fire, vacuum
 	}
 
 	tiles[][] map;
@@ -135,23 +135,11 @@ public class Overworld
 		}
 		
 		//pickups
-		if(modifiers[playerPos.y][playerPos.x] == mods.componentBag)
+		if(modifiers[playerPos.y][playerPos.x] == mods.componentPile)
 		{
 			//generate a component to give the player
-			CircuitComponent c = null;
-			int type = (int)(Math.random() * 3);
-			switch (type) {
-				case 0:
-					c = CircuitComponent.battery();
-					break;
-				case 1:
-					c = CircuitComponent.lamp();
-					break;
-				case 2:
-					c = CircuitComponent.resistor();
-					break;
-			}
-			c.setMainValue((int)(Math.random() * 10) + 1);
+			inventory.addComponent(CircuitComponent.randomComponent());
+			modifiers[playerPos.y][playerPos.x] = null;
 		}
 		
 	}
@@ -252,7 +240,7 @@ public class Overworld
 					if(Math.random() < 0.005)
 						modifiers[j][i] = mods.fire;
 					else if(Math.random() < 0.1)
-						modifiers[j][i] = mods.componentBag;
+						modifiers[j][i] = mods.componentPile;
 					else
 						modifiers[j][i] = mods.none;
 				}

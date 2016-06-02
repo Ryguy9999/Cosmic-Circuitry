@@ -91,18 +91,17 @@ public class CircuitComponent implements Serializable
 		switch((int)(Math.random()*3))
 		{
 		case 0:
-			comp.type = Type.RESISTOR;
+			comp = resistor();
 			break;
 		case 1:
-			comp.type = Type.BATTERY;
+			comp = battery();
 			break;
 		case 2:
-			comp.type = Type.RESISTOR;
-			comp.isLamp = true;
+			comp = lamp();
 			break;
 		}
 		
-		comp.setMainValue((int)(Math.random()*9) + 1);
+		comp.setMainValue((int)(Math.random()*10) + 1);
 		
 		return comp;
 	}
