@@ -115,8 +115,20 @@ public class Overworld
 			currentCircuit = null;
 	}
 	
-	public void circuitSuccess() {
-		//TODO: Method stub
+	public void circuitSuccess() 
+	{
+		Point lookAt = new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y);
+		switch(modifiers[lookAt.y][lookAt.x])
+		{
+		case doorBroken:
+			modifiers[lookAt.y][lookAt.x] = mods.none;
+			break;
+		case fireSuppression:
+			//TODO: Add broken, fixable fire suppression
+			break;
+		default:
+			break;
+		}
 	}
 	
 	public void turn() {
