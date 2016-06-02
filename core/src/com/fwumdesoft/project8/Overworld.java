@@ -1,7 +1,10 @@
 package com.fwumdesoft.project8;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.utils.Array;
 
@@ -58,6 +61,7 @@ public class Overworld
 
 		this.circuits = circuits;
 		removeStrayDoors();
+		distributeCircuits();
 	}
 
 	public String toString()
@@ -140,6 +144,36 @@ public class Overworld
 				inventory.addComponent(CircuitComponent.randomComponent());
 		}
 	}
+	
+	private void distributeCircuits()
+	{
+		List<Circuit> circuits = Arrays.asList(this.circuits.toArray());
+		List<Circuit> doorCircuits = circuits.stream()
+				.filter(circuit -> circuit.name.endsWith("_door"))
+				.collect(Collectors.toList());
+		for(int y = 0; y < modifiers.length; y++)
+			for(int x = 0; x < modifiers[y].length; x++)
+				switch(modifiers[y][x])
+				{
+				case doorBroken:
+					worldCircuits.put(new Point(x, y), getRandom(doorCircuits));
+					break;
+				case fireSuppression:
+					//TODO: Fire suppression circuits
+					break;
+				case none:
+					//TODO: Unbroken doors
+					break;
+				default:
+					break;
+				}
+	}
+	
+	private <T> T getRandom(List<T> list)
+	{
+		return list.get((int)(Math.random() * list.size()));
+	}
+	
 	/**
 	 * Generate room connected to door, with a chance to remove the connecting
 	 * wall to combine the rooms. Will also generate a new door for further
