@@ -1,7 +1,10 @@
 package com.fwumdesoft.project8;
 
-public class Circuit
+import java.io.Serializable;
+
+public class Circuit implements Serializable
 {
+	private static final long serialVersionUID = 1L;
 	public CircuitComponent[][] grid;
 	public int goalLamps;
 
