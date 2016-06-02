@@ -40,7 +40,7 @@ public class Renderer
 	 * The number of pixels of the screen's height
 	 */
 	private int screenHeight;
-	private Texture player, wall, floor, door, resistor, lamp, battery, cursor, blank;
+	private Texture player, wall, floor, componentBag, door, resistor, lamp, battery, cursor, blank;
 	/**
 	 * All of the individual wire tileset images [right][top][left][bottom]
 	 */
@@ -86,6 +86,7 @@ public class Renderer
 		this.player = assets.get("player.png", Texture.class);
 		this.wall = assets.get("station_wall.png", Texture.class);
 		this.floor = assets.get("station_floor.png", Texture.class);
+		this.componentBag = assets.get("component_bag.png", Texture.class);
 		this.door = assets.get("station_door.png", Texture.class);
 		this.resistor = assets.get("resistor.png", Texture.class);
 		this.lamp = assets.get("lamp.png", Texture.class);
@@ -116,7 +117,7 @@ public class Renderer
 	/**
 	 * The distance the player needs to be from a door for it to open
 	 */
-	private final int doorOpenDistance = 2;
+	private final int doorOpenDistance = 1;
 
 	/**
 	 * Draw the current state of the overworld
@@ -161,6 +162,8 @@ public class Renderer
 					break;
 				case floor:
 					batch.draw(floor, drawX, drawY);
+					if(world.modifiers[y][x] == mods.componentBag)
+						batch.draw(componentBag, drawX, drawY);
 					break;
 				default:
 					break;

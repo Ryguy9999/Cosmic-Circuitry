@@ -20,11 +20,13 @@ public class Overworld
 	tiles[][] map;
 	mods[][] modifiers;
 	Point playerPos, playerFace;
-	Array<CircuitComponent[][]> circuits;
+	Array<Circuit> circuits;
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
+	Inventory inventory;
+	private final double BAG_CHANCE = 0.04;
 
-	public Overworld(int size, Array<CircuitComponent[][]> circuits)
+	public Overworld(int size, Array<Circuit> circuits, Inventory inventory)
 	{
 		// contains permanent tiles
 		map = new tiles[size][size];
@@ -45,6 +47,7 @@ public class Overworld
 		playerPos = new Point(size / 2 - 1, size / 2);
 		boolean firstDoor = true;
 		this.playerFace = new Point();
+		this.inventory = inventory;
 		worldCircuits = new HashMap<Point, Circuit>();
 		currentCircuit = null;
 
@@ -95,7 +98,7 @@ public class Overworld
 		}
 		return spotFree;
 	}
-
+	
 	/**
 	 * Interact with the tile the player is facing
 	 */
@@ -105,12 +108,41 @@ public class Overworld
 			currentCircuit = worldCircuits.get(playerFace);
 		else
 			currentCircuit = null;
+		
+		if(modifiers[playerPos.x + playerFace.x][playerPos.y + playerFace.y] == mods.componentBag)
+		{
+			modifiers[playerPos.x + playerFace.x][playerPos.y + playerFace.y] = null;
+			inventory.addComponent(CircuitComponent.randomComponent());
+			while(Math.random() < 1.0/3.0)
+				inventory.addComponent(CircuitComponent.randomComponent());
+		}
 	}
 	
 	public void circuitSuccess() {
 		//TODO: Method stub
 	}
-
+	
+	public void turn() {
+		//spread fire
+		for(int y = 0; y < modifiers.length; y++)
+		{
+			for(int x = 0; x < modifiers[y].length; x++)
+			{
+				if(modifiers[y][x] == mods.fire)
+				{
+					int spreadX = (int)(Math.random() * 3) - 1;
+					int spreadY = (int)(Math.random() * 3) - 1;
+					while((spreadX == 0 && spreadY == 0) && map[y + spreadY][x + spreadX] == tiles.wall)
+					{
+						spreadX = (int)(Math.random() * 3) - 1;
+						spreadY = (int)(Math.random() * 3) - 1;
+					}
+					modifiers[y + spreadY][x + spreadX] = mods.fire;
+				}
+			}
+		}
+		
+	}
 	/**
 	 * Generate room connected to door, with a chance to remove the connecting
 	 * wall to combine the rooms. Will also generate a new door for further
@@ -163,11 +195,6 @@ public class Overworld
 				break;
 			}
 		}
-		// else {
-		// map[door.y][door.x] = tiles.door;
-		// modifiers[door.x][door.y] = (Math.random() < 0.2)? mods.doorBroken :
-		// mods.none;
-		// }
 		// randomly generates 1 more door (can overlap, but not with first door)
 		int position = (int) (Math.random() * 4);
 		while (position == door.facing)
@@ -210,15 +237,21 @@ public class Overworld
 				else
 				{
 					map[j][i] = tiles.floor;
+					modifiers[j][i] = (Math.random() < 0.05)? mods.fire : mods.none;
 				}
 			}
 		}
+		for(int i = x + 1; i < x + 4; i++)
+			for(int j = y + 1; j < y + 4; j++)
+				if(Math.random() < BAG_CHANCE && map[j][i] == tiles.floor)
+					modifiers[j][i] = mods.componentBag;
+		
 		return nextDoor;
 	}
 
 	/**
 	 * Captain's log: Star Date sometime I have given up. The doors won't go
-	 * away. We've tried anything I have accepted that this is as good a
+	 * away. We've tried everything. I have accepted that this is as good a
 	 * solution as any for the time being. Save yourself, don't try to fix the
 	 * doors. *static* Or else *static* will *static* <end transmission>
 	 */
