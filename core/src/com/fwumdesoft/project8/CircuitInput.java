@@ -114,6 +114,17 @@ public class CircuitInput
 			circuitName += ".circuit";
 			CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
 		}
+		if(Gdx.input.isKeyJustPressed(Keys.N)) 
+		{
+			String input = JOptionPane.showInputDialog("Enter the number of lamps required to win");
+			try
+			{
+				circuit.goalLamps = Integer.parseInt(input);
+			} catch (NumberFormatException | NullPointerException e)
+			{
+				JOptionPane.showMessageDialog(null, "Failed to parse number.");
+			}
+		}
 	}
 
 	private void interact(int cursorX, int cursorY)
