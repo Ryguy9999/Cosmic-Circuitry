@@ -112,7 +112,7 @@ public class CircuitInput
 		{
 			String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to save.");
 			circuitName += ".circuit";
-			circuit.name = circuitName;
+			circuit.name = circuitName.substring(0, circuitName.indexOf(".circuit"));
 			CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
 		}
 		if(Gdx.input.isKeyJustPressed(Keys.N)) 
