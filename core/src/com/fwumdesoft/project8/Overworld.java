@@ -169,7 +169,7 @@ public class Overworld
 				switch(modifiers[y][x])
 				{
 				case doorBroken:
-					worldCircuits.put(new Point(x, y), getRandom(doorCircuits));
+					worldCircuits.put(new Point(x, y), new Circuit(getRandom(doorCircuits)));
 					break;
 				case fireSuppression:
 					//TODO: Fire suppression circuits
