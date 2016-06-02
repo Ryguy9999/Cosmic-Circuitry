@@ -46,7 +46,13 @@ public class Renderer
 	 */
 	private TextureRegion[][][][] wireTiles;
 	private TextureRegion unconnectedWire, openDoor, closedDoor;
+	/**
+	 * The frames in the fire animation
+	 */
 	private TextureRegion[] fire;
+	/**
+	 * The current frame in the fire animation
+	 */
 	private int fireFrame;
 	/**
 	 * If the class should draw the inventory </br>
