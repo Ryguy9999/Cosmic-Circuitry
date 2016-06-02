@@ -289,7 +289,6 @@ public class Overworld
 	 */
 	public boolean isOpen(int x, int y)
 	{
-		System.out.println((map[y][x] == tiles.floor) + "\t" + (map[y][x] == tiles.door) + "\t" +  (modifiers[y][x] != mods.doorBroken));
 		return map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.doorBroken);
 	}
 
