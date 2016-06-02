@@ -104,14 +104,16 @@ public class Overworld
 	 */
 	public void interact()
 	{
+		System.out.println(playerPos);
+		System.out.println(playerFace);
 		if(worldCircuits.containsKey(new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y)))
 			currentCircuit = worldCircuits.get(playerFace);
 		else
 			currentCircuit = null;
 		
-		if(modifiers[playerPos.x + playerFace.x][playerPos.y + playerFace.y] == mods.componentBag)
+		if(modifiers[playerPos.y + playerFace.y][playerPos.x + playerFace.x] == mods.componentBag)
 		{
-			modifiers[playerPos.x + playerFace.x][playerPos.y + playerFace.y] = null;
+			modifiers[playerPos.y + playerFace.y][playerPos.x + playerFace.x] = null;
 			inventory.addComponent(CircuitComponent.randomComponent());
 			while(Math.random() < 1.0/3.0)
 				inventory.addComponent(CircuitComponent.randomComponent());
