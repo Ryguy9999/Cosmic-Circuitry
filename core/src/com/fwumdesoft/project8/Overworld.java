@@ -133,6 +133,11 @@ public class Overworld
 				}
 			}
 		}
+		
+		//Death by fire
+		if(modifiers[playerPos.y][playerPos.x] == mods.fire)
+			//TODO Project8.die()? dispose() & create()? Halp
+		
 		//Pick up bags
 		if(modifiers[playerPos.y][playerPos.x] == mods.componentPile)
 		{
