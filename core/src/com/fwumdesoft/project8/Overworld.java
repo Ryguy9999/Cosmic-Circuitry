@@ -110,14 +110,6 @@ public class Overworld
 			currentCircuit = worldCircuits.get(playerFace);
 		else
 			currentCircuit = null;
-		
-		if(modifiers[playerPos.y + playerFace.y][playerPos.x + playerFace.x] == mods.componentBag)
-		{
-			modifiers[playerPos.y + playerFace.y][playerPos.x + playerFace.x] = null;
-			inventory.addComponent(CircuitComponent.randomComponent());
-			while(Math.random() < 1.0/3.0)
-				inventory.addComponent(CircuitComponent.randomComponent());
-		}
 	}
 	
 	public void circuitSuccess() {
@@ -143,7 +135,14 @@ public class Overworld
 				}
 			}
 		}
-		
+		//Pick up bags
+		if(modifiers[playerPos.y][playerPos.x] == mods.componentBag)
+		{
+			modifiers[playerPos.y][playerPos.x] = null;
+			inventory.addComponent(CircuitComponent.randomComponent());
+			while(Math.random() < 1.0/3.0)
+				inventory.addComponent(CircuitComponent.randomComponent());
+		}
 	}
 	/**
 	 * Generate room connected to door, with a chance to remove the connecting
