@@ -84,6 +84,11 @@ public class Project8 extends ApplicationAdapter
 				world.circuitSuccess();
 				isCircuit = false;
 			}
+			if(Gdx.input.isKeyJustPressed(Keys.ESCAPE))
+			{
+				world.circuitFail();
+				isCircuit = false;
+			}
 		} else
 		{
 			Gdx.gl.glClearColor(0, 0, 0, 1);
