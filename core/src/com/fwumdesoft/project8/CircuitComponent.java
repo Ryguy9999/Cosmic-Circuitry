@@ -81,6 +81,31 @@ public class CircuitComponent implements Serializable
 		if (hasMainValue())
 			setMainValue(1);
 	}
+	
+	/**
+	 * @return A new random component (typically from bags)
+	 */
+	public static CircuitComponent randomComponent()
+	{
+		CircuitComponent comp = new CircuitComponent(null);
+		switch((int)(Math.random()*3))
+		{
+		case 0:
+			comp.type = Type.RESISTOR;
+			break;
+		case 1:
+			comp.type = Type.BATTERY;
+			break;
+		case 2:
+			comp.type = Type.RESISTOR;
+			comp.isLamp = true;
+			break;
+		}
+		
+		comp.setMainValue((int)(Math.random()*9) + 1);
+		
+		return comp;
+	}
 
 	/**
 	 * @return A new blank component

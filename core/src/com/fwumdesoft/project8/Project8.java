@@ -59,7 +59,6 @@ public class Project8 extends ApplicationAdapter
 		world = new Overworld(1000, assets.getAll(Circuit.class, new Array<>()), inventory);
 		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480);
 
-		
 		Camera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.x = Gdx.graphics.getWidth() / 2;
 		camera.position.y = Gdx.graphics.getHeight() / 2;
