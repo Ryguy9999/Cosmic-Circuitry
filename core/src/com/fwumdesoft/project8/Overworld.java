@@ -131,6 +131,23 @@ public class Overworld
 		}
 	}
 	
+	public void circuitFail()
+	{
+		Point lookAt = new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y);
+		switch(modifiers[lookAt.y][lookAt.x])
+		{
+		case none:
+			if(map[lookAt.y][lookAt.x] == tiles.door)
+				modifiers[lookAt.y][lookAt.x] = mods.doorBroken;
+			break;
+		case fireSuppression:
+			//TODO: Add broken, fixable fire suppression
+			break;
+		default:
+			break;
+		}
+	}
+	
 	public void turn() {
 		//spread fire
 		for(int y = 0; y < modifiers.length; y++)
