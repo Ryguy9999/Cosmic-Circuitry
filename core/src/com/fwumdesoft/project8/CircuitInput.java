@@ -102,12 +102,6 @@ public class CircuitInput
 		{
 			putComponent(null, cursorX, cursorY);
 		}
-		if (Gdx.input.isKeyJustPressed(Keys.NUM_7))
-		{	
-			CircuitComponent r = CircuitComponent.resistor();
-			r.resistance = Double.MAX_VALUE;
-			circuit.grid[cursorY][cursorX] = r;
-		}
 		if (Gdx.input.isKeyJustPressed(Keys.L))
 		{
 			String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to load.");
