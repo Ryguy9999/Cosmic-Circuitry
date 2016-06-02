@@ -108,8 +108,9 @@ public class Overworld
 	 */
 	public void interact()
 	{
-		if(worldCircuits.containsKey(new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y)))
-			currentCircuit = worldCircuits.get(playerFace);
+		Point lookAt = new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y);
+		if(worldCircuits.containsKey(lookAt))
+			currentCircuit = worldCircuits.get(lookAt);
 		else
 			currentCircuit = null;
 	}
