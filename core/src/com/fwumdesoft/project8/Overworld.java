@@ -124,15 +124,13 @@ public class Overworld
 				{
 					int spreadX = (int)(Math.random() * 3) - 1;
 					int spreadY = (int)(Math.random() * 3) - 1;
-					while((spreadX == 0 && spreadY == 0) && map[y + spreadY][x + spreadX] != tiles.floor)
-					{
-						spreadX = (int)(Math.random() * 3) - 1;
-						spreadY = (int)(Math.random() * 3) - 1;
-					}
-					modifiers[y + spreadY][x + spreadX] = mods.fire;
+					if(map[y + spreadY][x + spreadX] == tiles.floor)
+						modifiers[y + spreadY][x + spreadX] = mods.fire;
 				}
 			}
 		}
+		if(modifiers[playerPos.y][playerPos.x]== mods.fire )
+			System.out.println("FIRE FIRE FIRE");
 		//Pick up bags
 		if(modifiers[playerPos.y][playerPos.x] == mods.componentPile)
 		{

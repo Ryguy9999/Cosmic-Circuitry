@@ -46,6 +46,8 @@ public class Renderer
 	 */
 	private TextureRegion[][][][] wireTiles;
 	private TextureRegion unconnectedWire, openDoor, closedDoor;
+	private TextureRegion[] fire;
+	private int fireFrame;
 	/**
 	 * If the class should draw the inventory </br>
 	 * Toggled by tab
@@ -86,6 +88,10 @@ public class Renderer
 		this.player = assets.get("player.png", Texture.class);
 		this.wall = assets.get("station_wall.png", Texture.class);
 		this.floor = assets.get("station_floor.png", Texture.class);
+		Texture fire = assets.get("fire.png", Texture.class);
+		this.fire = new TextureRegion[4];
+		for(int i = 0; i < 4; i++)
+			this.fire[i] = new TextureRegion(fire, fire.getWidth() / 4 * i, 0, fire.getWidth() / 4, fire.getHeight());
 		this.componentPile = assets.get("component_pile.png", Texture.class);
 		this.door = assets.get("station_door.png", Texture.class);
 		this.resistor = assets.get("resistor.png", Texture.class);
@@ -126,6 +132,8 @@ public class Renderer
 	 */
 	public void renderOverworld(Overworld world, Inventory inventory)
 	{
+		this.fireFrame = (fireFrame + 1) % 60;
+		int fireFrame = this.fireFrame / 15;
 		Point player = world.playerPos;
 		// Establish the drawable region
 		int halfGridWidth = (screenWidth / cellSize) / 2;
@@ -164,6 +172,8 @@ public class Renderer
 					batch.draw(floor, drawX, drawY);
 					if(world.modifiers[y][x] == mods.componentPile)
 						batch.draw(componentPile, drawX, drawY);
+					else if(world.modifiers[y][x] == mods.fire)
+						batch.draw(fire[fireFrame], drawX, drawY);
 					break;
 				default:
 					break;
