@@ -163,13 +163,13 @@ public class CircuitComponent implements Serializable
 		switch (type)
 		{
 		case BATTERY:
-			if(!isLamp)
-				voltageDif = value;
-			else
-				targetCurrent = value;
+			voltageDif = value;
 			break;
 		case RESISTOR:
-			resistance = value;
+			if(isLamp)
+				targetCurrent = value;
+			else
+				resistance = value;
 			break;
 		default:
 			throw new RuntimeException(this + " has no main value");
