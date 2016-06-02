@@ -1,7 +1,10 @@
 package com.fwumdesoft.project8;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.utils.Array;
 
@@ -58,6 +61,7 @@ public class Overworld
 
 		this.circuits = circuits;
 		removeStrayDoors();
+		distributeCircuits();
 	}
 
 	public String toString()
@@ -104,14 +108,44 @@ public class Overworld
 	 */
 	public void interact()
 	{
-		if(worldCircuits.containsKey(new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y)))
-			currentCircuit = worldCircuits.get(playerFace);
+		Point lookAt = new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y);
+		if(worldCircuits.containsKey(lookAt))
+			currentCircuit = worldCircuits.get(lookAt);
 		else
 			currentCircuit = null;
 	}
 	
-	public void circuitSuccess() {
-		//TODO: Method stub
+	public void circuitSuccess() 
+	{
+		Point lookAt = new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y);
+		switch(modifiers[lookAt.y][lookAt.x])
+		{
+		case doorBroken:
+			modifiers[lookAt.y][lookAt.x] = mods.none;
+			break;
+		case fireSuppression:
+			//TODO: Add broken, fixable fire suppression
+			break;
+		default:
+			break;
+		}
+	}
+	
+	public void circuitFail()
+	{
+		Point lookAt = new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y);
+		switch(modifiers[lookAt.y][lookAt.x])
+		{
+		case none:
+			if(map[lookAt.y][lookAt.x] == tiles.door)
+				modifiers[lookAt.y][lookAt.x] = mods.doorBroken;
+			break;
+		case fireSuppression:
+			//TODO: Add broken, fixable fire suppression
+			break;
+		default:
+			break;
+		}
 	}
 	
 	public void turn() {
@@ -124,19 +158,15 @@ public class Overworld
 				{
 					int spreadX = (int)(Math.random() * 3) - 1;
 					int spreadY = (int)(Math.random() * 3) - 1;
-					while((spreadX == 0 && spreadY == 0) && map[y + spreadY][x + spreadX] != tiles.floor)
-					{
-						spreadX = (int)(Math.random() * 3) - 1;
-						spreadY = (int)(Math.random() * 3) - 1;
-					}
-					modifiers[y + spreadY][x + spreadX] = mods.fire;
+					if(map[y + spreadY][x + spreadX] == tiles.floor)
+						modifiers[y + spreadY][x + spreadX] = mods.fire;
 				}
 			}
 		}
 		
 		//Death by fire
-		if(modifiers[playerPos.y][playerPos.x] == mods.fire)
-			//TODO Project8.die()? dispose() & create()? Halp
+		if(modifiers[playerPos.y][playerPos.x]== mods.fire )
+			System.out.println("FIRE FIRE FIRE");
 		
 		//Pick up bags
 		if(modifiers[playerPos.y][playerPos.x] == mods.componentPile)
@@ -147,6 +177,36 @@ public class Overworld
 				inventory.addComponent(CircuitComponent.randomComponent());
 		}
 	}
+	
+	private void distributeCircuits()
+	{
+		List<Circuit> circuits = Arrays.asList(this.circuits.toArray());
+		List<Circuit> doorCircuits = circuits.stream()
+				.filter(circuit -> circuit.name.endsWith("_door"))
+				.collect(Collectors.toList());
+		for(int y = 0; y < modifiers.length; y++)
+			for(int x = 0; x < modifiers[y].length; x++)
+				switch(modifiers[y][x])
+				{
+				case doorBroken:
+					worldCircuits.put(new Point(x, y), new Circuit(getRandom(doorCircuits)));
+					break;
+				case fireSuppression:
+					//TODO: Fire suppression circuits
+					break;
+				case none:
+					//TODO: Unbroken doors
+					break;
+				default:
+					break;
+				}
+	}
+	
+	private <T> T getRandom(List<T> list)
+	{
+		return list.get((int)(Math.random() * list.size()));
+	}
+	
 	/**
 	 * Generate room connected to door, with a chance to remove the connecting
 	 * wall to combine the rooms. Will also generate a new door for further

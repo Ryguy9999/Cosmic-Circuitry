@@ -83,11 +83,29 @@ public class CircuitComponent implements Serializable
 	}
 	
 	/**
+	 * A copy constructor
+	 * @param comp The original to copy
+	 */
+	public CircuitComponent(CircuitComponent comp)
+	{
+		isLamp = comp.isLamp;
+		isActive = comp.isActive;
+		isChangeable = comp.isChangeable;
+		type = comp.type;
+		voltageDif = comp.voltageDif;
+		current = comp.current;
+		resistance = comp.current;
+		targetCurrent = comp.targetCurrent;
+		targetMargin = comp.targetMargin;
+	}
+	
+	/**
 	 * @return A new random component (typically from bags)
 	 */
 	public static CircuitComponent randomComponent()
 	{
-		CircuitComponent comp = new CircuitComponent(null);
+		Type t = null;
+		CircuitComponent comp = new CircuitComponent(t);
 		switch((int)(Math.random()*3))
 		{
 		case 0:
@@ -111,7 +129,8 @@ public class CircuitComponent implements Serializable
 	 */
 	public static CircuitComponent blank()
 	{
-		CircuitComponent comp = new CircuitComponent(null);
+		Type t = null;
+		CircuitComponent comp = new CircuitComponent(t);
 		comp.isChangeable = true;
 		return comp;
 	}
@@ -139,6 +158,8 @@ public class CircuitComponent implements Serializable
 	{
 		CircuitComponent comp = new CircuitComponent(Type.RESISTOR);
 		comp.isLamp = true;
+		comp.resistance = 1;
+		comp.targetMargin = 0.75f;
 		return comp;
 	}
 
@@ -164,7 +185,10 @@ public class CircuitComponent implements Serializable
 			voltageDif = value;
 			break;
 		case RESISTOR:
-			resistance = value;
+			if(isLamp)
+				targetCurrent = value;
+			else
+				resistance = value;
 			break;
 		default:
 			throw new RuntimeException(this + " has no main value");
@@ -183,7 +207,10 @@ public class CircuitComponent implements Serializable
 		case BATTERY:
 			return voltageDif;
 		case RESISTOR:
-			return resistance;
+			if(!isLamp)
+				return resistance;
+			else
+				return targetCurrent;
 		default:
 			throw new RuntimeException(this + " has no main value");
 		}

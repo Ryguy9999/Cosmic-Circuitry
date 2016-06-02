@@ -58,11 +58,14 @@ public class CircuitInput
 	 *            The square the mouse is hovering over
 	 * @param cursorY
 	 *            The square the mouse is hovering over
+	 * @return If the circuit has been completed
 	 */
-	public void update(int cursorX, int cursorY)
+	public boolean update(int cursorX, int cursorY)
 	{
 		if (Gdx.input.isKeyJustPressed(Keys.END))
 			editing = !editing;
+		if(Gdx.input.isKeyJustPressed(Keys.ENTER) && circuit.isSolved())
+			return true;
 		if (editing)
 		{
 			edit(cursorX, cursorY);
@@ -70,6 +73,7 @@ public class CircuitInput
 		{
 			interact(cursorX, cursorY);
 		}
+		return false;
 	}
 
 	private void edit(int cursorX, int cursorY)
@@ -98,12 +102,6 @@ public class CircuitInput
 		{
 			putComponent(null, cursorX, cursorY);
 		}
-		if (Gdx.input.isKeyJustPressed(Keys.NUM_7))
-		{	
-			CircuitComponent r = CircuitComponent.resistor();
-			r.resistance = Double.MAX_VALUE;
-			circuit.grid[cursorY][cursorX] = r;
-		}
 		if (Gdx.input.isKeyJustPressed(Keys.L))
 		{
 			String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to load.");
@@ -114,7 +112,19 @@ public class CircuitInput
 		{
 			String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to save.");
 			circuitName += ".circuit";
+			circuit.name = circuitName.substring(0, circuitName.indexOf(".circuit"));
 			CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
+		}
+		if(Gdx.input.isKeyJustPressed(Keys.N)) 
+		{
+			String input = JOptionPane.showInputDialog("Enter the number of lamps required to win");
+			try
+			{
+				circuit.goalLamps = Integer.parseInt(input);
+			} catch (NumberFormatException | NullPointerException e)
+			{
+				JOptionPane.showMessageDialog(null, "Failed to parse number.");
+			}
 		}
 	}
 
