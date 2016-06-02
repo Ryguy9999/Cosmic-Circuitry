@@ -8,6 +8,18 @@ public class Circuit implements Serializable
 	public CircuitComponent[][] grid;
 	public String name;
 	public int goalLamps;
+	
+	public Circuit(Circuit original)
+	{
+		this.goalLamps = original.goalLamps;
+		grid = new CircuitComponent[original.grid.length][];
+		for(int i = 0; i < grid.length; i++)
+		{
+			grid[i] = new CircuitComponent[original.grid[i].length];
+			for(int j = 0; j < grid[i].length; j++)
+				grid[i][j] = new CircuitComponent(original.grid[i][j]);
+		}
+	}
 
 	public Circuit(CircuitComponent[][] grid, int goalLamps)
 	{
