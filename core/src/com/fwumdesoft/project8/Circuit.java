@@ -17,7 +17,8 @@ public class Circuit implements Serializable
 		{
 			grid[i] = new CircuitComponent[original.grid[i].length];
 			for(int j = 0; j < grid[i].length; j++)
-				grid[i][j] = new CircuitComponent(original.grid[i][j]);
+				if(original.grid[i][j] != null)
+					grid[i][j] = new CircuitComponent(original.grid[i][j]);
 		}
 	}
 
