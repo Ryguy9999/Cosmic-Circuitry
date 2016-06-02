@@ -101,7 +101,7 @@ public class CircuitComponent implements Serializable
 			break;
 		}
 		
-		comp.setMainValue((int)(Math.random()*10) + 1);
+		comp.setMainValue((int)(Math.random()*9) + 1);
 		
 		return comp;
 	}
