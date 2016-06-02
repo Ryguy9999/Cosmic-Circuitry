@@ -70,7 +70,7 @@ public class Project8 extends ApplicationAdapter
 		mousePosition = new Vector2();
 	}
 
-	private boolean isCircuit = true;
+	private boolean isCircuit = false;
 
 	@Override
 	public void render()
@@ -85,8 +85,13 @@ public class Project8 extends ApplicationAdapter
 			viewport.unproject(mousePosition);
 			int circuitX = (int) (mousePosition.x / 64);
 			int circuitY = (int) (mousePosition.y / 64);
-			input.update(circuitX, circuitY);
+			boolean finished = input.update(circuitX, circuitY);
 			rend.renderCircuit(input.getCircuit(), inventory, circuitX, circuitY);
+			if(finished) 
+			{
+				world.circuitSuccess();
+				isCircuit = false;
+			}
 		} else
 		{
 			Gdx.gl.glClearColor(0, 0, 0, 1);
