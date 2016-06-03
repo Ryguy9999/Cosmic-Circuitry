@@ -7,13 +7,15 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.utils.Array;
 
 public class Overworld
 {
 	public static enum tiles
 	{
-		space, wall, door, floor, fireSuppression, componentMachine
+		space, wall, door, floor, fireSuppression, componentMachine, terminal
 	}
 
 	public static enum mods
@@ -29,7 +31,8 @@ public class Overworld
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
 	Inventory inventory;
-	final int FIRE_SUPPRESSION_RANGE = 12;
+	boolean noClip;
+	final int FIRE_SUPPRESSION_RANGE = 12, TERMINAL_COUNT = 3;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.15;
 	private Overworld previous;
@@ -60,6 +63,7 @@ public class Overworld
 		this.playerFace = new Point();
 		this.app = app;
 		worldCircuits = new HashMap<Point, Circuit>();
+		noClip = false;
 		currentCircuit = null;
 
 		for (int i = 0; i < 100; i++)
@@ -71,6 +75,7 @@ public class Overworld
 		this.circuits = circuits;
 		removeStrayDoors();
 		spawnFireSuppression();
+		spawnTerminals();
 		distributeCircuits();
 	}
 
@@ -154,6 +159,9 @@ public class Overworld
 	}
 	
 	public void turn() {
+		if(Gdx.input.isKeyPressed(Keys.END))
+			noClip = !noClip;
+		
 		for(int y = 0; y < modifiers.length; y++)
 		{
 			for(int x = 0; x < modifiers[y].length; x++)
@@ -228,11 +236,12 @@ public class Overworld
 	private void distributeCircuits()
 	{
 		List<Circuit> circuits = Arrays.asList(this.circuits.toArray());
-		Function<String, List<Circuit>> getCircuits = suffix -> circuits.stream().filter(circuit -> circuit.name.endsWith(suffix)).collect(Collectors.toList());
+		Function<String, List<Circuit>> getCircuits = suffix -> circuits.stream().filter(circuit ->
+					circuit.name.endsWith(suffix)).collect(Collectors.toList());
 		List<Circuit> doorCircuits = getCircuits.apply("door");
-		System.out.println(doorCircuits);
+		List<Circuit> fireSuppression = getCircuits.apply("fire");
+		List<Circuit> terminalCircuits = getCircuits.apply("terminal");
 		List<Circuit> solvedDoorCircuits = getCircuits.apply("door_solved");
-		System.out.println(solvedDoorCircuits);
 		List<Circuit> solvedFireSuppression = getCircuits.apply("fire_solved");
 
 		for(int y = 0; y < modifiers.length; y++)
@@ -245,7 +254,9 @@ public class Overworld
 					if(map[y][x] == tiles.door)
 						c = new Circuit(getRandom(doorCircuits));
 					else if(map[y][x] == tiles.fireSuppression)
-						c = new Circuit(getRandom(doorCircuits));//TODO: fire suppression circuits
+						c = new Circuit(getRandom(fireSuppression));
+					else if(map[y][x] == tiles.terminal)
+						c = new Circuit(getRandom(terminalCircuits));
 					break;
 				case none:
 					if(map[y][x] == tiles.door)
@@ -372,6 +383,31 @@ public class Overworld
 		return nextDoor;
 	}
 	
+	private void spawnTerminals()
+	{
+		for(int t = 0; t < TERMINAL_COUNT; t++)
+		{
+			int y = (int)(Math.random() * map.length);
+			int x = (int)(Math.random() * map[y].length);
+			boolean success = false;
+			
+			while(!success)
+			{
+				y = (int)(Math.random() * map.length);
+				x = (int)(Math.random() * map[y].length);
+				
+				if(map[y][x] == tiles.floor)
+					success = true;
+			}
+			
+			while(map[y][x] != tiles.wall)
+				y++;
+			
+			map[y][x] = tiles.terminal;
+			modifiers[y][x] = mods.broken;
+		}
+	}
+	
 	private void spawnFireSuppression()
 	{
 		for(int y = 0; y < map.length; y += FIRE_SUPPRESSION_RANGE * 2)
@@ -435,7 +471,8 @@ public class Overworld
 	 */
 	public boolean isOpen(int x, int y)
 	{
-		return (map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.broken)) && modifiers[y][x] != mods.fire;
+		return noClip || (map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.broken))
+				&& modifiers[y][x] != mods.fire;
 	}
 
 	private class Door

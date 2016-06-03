@@ -46,7 +46,8 @@ public class Renderer
 	 * The number of pixels of the screen's height
 	 */
 	private int screenHeight;
-	private Texture player, wall, floor, componentPile, componentMachine, fireSuppression, door, resistor, lamp, battery, cursor, blank;
+	private Texture player, wall, floor, componentPile, componentMachine, fireSuppression, terminal, door,
+						resistor, lamp, battery, cursor, blank;
 	/**
 	 * All of the individual wire tileset images [right][top][left][bottom]
 	 */
@@ -119,6 +120,7 @@ public class Renderer
 		this.componentPile = assets.get("component_pile.png", Texture.class);
 		this.componentMachine = assets.get("component_machine.png", Texture.class);
 		this.fireSuppression = assets.get("fire_suppression.png", Texture.class);
+		this.terminal = assets.get("terminal.png", Texture.class);
 		this.door = assets.get("station_door.png", Texture.class);
 		this.resistor = assets.get("resistor.png", Texture.class);
 		this.lamp = assets.get("lamp.png", Texture.class);
@@ -209,6 +211,9 @@ public class Renderer
 					break;
 				case componentMachine:
 					batch.draw(componentMachine, drawX, drawY);
+					break;
+				case terminal:
+					batch.draw(terminal, drawX, drawY);
 					break;
 				default:
 					break;
