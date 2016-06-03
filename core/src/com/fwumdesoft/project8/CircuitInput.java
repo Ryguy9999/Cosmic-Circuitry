@@ -252,6 +252,22 @@ public class CircuitInput
 		return circuit.grid;
 	}
 	
+	/**
+	 * @return Get the nubmer of lamps needed to light up
+	 */
+	public int getLampNumber()
+	{
+		return circuit.goalLamps;
+	}
+	
+	/**
+	 * @return If the circuit is finished
+	 */
+	public boolean isFinished()
+	{
+		return circuit.isSolved();
+	}
+	
 	public void setCircuit(Circuit circ)
 	{
 		circuit = circ;

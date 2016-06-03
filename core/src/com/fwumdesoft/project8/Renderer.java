@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 import com.fwumdesoft.project8.CircuitComponent.Type;
@@ -225,7 +226,7 @@ public class Renderer
 		renderInventory(inventory);
 	}
 
-	public void renderCircuit(CircuitComponent[][] circuit, Inventory inventory, int cursorX, int cursorY)
+	public void renderCircuit(CircuitComponent[][] circuit, int requiredLamps, Inventory inventory, int cursorX, int cursorY)
 	{
 		shapes.begin(ShapeRenderer.ShapeType.Filled);
 		shapes.setColor(Color.WHITE);
@@ -309,6 +310,13 @@ public class Renderer
 		batch.draw(cursor, cursorX * componentSize - circuitCamera.x, cursorY * componentSize - circuitCamera.y);
 		batch.end();
 		renderInventory(inventory);
+		shapes.begin(ShapeType.Filled);
+		shapes.setColor(Color.BLACK);
+		shapes.rect(0, Gdx.graphics.getHeight() - 32, 128, 32);
+		shapes.end();
+		batch.begin();
+		font.draw(batch, "Lamps needed: " + requiredLamps, 0, Gdx.graphics.getHeight() - 12);
+		batch.end();
 	}
 
 	private void renderInventory(Inventory inventory)
