@@ -61,7 +61,7 @@ public class Project8 extends ApplicationAdapter
 
 		Gdx.input.setInputProcessor(overInput = new OverworldInput(this, world));
 
-		input = new CircuitInput(new Circuit(new CircuitComponent[10][5], 0), assets, inventory, circuitCamera);
+		input = new CircuitInput(new Circuit(new CircuitComponent[10][20], 0), assets, inventory, circuitCamera);
 		mousePosition = new Vector2();
 	}
 
