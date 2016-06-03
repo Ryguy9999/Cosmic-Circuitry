@@ -56,13 +56,13 @@ public class Project8 extends ApplicationAdapter
 		camera.position.y = Gdx.graphics.getHeight() / 2;
 		viewport = new FitViewport(640, 480, camera);
 
-		Gdx.input.setInputProcessor(new OverworldInput(world));
+		Gdx.input.setInputProcessor(new OverworldInput(this, world));
 
 		input = new CircuitInput(new Circuit(new CircuitComponent[10][5], 0), assets, inventory);
 		mousePosition = new Vector2();
 	}
 
-	private boolean isCircuit = false;
+	public boolean isCircuit = false;
 
 	@Override
 	public void render()

@@ -6,14 +6,18 @@ import com.badlogic.gdx.InputAdapter;
 public class OverworldInput extends InputAdapter
 {
 	private Overworld world;
-
-	public OverworldInput(Overworld world)
+	private Project8 topLevel;
+	
+	public OverworldInput(Project8 topLevel, Overworld world)
 	{
+		this.topLevel = topLevel;
 		this.world = world;
 	}
 
 	public boolean keyDown(int keycode)
 	{
+		if(topLevel.isCircuit)
+			return false;
 		switch (keycode)
 		{
 		case Keys.A:
