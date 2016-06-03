@@ -73,7 +73,11 @@ public class Project8 extends ApplicationAdapter
 			}
 			if(Gdx.input.isKeyJustPressed(Keys.ESCAPE))
 			{
-				world.circuitFail();
+				//Exiting a finished circuit means it was still a success
+				if(input.isFinished())
+					world.circuitSuccess();
+				else
+					world.circuitFail();
 				isCircuit = false;
 			}
 		} else

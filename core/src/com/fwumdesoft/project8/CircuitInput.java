@@ -260,6 +260,14 @@ public class CircuitInput
 		return circuit.goalLamps;
 	}
 	
+	/**
+	 * @return If the circuit is finished
+	 */
+	public boolean isFinished()
+	{
+		return circuit.isSolved();
+	}
+	
 	public void setCircuit(Circuit circ)
 	{
 		circuit = circ;
