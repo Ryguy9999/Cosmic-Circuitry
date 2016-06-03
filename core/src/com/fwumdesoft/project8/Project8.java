@@ -33,6 +33,8 @@ public class Project8 extends ApplicationAdapter
 	Viewport viewport;
 	Vector2 mousePosition;
 	AssetManager assets;
+	OverworldInput overInput;
+	Vector2 circuitCamera;
 	
 	@Override
 	public void create()
@@ -48,17 +50,18 @@ public class Project8 extends ApplicationAdapter
 		inventory.addComponent(CircuitComponent.battery());
 		inventory.addComponent(CircuitComponent.resistor());
 
-		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory);
-		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480);
+		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory, true);
+		circuitCamera = new Vector2();
+		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480, circuitCamera);
 
 		Camera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.x = Gdx.graphics.getWidth() / 2;
 		camera.position.y = Gdx.graphics.getHeight() / 2;
 		viewport = new FitViewport(640, 480, camera);
 
-		Gdx.input.setInputProcessor(new OverworldInput(this, world));
+		Gdx.input.setInputProcessor(overInput = new OverworldInput(this, world));
 
-		input = new CircuitInput(new Circuit(new CircuitComponent[10][5], 0), assets, inventory);
+		input = new CircuitInput(new Circuit(new CircuitComponent[10][20], 0), assets, inventory, circuitCamera);
 		mousePosition = new Vector2();
 	}
 
@@ -72,11 +75,11 @@ public class Project8 extends ApplicationAdapter
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (isCircuit)
 		{
-			Gdx.gl.glClearColor(1, 1, 1, 1);
+			Gdx.gl.glClearColor(0.9f, 0.9f, 0.9f, 1);
 			mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
 			viewport.unproject(mousePosition);
-			int circuitX = (int) (mousePosition.x / 64);
-			int circuitY = (int) (mousePosition.y / 64);
+			int circuitX = (int) ((mousePosition.x + circuitCamera.x) / 64);
+			int circuitY = (int) ((mousePosition.y + circuitCamera.y) / 64);
 			boolean finished = input.update(circuitX, circuitY);
 			rend.renderCircuit(input.getCircuit(), inventory, circuitX, circuitY);
 			if(finished) 
@@ -92,6 +95,7 @@ public class Project8 extends ApplicationAdapter
 		} else
 		{
 			Gdx.gl.glClearColor(0, 0, 0, 1);
+			overInput.step();
 			rend.renderOverworld(world, inventory);
 			if(world.currentCircuit != null) 
 			{

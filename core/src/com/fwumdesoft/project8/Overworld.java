@@ -30,9 +30,12 @@ public class Overworld
 	Inventory inventory;
 	final int FIRE_SUPPRESSION_RANGE = 10;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.25;
-
-	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
+	private Overworld previous;
+	
+	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, boolean topLevel)
 	{
+		if(topLevel)
+			previous = new Overworld(app, size, circuits, inventory, false);
 		this.inventory = inventory;
 		// contains permanent tiles
 		map = new tiles[size][size];
@@ -157,8 +160,7 @@ public class Overworld
 		{
 			for(int x = 0; x < modifiers[y].length; x++)
 			{
-				//spread fire
-				if(modifiers[y][x] == mods.fire && Math.random() < 0.05)
+				if(modifiers[y][x] == mods.fire && Math.random() < 0.25)
 				{
 					int spreadX = (int)(Math.random() * 3) - 1;
 					int spreadY = (int)(Math.random() * 3) - 1;
@@ -194,6 +196,25 @@ public class Overworld
 				inventory.addComponent(CircuitComponent.randomComponent());
 
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Overworld getStateCopy()
+	{
+		previous.currentCircuit = currentCircuit;
+		deepCopy(map, previous.map);
+		deepCopy(modifiers, previous.modifiers);
+		previous.playerFace = new Point(playerFace);
+		previous.playerPos = new Point(playerPos);
+		previous.worldCircuits = (HashMap<Point, Circuit>)worldCircuits.clone();
+		return previous;
+	}
+	
+	public boolean equals(Overworld ow)
+	{
+		return ow != null && Arrays.deepEquals(map, ow.map) && 
+				Arrays.deepEquals(modifiers, previous.modifiers) && playerPos.equals(ow.playerPos) && 
+				playerFace.equals(ow.playerFace) && worldCircuits.equals(previous.worldCircuits);
 	}
 	
 	private void distributeCircuits()
@@ -238,11 +259,9 @@ public class Overworld
 	{
 		// The room faces the opposite direction of the door it is connected to
 		// 0 - left, 1 - top, 2 - right, 3 - bottom
-		door.facing = (door.facing + 2) % 4;
-		// Must be odd for door to be in middle of a wall
 		int x = door.x, y = door.y;
 		// Uses facing direction to determine top left coordinate of room
-		switch (door.facing)
+		switch ((door.facing + 2) % 4)
 		{
 		case 0:
 			y -= 2;
@@ -259,28 +278,9 @@ public class Overworld
 			x -= 2;
 			break;
 		}
-		// Sometimes wall will not generate to make larger connected rooms
-		if (Math.random() < 0.25 && !firstDoor)
-		{
-			switch (door.facing)
-			{
-			case 0:
-			case 2:
-				map[door.y + 1][door.x] = tiles.floor;
-				map[door.y][door.x] = tiles.floor;
-				map[door.y - 1][door.x] = tiles.floor;
-				break;
-			case 1:
-			case 3:
-				map[door.y][door.x + 1] = tiles.floor;
-				map[door.y][door.x] = tiles.floor;
-				map[door.y][door.x - 1] = tiles.floor;
-				break;
-			}
-		}
 		// randomly generates 1 more door (can overlap, but not with first door)
 		int position = (int) (Math.random() * 4);
-		while (position == door.facing)
+		while (position == (door.facing + 2) % 4)
 			position = (int) (Math.random() * 4);
 		int xOffset = 0;
 		int yOffset = 0;
@@ -303,7 +303,28 @@ public class Overworld
 		}
 		map[y + yOffset][x + xOffset] = tiles.door;
 		Door nextDoor = new Door(x + xOffset, y + yOffset, position);
-		modifiers[door.y][door.x] = (Math.random() < 0.2) ? mods.doorBroken : mods.none;
+		modifiers[y + yOffset][x + xOffset] = (Math.random() < 0.2)? mods.doorBroken : mods.none;
+		// Sometimes wall will not generate to make larger connected rooms
+		//Will only knock out wall of first door to ensure it is not opening into space
+		if (Math.random() < 0.25 && !firstDoor)
+		{
+			switch ((door.facing + 2) % 4)
+			{
+			case 0:
+			case 2:
+				map[door.y + 1][door.x] = tiles.floor;
+				map[door.y][door.x] = tiles.floor;
+				map[door.y - 1][door.x] = tiles.floor;
+				break;
+			case 1:
+			case 3:
+				map[door.y][door.x + 1] = tiles.floor;
+				map[door.y][door.x] = tiles.floor;
+				map[door.y][door.x - 1] = tiles.floor;
+				break;
+			}
+			System.out.println(map[door.y][door.x]);
+		}
 		// Fills in walls and floor
 		for (int i = x; i < x + 5; i++)
 		{
@@ -311,7 +332,7 @@ public class Overworld
 			{
 				if (i == x || i == x + 4 || j == y || j == y + 4)
 				{
-					if (map[j][i] != tiles.door && map[j][i] != tiles.floor)
+					if (map[j][i] == tiles.space)
 					{
 						map[j][i] = tiles.wall;
 					}
@@ -320,7 +341,7 @@ public class Overworld
 				else
 				{
 					map[j][i] = tiles.floor;
-					if(Math.random() < 0.005)
+					if(Math.random() < 0.05)
 						modifiers[j][i] = mods.fire;
 					else if(Math.random() < 0.1)
 						modifiers[j][i] = mods.componentPile;
@@ -332,6 +353,14 @@ public class Overworld
 			}
 		}
 		return nextDoor;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T> void deepCopy(T[][] original, T[][] target)
+	{
+		for(int i = 0; i < original.length; i++)
+			for(int j = 0; j < original[i].length; j++)
+				target[i][j] = original[i][j];
 	}
 
 	/**

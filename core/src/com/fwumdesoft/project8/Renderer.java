@@ -5,6 +5,7 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -24,6 +25,10 @@ public class Renderer
 	private SpriteBatch batch;
 	private ShapeRenderer shapes;
 	private BitmapFont font;
+	/**
+	 * The camera offset for the circuits
+	 */
+	private Vector2 circuitOffset;
 	/**
 	 * The number of pixels of the side of an overworld square
 	 */
@@ -46,14 +51,31 @@ public class Renderer
 	 */
 	private TextureRegion[][][][] wireTiles;
 	private TextureRegion unconnectedWire, openDoor, closedDoor;
+	/**
+	 * The frames in the fire animation
+	 */
 	private TextureRegion[] fire;
+	/**
+	 * The current frame in the fire animation
+	 */
 	private int fireFrame;
 	/**
 	 * If the class should draw the inventory </br>
 	 * Toggled by tab
 	 */
 	private boolean showInventory;
-
+	/**
+	 * The location of the circuit camera
+	 */
+	private Vector2 circuitCamera;
+	/**
+	 * The current animation frame for the overworld
+	 */
+	private float currentFrame;
+	/**
+	 * The game frames per one animation
+	 */
+	private final int FRAMES_PER_ANIMATION = 15; 
 	/**
 	 * Create a Renderer
 	 * 
@@ -74,7 +96,7 @@ public class Renderer
 	 *            The height of the screen
 	 */
 	public Renderer(SpriteBatch batch, BitmapFont font, AssetManager assets, int cellSize, int componentSize,
-			int screenWidth, int screenHeight)
+			int screenWidth, int screenHeight, Vector2 camera)
 	{
 		// Initialize member variables
 		this.batch = batch;
@@ -100,6 +122,7 @@ public class Renderer
 		this.battery = assets.get("battery.png", Texture.class);
 		this.cursor = assets.get("cursor.png", Texture.class);
 		this.blank = assets.get("blank.png", Texture.class);
+		this.circuitOffset = new Vector2();
 		// Create wire tileset
 		Texture wires = assets.get("wires.png", Texture.class);
 		wireTiles = new TextureRegion[2][2][2][2];
@@ -119,6 +142,7 @@ public class Renderer
 		closedDoor = new TextureRegion(door, 0, 0, 32, 32);
 		openDoor = new TextureRegion(door, 128, 0, 32, 32);
 		showInventory = true;
+		circuitCamera = camera;
 	}
 
 	/**
@@ -133,6 +157,7 @@ public class Renderer
 	 */
 	public void renderOverworld(Overworld world, Inventory inventory)
 	{
+		currentFrame += FRAMES_PER_ANIMATION / 4f;
 		this.fireFrame = (fireFrame + 1) % 60;
 		int fireFrame = this.fireFrame / 15;
 		Point player = world.playerPos;
@@ -196,13 +221,15 @@ public class Renderer
 
 	public void renderCircuit(CircuitComponent[][] circuit, Inventory inventory, int cursorX, int cursorY)
 	{
+		shapes.begin(ShapeRenderer.ShapeType.Filled);
+		shapes.setColor(Color.WHITE);
+		shapes.rect(-circuitCamera.x, -circuitCamera.y, circuit[0].length * componentSize, circuit.length * componentSize);
 		if (showInventory)
 		{
-			shapes.begin(ShapeRenderer.ShapeType.Filled);
-			shapes.setColor(0, 0, 0, 1);
+			shapes.setColor(Color.BLACK);
 			shapes.rect(464, 0, 640, 96);
-			shapes.end();
 		}
+		shapes.end();
 		batch.begin();
 		for (int y = 0; y < circuit.length; y++)
 		{
@@ -213,8 +240,8 @@ public class Renderer
 				left = x > 0 && circuit[y][x - 1] != null;
 				right = x < circuit[y].length - 1 && circuit[y][x + 1] != null;
 				top = y < circuit.length - 1 && circuit[y + 1][x] != null;
-				int drawX = x * componentSize;
-				int drawY = y * componentSize;
+				int drawX = x * componentSize - (int)circuitCamera.x;
+				int drawY = y * componentSize - (int)circuitCamera.y;
 				CircuitComponent comp = circuit[y][x];
 				if (comp == null)
 				{
@@ -273,7 +300,7 @@ public class Renderer
 				font.draw(batch, outValue, 465, 90);
 			}
 		}
-		batch.draw(cursor, cursorX * componentSize, cursorY * componentSize);
+		batch.draw(cursor, cursorX * componentSize - circuitCamera.x, cursorY * componentSize - circuitCamera.y);
 		batch.end();
 		renderInventory(inventory);
 	}
@@ -298,6 +325,11 @@ public class Renderer
 		batch.draw(battery, 0, 64, 32, 32);
 		drawInventoryList(inventory.batteries, "", 64);
 		batch.end();
+	}
+
+	public void resetCircuitCamera()
+	{
+		circuitOffset.set(0, 0);
 	}
 
 	private int[] circuitAccumulator = new int[9];

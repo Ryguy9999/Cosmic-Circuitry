@@ -1,10 +1,13 @@
 package com.fwumdesoft.project8;
 
 import java.util.List;
+
 import javax.swing.JOptionPane;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.Vector2;
 import com.fwumdesoft.project8.CircuitComponent.Type;
 
 /**
@@ -32,6 +35,10 @@ public class CircuitInput
 	 * The inventory of the player
 	 */
 	private Inventory inventory;
+	/**
+	 * The location of the circuit camera
+	 */
+	private Vector2 camera;
 
 	/**
 	 * Create a new circuit designer
@@ -43,12 +50,13 @@ public class CircuitInput
 	 * @param height
 	 *            The height of the circuit
 	 */
-	public CircuitInput(Circuit circuit, AssetManager assets, Inventory inventory)
+	public CircuitInput(Circuit circuit, AssetManager assets, Inventory inventory, Vector2 camera)
 	{
 		this.circuit = circuit;
 		this.inventory = inventory;
 		this.editing = false;
 		this.assets = assets;
+		this.camera = camera;
 	}
 
 	/**
@@ -64,6 +72,16 @@ public class CircuitInput
 	{
 		if (Gdx.input.isKeyJustPressed(Keys.END))
 			editing = !editing;
+		if(Gdx.input.isKeyPressed(Keys.LEFT))
+			camera.x -= 2;
+		if(Gdx.input.isKeyPressed(Keys.RIGHT))
+			camera.x += 2;
+		if(Gdx.input.isKeyPressed(Keys.UP))
+			camera.y += 2;
+		if(Gdx.input.isKeyPressed(Keys.DOWN))
+			camera.y -= 2;
+		if(Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT))
+			camera.set(0, 0);
 		if(Gdx.input.isKeyJustPressed(Keys.ENTER) && circuit.isSolved())
 			return true;
 		if (editing)
