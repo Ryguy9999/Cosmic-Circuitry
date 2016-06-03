@@ -6,7 +6,7 @@ public class Circuit implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	public CircuitComponent[][] grid;
-	public String name;
+	public transient String name;
 	public int goalLamps;
 	
 	public Circuit(Circuit original)
