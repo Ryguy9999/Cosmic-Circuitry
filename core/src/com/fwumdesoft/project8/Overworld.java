@@ -180,7 +180,7 @@ public class Overworld
 						int j = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + y - FIRE_SUPPRESSION_RANGE;
 						int i = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + x - FIRE_SUPPRESSION_RANGE;
 						if(modifiers[j][i] == mods.fire)
-							modifiers[j][i] = null;
+							modifiers[j][i] = null; 
 					}
 			}
 		}
@@ -370,7 +370,6 @@ public class Overworld
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private <T> void deepCopy(T[][] original, T[][] target)
 	{
 		for(int i = 0; i < original.length; i++)
