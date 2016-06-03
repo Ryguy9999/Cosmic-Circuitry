@@ -12,12 +12,12 @@ public class Overworld
 {
 	public static enum tiles
 	{
-		space, wall, door, floor
+		space, wall, door, floor, fireSuppression
 	}
 
 	public static enum mods
 	{
-		none, doorClosed, doorBroken, fireSuppression, destroyedWall, componentPile, fire, vacuum
+		none, doorClosed, broken, destroyedWall, componentPile, fire, vacuum
 	}
 
 	Project8 app;
@@ -29,7 +29,8 @@ public class Overworld
 	Circuit currentCircuit;
 	Inventory inventory;
 	final int FIRE_SUPPRESSION_RANGE = 10;
-	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.25;
+	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
+	final double FIRE_SPREAD_CHANCE = 0.15;
 	private Overworld previous;
 	
 	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, boolean topLevel)
@@ -68,6 +69,7 @@ public class Overworld
 
 		this.circuits = circuits;
 		removeStrayDoors();
+		spawnFireSuppression();
 		distributeCircuits();
 	}
 
@@ -127,11 +129,9 @@ public class Overworld
 		Point lookAt = new Point(playerPos.x + playerFace.x, playerPos.y + playerFace.y);
 		switch(modifiers[lookAt.y][lookAt.x])
 		{
-		case doorBroken:
-			modifiers[lookAt.y][lookAt.x] = mods.none;
-			break;
-		case fireSuppression:
-			//TODO: Add broken, fixable fire suppression
+		case broken:
+			if(map[lookAt.y][lookAt.x] == tiles.door || map[lookAt.y][lookAt.x] == tiles.fireSuppression)
+				modifiers[lookAt.y][lookAt.x] = mods.broken;
 			break;
 		default:
 			break;
@@ -144,11 +144,8 @@ public class Overworld
 		switch(modifiers[lookAt.y][lookAt.x])
 		{
 		case none:
-			if(map[lookAt.y][lookAt.x] == tiles.door)
-				modifiers[lookAt.y][lookAt.x] = mods.doorBroken;
-			break;
-		case fireSuppression:
-			//TODO: Add broken, fixable fire suppression
+			if(map[lookAt.y][lookAt.x] == tiles.door || map[lookAt.y][lookAt.x] == tiles.fireSuppression)
+				modifiers[lookAt.y][lookAt.x] = mods.broken;
 			break;
 		default:
 			break;
@@ -160,19 +157,24 @@ public class Overworld
 		{
 			for(int x = 0; x < modifiers[y].length; x++)
 			{
-				if(modifiers[y][x] == mods.fire && Math.random() < 0.25)
+				if(modifiers[y][x] == mods.fire)
 				{
-					int spreadX = (int)(Math.random() * 3) - 1;
-					int spreadY = (int)(Math.random() * 3) - 1;
-					if(map[y + spreadY][x + spreadX] == tiles.floor)
-						modifiers[y + spreadY][x + spreadX] = mods.fire;
-					else if(map[y + spreadY][x + spreadX] == tiles.door && Math.abs(spreadY)+Math.abs(spreadX) <= 1 &&
-							Math.random() < 0.2)
-						modifiers[y + spreadY*2][x + spreadX*2] = mods.fire;
+					if(Math.random() < FIRE_SPREAD_CHANCE)
+					{
+						int spreadX = (int)(Math.random() * 3) - 1;
+						int spreadY = (int)(Math.random() * 3) - 1;
+						if(map[y + spreadY][x + spreadX] == tiles.floor)
+							modifiers[y + spreadY][x + spreadX] = mods.fire;
+						else if(map[y + spreadY][x + spreadX] == tiles.door && Math.abs(spreadY)+Math.abs(spreadX) <= 1 &&
+								Math.random() < FIRE_SPREAD_CHANCE / 3 * 3)
+							modifiers[y + spreadY*2][x + spreadX*2] = mods.fire;
+					}
+					else if(Math.random() < FIRE_SPREAD_CHANCE / 6)
+						modifiers[y][x] = mods.none;
 				}
 				
 				//Fire suppression
-				if(modifiers[y][x]== mods.fireSuppression)
+				if(map[y][x] == tiles.fireSuppression)
 					for(int c = 0; c < Math.pow(FIRE_SUPPRESSION_RANGE*2+1, 2) * FIRE_SUPPRESSION_EFFECTIVENESS; c++)
 					{
 						int j = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + y - FIRE_SUPPRESSION_RANGE;
@@ -227,11 +229,11 @@ public class Overworld
 			for(int x = 0; x < modifiers[y].length; x++)
 				switch(modifiers[y][x])
 				{
-				case doorBroken:
-					worldCircuits.put(new Point(x, y), new Circuit(getRandom(doorCircuits)));
-					break;
-				case fireSuppression:
-					//TODO: Fire suppression circuits
+				case broken:
+					if(map[y][x] == tiles.door)
+						worldCircuits.put(new Point(x, y), new Circuit(getRandom(doorCircuits)));
+					else if(map[y][x] == tiles.fireSuppression)
+						worldCircuits.put(new Point(x, y), new Circuit(getRandom(doorCircuits)));//TODO: fire suppression circuits
 					break;
 				case none:
 					//TODO: Unbroken doors
@@ -303,7 +305,7 @@ public class Overworld
 		}
 		map[y + yOffset][x + xOffset] = tiles.door;
 		Door nextDoor = new Door(x + xOffset, y + yOffset, position);
-		modifiers[y + yOffset][x + xOffset] = (Math.random() < 0.2)? mods.doorBroken : mods.none;
+		modifiers[y + yOffset][x + xOffset] = (Math.random() < 0.2)? mods.broken : mods.none;
 		// Sometimes wall will not generate to make larger connected rooms
 		//Will only knock out wall of first door to ensure it is not opening into space
 		if (Math.random() < 0.25 && !firstDoor)
@@ -341,18 +343,31 @@ public class Overworld
 				else
 				{
 					map[j][i] = tiles.floor;
-					if(Math.random() < 0.05)
+					if(Math.random() < 0.5)
 						modifiers[j][i] = mods.fire;
 					else if(Math.random() < 0.1)
 						modifiers[j][i] = mods.componentPile;
-					else if(Math.random() < 0.007)
-						modifiers[j][i] = mods.fireSuppression;
 					else
 						modifiers[j][i] = mods.none;
 				}
 			}
 		}
 		return nextDoor;
+	}
+	
+	private void spawnFireSuppression()
+	{
+		for(int y = 0; y < map.length; y += FIRE_SUPPRESSION_RANGE * 2)
+		{
+			for(int x = 0; x < map[y].length; x++)
+			{
+				if(map[y][x] == tiles.floor)// && Math.random() < 0.25)
+				{
+					map[y][x] = tiles.fireSuppression;
+					x += (Math.random() * FIRE_SUPPRESSION_RANGE) + (FIRE_SUPPRESSION_RANGE);
+				}
+			}
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -404,7 +419,7 @@ public class Overworld
 	 */
 	public boolean isOpen(int x, int y)
 	{
-		return (map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.doorBroken)) &&
+		return (map[y][x] == tiles.floor || map[y][x] == tiles.fireSuppression || (map[y][x] == tiles.door && modifiers[y][x] != mods.broken)) &&
 				modifiers[y][x] != mods.fire;
 	}
 
