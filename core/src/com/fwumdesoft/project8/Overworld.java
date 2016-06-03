@@ -159,6 +159,7 @@ public class Overworld
 	}
 	
 	public void turn() {
+		//TODO Remove before finished, for now: NO CLIP
 		if(Gdx.input.isKeyPressed(Keys.END))
 			noClip = !noClip;
 		
@@ -166,16 +167,17 @@ public class Overworld
 		{
 			for(int x = 0; x < modifiers[y].length; x++)
 			{
+				//Spread fire
 				if(modifiers[y][x] == mods.fire)
 				{
 					if(Math.random() < FIRE_SPREAD_CHANCE)
 					{
 						int spreadX = (int)(Math.random() * 3) - 1;
 						int spreadY = (int)(Math.random() * 3) - 1;
-						if(map[y + spreadY][x + spreadX] == tiles.floor)
+						if(map[y + spreadY][x + spreadX] == tiles.floor)//Regular spread
 							modifiers[y + spreadY][x + spreadX] = mods.fire;
 						else if(map[y + spreadY][x + spreadX] == tiles.door && Math.abs(spreadY)+Math.abs(spreadX) <= 1 &&
-								Math.random() < FIRE_SPREAD_CHANCE / 3 * 3)
+								Math.random() < 0.2)//Spread through door
 							modifiers[y + spreadY*2][x + spreadX*2] = mods.fire;
 					}
 					else if(Math.random() < FIRE_SPREAD_CHANCE / 6)
@@ -183,7 +185,7 @@ public class Overworld
 				}
 				
 				//Fire suppression
-				if(map[y][x] == tiles.fireSuppression)
+				if(map[y][x] == tiles.fireSuppression && modifiers[y][x] != mods.broken)
 					for(int c = 0; c < Math.pow(FIRE_SUPPRESSION_RANGE*2+1, 2) * FIRE_SUPPRESSION_EFFECTIVENESS; c++)
 					{
 						int j = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + y - FIRE_SUPPRESSION_RANGE;
@@ -371,7 +373,7 @@ public class Overworld
 				else
 				{
 					map[j][i] = tiles.floor;
-					if(Math.random() < 0.5)
+					if(Math.random() < 0.05)
 						modifiers[j][i] = mods.fire;
 					else if(Math.random() < 0.1)
 						modifiers[j][i] = mods.componentPile;
@@ -389,22 +391,23 @@ public class Overworld
 		{
 			int y = (int)(Math.random() * map.length);
 			int x = (int)(Math.random() * map[y].length);
-			boolean success = false;
 			
-			while(!success)
+			while(map[y][x] != tiles.floor)
 			{
 				y = (int)(Math.random() * map.length);
 				x = (int)(Math.random() * map[y].length);
-				
-				if(map[y][x] == tiles.floor)
-					success = true;
 			}
 			
-			while(map[y][x] != tiles.wall)
+			while(map[y][x] == tiles.floor)
 				y++;
 			
-			map[y][x] = tiles.terminal;
-			modifiers[y][x] = mods.broken;
+			if(map[y][x] == tiles.wall)
+			{
+				map[y][x] = tiles.terminal;
+				modifiers[y][x] = mods.broken;
+			}
+			else
+				t--;
 		}
 	}
 	
@@ -417,6 +420,7 @@ public class Overworld
 				if(map[y][x] == tiles.floor)// && Math.random() < 0.25)
 				{
 					map[y][x] = tiles.fireSuppression;
+					modifiers[y][x] = mods.broken;
 					x += (Math.random() * FIRE_SUPPRESSION_RANGE) + (FIRE_SUPPRESSION_RANGE);
 				}
 			}
