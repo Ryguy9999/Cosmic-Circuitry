@@ -202,13 +202,13 @@ public class Renderer
 	public void renderCircuit(CircuitComponent[][] circuit, Inventory inventory, int cursorX, int cursorY)
 	{
 		shapes.begin(ShapeRenderer.ShapeType.Filled);
+		shapes.setColor(Color.WHITE);
+		shapes.rect(-circuitCamera.x, -circuitCamera.y, circuit[0].length * componentSize, circuit.length * componentSize);
 		if (showInventory)
 		{
 			shapes.setColor(Color.BLACK);
 			shapes.rect(464, 0, 640, 96);
 		}
-		shapes.setColor(Color.WHITE);
-		shapes.rect(-circuitCamera.x, -circuitCamera.y, circuit[0].length * componentSize, circuit.length * componentSize);
 		shapes.end();
 		batch.begin();
 		for (int y = 0; y < circuit.length; y++)
