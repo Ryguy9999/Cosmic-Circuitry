@@ -154,7 +154,7 @@ public class Overworld
 		{
 			for(int x = 0; x < modifiers[y].length; x++)
 			{
-				if(modifiers[y][x] == mods.fire && Math.random() < 0.05)
+				if(modifiers[y][x] == mods.fire && Math.random() < 0.25)
 				{
 					int spreadX = (int)(Math.random() * 3) - 1;
 					int spreadY = (int)(Math.random() * 3) - 1;
@@ -260,7 +260,7 @@ public class Overworld
 		}
 		map[y + yOffset][x + xOffset] = tiles.door;
 		Door nextDoor = new Door(x + xOffset, y + yOffset, position);
-		modifiers[y + yOffset][x + xOffset] = (Math.random() < 0.0)? mods.doorBroken : mods.none;
+		modifiers[y + yOffset][x + xOffset] = (Math.random() < 0.2)? mods.doorBroken : mods.none;
 		// Sometimes wall will not generate to make larger connected rooms
 		//Will only knock out wall of first door to ensure it is not opening into space
 		if (Math.random() < 0.25 && !firstDoor)
@@ -298,7 +298,7 @@ public class Overworld
 				else
 				{
 					map[j][i] = tiles.floor;
-					if(Math.random() < 0.005)
+					if(Math.random() < 0.05)
 						modifiers[j][i] = mods.fire;
 					else if(Math.random() < 0.1)
 						modifiers[j][i] = mods.componentPile;
