@@ -74,6 +74,14 @@ public class CircuitInput
 			editing = !editing;
 		if(Gdx.input.isKeyPressed(Keys.LEFT))
 			camera.x -= 2;
+		if(Gdx.input.isKeyPressed(Keys.RIGHT))
+			camera.x += 2;
+		if(Gdx.input.isKeyPressed(Keys.UP))
+			camera.y += 2;
+		if(Gdx.input.isKeyPressed(Keys.DOWN))
+			camera.y -= 2;
+		if(Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT))
+			camera.set(0, 0);
 		if(Gdx.input.isKeyJustPressed(Keys.ENTER) && circuit.isSolved())
 			return true;
 		if (editing)
