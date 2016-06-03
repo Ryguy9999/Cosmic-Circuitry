@@ -35,7 +35,7 @@ public class Renderer
 	 */
 	private int cellSize;
 	/**
-	 * The number of pixels of the side of a circuit component
+	 * The number of pixels of the side of a circuit.grid component
 	 */
 	private int componentSize;
 	/**
@@ -66,7 +66,7 @@ public class Renderer
 	 */
 	private boolean showInventory;
 	/**
-	 * The location of the circuit camera
+	 * The location of the circuit.grid camera
 	 */
 	private Vector2 circuitCamera;
 	/**
@@ -91,7 +91,7 @@ public class Renderer
 	 * @param cellSize
 	 *            The size of an overworld square
 	 * @param componentSize
-	 *            The size of a circuit component
+	 *            The size of a circuit.grid component
 	 * @param screenWidth
 	 *            The width of the screen
 	 * @param screenHeight
@@ -226,11 +226,12 @@ public class Renderer
 		renderInventory(inventory);
 	}
 
-	public void renderCircuit(CircuitComponent[][] circuit, int requiredLamps, Inventory inventory, int cursorX, int cursorY)
+	public void renderCircuit(Circuit circuit, Inventory inventory, int cursorX, int cursorY)
 	{
+		font.setColor(Color.WHITE);
 		shapes.begin(ShapeRenderer.ShapeType.Filled);
 		shapes.setColor(Color.WHITE);
-		shapes.rect(-circuitCamera.x, -circuitCamera.y, circuit[0].length * componentSize, circuit.length * componentSize);
+		shapes.rect(-circuitCamera.x, -circuitCamera.y, circuit.grid[0].length * componentSize, circuit.grid.length * componentSize);
 		if (showInventory)
 		{
 			shapes.setColor(Color.BLACK);
@@ -238,18 +239,18 @@ public class Renderer
 		}
 		shapes.end();
 		batch.begin();
-		for (int y = 0; y < circuit.length; y++)
+		for (int y = 0; y < circuit.grid.length; y++)
 		{
-			for (int x = 0; x < circuit[y].length; x++)
+			for (int x = 0; x < circuit.grid[y].length; x++)
 			{
 				boolean top, left, right, bottom;
-				bottom = y > 0 && circuit[y - 1][x] != null;
-				left = x > 0 && circuit[y][x - 1] != null;
-				right = x < circuit[y].length - 1 && circuit[y][x + 1] != null;
-				top = y < circuit.length - 1 && circuit[y + 1][x] != null;
+				bottom = y > 0 && circuit.grid[y - 1][x] != null;
+				left = x > 0 && circuit.grid[y][x - 1] != null;
+				right = x < circuit.grid[y].length - 1 && circuit.grid[y][x + 1] != null;
+				top = y < circuit.grid.length - 1 && circuit.grid[y + 1][x] != null;
 				int drawX = x * componentSize - (int)circuitCamera.x;
 				int drawY = y * componentSize - (int)circuitCamera.y;
-				CircuitComponent comp = circuit[y][x];
+				CircuitComponent comp = circuit.grid[y][x];
 				if (comp == null)
 				{
 					continue;
@@ -281,10 +282,10 @@ public class Renderer
 				}
 			}
 		}
-		if (showInventory && cursorX >= 0 && cursorY >= 0 && cursorY < circuit.length
-				&& cursorX < circuit[cursorY].length)
+		if (showInventory && cursorX >= 0 && cursorY >= 0 && cursorY < circuit.grid.length
+				&& cursorX < circuit.grid[cursorY].length)
 		{
-			CircuitComponent comp = circuit[cursorY][cursorX];
+			CircuitComponent comp = circuit.grid[cursorY][cursorX];
 			if (comp != null && comp.type != null)
 			{
 				String outValue = "";
@@ -312,10 +313,20 @@ public class Renderer
 		renderInventory(inventory);
 		shapes.begin(ShapeType.Filled);
 		shapes.setColor(Color.BLACK);
-		shapes.rect(0, Gdx.graphics.getHeight() - 32, 128, 32);
+		shapes.rect(0, Gdx.graphics.getHeight() - 32, 640, 32);
 		shapes.end();
 		batch.begin();
-		font.draw(batch, "Lamps needed: " + requiredLamps, 0, Gdx.graphics.getHeight() - 12);
+		font.draw(batch, "Lamps needed: " + circuit.goalLamps, 0, Gdx.graphics.getHeight() - 12);
+		if(circuit.isSolved()) 
+		{
+			font.setColor(Color.GREEN);
+			font.draw(batch, "Solved", Gdx.graphics.getWidth() - 64, Gdx.graphics.getHeight() - 12);
+		}
+		else
+		{
+			font.setColor(Color.RED);
+			font.draw(batch, "In Progress", Gdx.graphics.getWidth() - 96, Gdx.graphics.getHeight() - 12);
+		}
 		batch.end();
 	}
 
