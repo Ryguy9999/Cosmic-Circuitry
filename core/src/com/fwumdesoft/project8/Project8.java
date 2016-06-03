@@ -24,16 +24,16 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 public class Project8 extends ApplicationAdapter
 {
-	Renderer rend;
-	Overworld world;
-	Inventory inventory;
-	CircuitInput input;
-	Viewport viewport;
-	Vector2 mousePosition;
-	AssetManager assets;
-	OverworldInput overInput;
-	Vector2 circuitCamera;
-	SpriteBatch batch;
+	private Renderer rend;
+	private Overworld world;
+	private Inventory inventory;
+	private CircuitInput input;
+	private Viewport viewport;
+	private Vector2 mousePosition;
+	private AssetManager assets;
+	private OverworldInput overInput;
+	private Vector2 circuitCamera;
+	private SpriteBatch batch;
 	
 	@Override
 	public void create()
