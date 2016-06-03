@@ -71,11 +71,12 @@ public class Renderer
 	/**
 	 * The current animation frame for the overworld
 	 */
-	private float currentFrame;
+	//TODO: Make a decision about animation
+	//private float currentFrame;
 	/**
 	 * The game frames per one animation
 	 */
-	private final int FRAMES_PER_ANIMATION = 15; 
+	//private final int FRAMES_PER_ANIMATION = 15; 
 	/**
 	 * Create a Renderer
 	 * 
@@ -157,7 +158,7 @@ public class Renderer
 	 */
 	public void renderOverworld(Overworld world, Inventory inventory)
 	{
-		currentFrame += FRAMES_PER_ANIMATION / 4f;
+		//currentFrame += FRAMES_PER_ANIMATION / 4f;
 		this.fireFrame = (fireFrame + 1) % 60;
 		int fireFrame = this.fireFrame / 15;
 		Point player = world.playerPos;
