@@ -130,6 +130,8 @@ public class CircuitInput
 
 	private void interact(int cursorX, int cursorY)
 	{
+		if(cursorY < 0 || cursorX < 0 || cursorY >= circuit.grid.length || cursorX >= circuit.grid[cursorY].length || circuit.grid[cursorY][cursorX] == null)
+			return;
 		if (Gdx.input.isKeyJustPressed(Keys.SPACE))
 		{
 			if (!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0
