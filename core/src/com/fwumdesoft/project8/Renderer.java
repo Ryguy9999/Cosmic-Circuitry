@@ -107,7 +107,7 @@ public class Renderer
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
 		// Retrieve image assets
-		this.player = assets.get("player.png", Texture.class);
+		this.player = assets.get("player_idle.png", Texture.class);
 		this.wall = assets.get("station_wall.png", Texture.class);
 		this.floor = assets.get("station_floor.png", Texture.class);
 		Texture fire = assets.get("fire.png", Texture.class);
