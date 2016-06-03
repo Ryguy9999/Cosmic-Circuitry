@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.utils.Array;
@@ -131,7 +132,7 @@ public class Overworld
 		{
 		case broken:
 			if(map[lookAt.y][lookAt.x] == tiles.door || map[lookAt.y][lookAt.x] == tiles.fireSuppression)
-				modifiers[lookAt.y][lookAt.x] = mods.broken;
+				modifiers[lookAt.y][lookAt.x] = mods.none;
 			break;
 		default:
 			break;
@@ -222,26 +223,37 @@ public class Overworld
 	private void distributeCircuits()
 	{
 		List<Circuit> circuits = Arrays.asList(this.circuits.toArray());
-		List<Circuit> doorCircuits = circuits.stream()
-				.filter(circuit -> circuit.name.endsWith("_door"))
-				.collect(Collectors.toList());
+		Function<String, List<Circuit>> getCircuits = suffix -> circuits.stream().filter(circuit -> circuit.name.endsWith(suffix)).collect(Collectors.toList());
+		List<Circuit> doorCircuits = getCircuits.apply("door");
+		System.out.println(doorCircuits);
+		List<Circuit> solvedDoorCircuits = getCircuits.apply("door_solved");
+		System.out.println(solvedDoorCircuits);
+		List<Circuit> solvedFireSuppression = getCircuits.apply("fire_solved");
+
 		for(int y = 0; y < modifiers.length; y++)
 			for(int x = 0; x < modifiers[y].length; x++)
+			{
+				Circuit c = null;
 				switch(modifiers[y][x])
 				{
 				case broken:
 					if(map[y][x] == tiles.door)
-						worldCircuits.put(new Point(x, y), new Circuit(getRandom(doorCircuits)));
+						c = new Circuit(getRandom(doorCircuits));
 					else if(map[y][x] == tiles.fireSuppression)
-						worldCircuits.put(new Point(x, y), new Circuit(getRandom(doorCircuits)));//TODO: fire suppression circuits
+						c = new Circuit(getRandom(doorCircuits));//TODO: fire suppression circuits
 					break;
 				case none:
-					//TODO: Unbroken doors
-					//^ Actually this is every other type of tile
+					if(map[y][x] == tiles.door)
+						c = new Circuit(getRandom(solvedDoorCircuits));
+					else if(map[y][x] == tiles.fireSuppression)
+						c = new Circuit(getRandom(solvedFireSuppression));
 					break;
 				default:
 					break;
 				}
+				if(c != null)
+					worldCircuits.put(new Point(x, y), c);
+			}
 	}
 	
 	private <T> T getRandom(List<T> list)
