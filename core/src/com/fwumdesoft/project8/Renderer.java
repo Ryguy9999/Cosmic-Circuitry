@@ -5,6 +5,7 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -200,13 +201,15 @@ public class Renderer
 
 	public void renderCircuit(CircuitComponent[][] circuit, Inventory inventory, int cursorX, int cursorY)
 	{
+		shapes.begin(ShapeRenderer.ShapeType.Filled);
 		if (showInventory)
 		{
-			shapes.begin(ShapeRenderer.ShapeType.Filled);
-			shapes.setColor(0, 0, 0, 1);
+			shapes.setColor(Color.BLACK);
 			shapes.rect(464, 0, 640, 96);
-			shapes.end();
 		}
+		shapes.setColor(Color.WHITE);
+		shapes.rect(-circuitCamera.x, -circuitCamera.y, circuit[0].length * componentSize, circuit.length * componentSize);
+		shapes.end();
 		batch.begin();
 		for (int y = 0; y < circuit.length; y++)
 		{

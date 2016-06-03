@@ -75,7 +75,7 @@ public class Project8 extends ApplicationAdapter
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (isCircuit)
 		{
-			Gdx.gl.glClearColor(1, 1, 1, 1);
+			Gdx.gl.glClearColor(0.9f, 0.9f, 0.9f, 1);
 			mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
 			viewport.unproject(mousePosition);
 			int circuitX = (int) ((mousePosition.x + circuitCamera.x) / 64);
