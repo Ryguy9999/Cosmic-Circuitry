@@ -83,11 +83,29 @@ public class CircuitComponent implements Serializable
 	}
 	
 	/**
+	 * A copy constructor
+	 * @param comp The original to copy
+	 */
+	public CircuitComponent(CircuitComponent comp)
+	{
+		isLamp = comp.isLamp;
+		isActive = comp.isActive;
+		isChangeable = comp.isChangeable;
+		type = comp.type;
+		voltageDif = comp.voltageDif;
+		current = comp.current;
+		resistance = comp.current;
+		targetCurrent = comp.targetCurrent;
+		targetMargin = comp.targetMargin;
+	}
+	
+	/**
 	 * @return A new random component (typically from bags)
 	 */
 	public static CircuitComponent randomComponent()
 	{
-		CircuitComponent comp = new CircuitComponent(null);
+		Type t = null;
+		CircuitComponent comp = new CircuitComponent(t);
 		switch((int)(Math.random()*3))
 		{
 		case 0:
@@ -111,7 +129,8 @@ public class CircuitComponent implements Serializable
 	 */
 	public static CircuitComponent blank()
 	{
-		CircuitComponent comp = new CircuitComponent(null);
+		Type t = null;
+		CircuitComponent comp = new CircuitComponent(t);
 		comp.isChangeable = true;
 		return comp;
 	}

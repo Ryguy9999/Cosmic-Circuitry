@@ -32,7 +32,10 @@ public class Project8 extends ApplicationAdapter
 	CircuitInput input;
 	Viewport viewport;
 	Vector2 mousePosition;
-
+	AssetManager assets;
+	OverworldInput overInput;
+	Vector2 circuitCamera;
+	
 	@Override
 	public void create()
 	{
@@ -41,36 +44,28 @@ public class Project8 extends ApplicationAdapter
 		SpriteBatch batch = new SpriteBatch();
 		manualCleanup.add(batch);
 
-		List<FileHandle> assetsFiles = Arrays.asList(Gdx.files.internal(".").list());
-
-		AssetManager assets = new AssetManager();
-		assets.setLoader(Circuit.class, new CircuitIO(assets.getFileHandleResolver()));
-		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("png") || string.endsWith("jpg"))
-				.forEach(name -> assets.load(name, Texture.class));
-		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("circuit"))
-				.forEach(name -> assets.load(name, Circuit.class));
-		assets.finishLoading();
-		manualCleanup.add(assets);
-
+		loadAssets();
+		
 		inventory = new Inventory();
 		inventory.addComponent(CircuitComponent.battery());
 		inventory.addComponent(CircuitComponent.resistor());
 
-		world = new Overworld(1000, assets.getAll(Circuit.class, new Array<>()), inventory);
-		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480);
+		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory);
+		circuitCamera = new Vector2();
+		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480, circuitCamera);
 
 		Camera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.x = Gdx.graphics.getWidth() / 2;
 		camera.position.y = Gdx.graphics.getHeight() / 2;
 		viewport = new FitViewport(640, 480, camera);
 
-		Gdx.input.setInputProcessor(new OverworldInput(world));
+		Gdx.input.setInputProcessor(overInput = new OverworldInput(this, world));
 
-		input = new CircuitInput(new Circuit(new CircuitComponent[10][5], 0), assets, inventory);
+		input = new CircuitInput(new Circuit(new CircuitComponent[10][20], 0), assets, inventory, circuitCamera);
 		mousePosition = new Vector2();
 	}
 
-	private boolean isCircuit = true;
+	public boolean isCircuit = false;
 
 	@Override
 	public void render()
@@ -80,16 +75,27 @@ public class Project8 extends ApplicationAdapter
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (isCircuit)
 		{
-			Gdx.gl.glClearColor(1, 1, 1, 1);
+			Gdx.gl.glClearColor(0.9f, 0.9f, 0.9f, 1);
 			mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
 			viewport.unproject(mousePosition);
-			int circuitX = (int) (mousePosition.x / 64);
-			int circuitY = (int) (mousePosition.y / 64);
-			input.update(circuitX, circuitY);
+			int circuitX = (int) ((mousePosition.x + circuitCamera.x) / 64);
+			int circuitY = (int) ((mousePosition.y + circuitCamera.y) / 64);
+			boolean finished = input.update(circuitX, circuitY);
 			rend.renderCircuit(input.getCircuit(), inventory, circuitX, circuitY);
+			if(finished) 
+			{
+				world.circuitSuccess();
+				isCircuit = false;
+			}
+			if(Gdx.input.isKeyJustPressed(Keys.ESCAPE))
+			{
+				world.circuitFail();
+				isCircuit = false;
+			}
 		} else
 		{
 			Gdx.gl.glClearColor(0, 0, 0, 1);
+			overInput.step();
 			rend.renderOverworld(world, inventory);
 			if(world.currentCircuit != null) 
 			{
@@ -98,6 +104,44 @@ public class Project8 extends ApplicationAdapter
 				world.currentCircuit = null;
 			}
 		}
+	}
+	
+	/**
+	 * Use to load or refresh game assets
+	 */
+	public void loadAssets()
+	{
+		if(assets != null)
+		{
+			assets.dispose();
+			manualCleanup.remove(assets);
+		}
+		assets = new AssetManager();
+		assets.setLoader(Circuit.class, new CircuitIO(assets.getFileHandleResolver()));
+		List<FileHandle> assetsFiles = Arrays.asList(Gdx.files.internal(".").list());
+		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("png") || string.endsWith("jpg"))
+				.forEach(name -> assets.load(name, Texture.class));
+		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("circuit"))
+				.forEach(name -> assets.load(name, Circuit.class));
+		assets.finishLoading();
+		manualCleanup.add(assets);
+	}
+	
+	/**
+	 * Call when the game should be restarted
+	 */
+	public void restart()
+	{
+		diposeAssets();
+		create();
+	}
+	
+	/**
+	 * Call when things should be disposed but the application should not end
+	 */
+	public void diposeAssets()
+	{
+		manualCleanup.forEach(x -> x.dispose());
 	}
 
 	@Override
@@ -109,6 +153,6 @@ public class Project8 extends ApplicationAdapter
 	@Override
 	public void dispose()
 	{
-		manualCleanup.forEach(x -> x.dispose());
+		diposeAssets();
 	}
 }

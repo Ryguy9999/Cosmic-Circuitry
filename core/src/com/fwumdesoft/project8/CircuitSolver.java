@@ -117,7 +117,6 @@ public class CircuitSolver
 		for (Equation equation : system.equations)
 			equation.sort(branches);
 
-		System.out.println(system);//XXX
 		ArrayList<Double> result = system.solve();
 
 		// With the branch results (finally!) put the numbers into each branch's

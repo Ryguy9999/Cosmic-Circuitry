@@ -1,10 +1,13 @@
 package com.fwumdesoft.project8;
 
 import java.util.List;
+
 import javax.swing.JOptionPane;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.Vector2;
 import com.fwumdesoft.project8.CircuitComponent.Type;
 
 /**
@@ -32,6 +35,10 @@ public class CircuitInput
 	 * The inventory of the player
 	 */
 	private Inventory inventory;
+	/**
+	 * The location of the circuit camera
+	 */
+	private Vector2 camera;
 
 	/**
 	 * Create a new circuit designer
@@ -43,12 +50,13 @@ public class CircuitInput
 	 * @param height
 	 *            The height of the circuit
 	 */
-	public CircuitInput(Circuit circuit, AssetManager assets, Inventory inventory)
+	public CircuitInput(Circuit circuit, AssetManager assets, Inventory inventory, Vector2 camera)
 	{
 		this.circuit = circuit;
 		this.inventory = inventory;
 		this.editing = false;
 		this.assets = assets;
+		this.camera = camera;
 	}
 
 	/**
@@ -58,11 +66,24 @@ public class CircuitInput
 	 *            The square the mouse is hovering over
 	 * @param cursorY
 	 *            The square the mouse is hovering over
+	 * @return If the circuit has been completed
 	 */
-	public void update(int cursorX, int cursorY)
+	public boolean update(int cursorX, int cursorY)
 	{
 		if (Gdx.input.isKeyJustPressed(Keys.END))
 			editing = !editing;
+		if(Gdx.input.isKeyPressed(Keys.LEFT))
+			camera.x -= 2;
+		if(Gdx.input.isKeyPressed(Keys.RIGHT))
+			camera.x += 2;
+		if(Gdx.input.isKeyPressed(Keys.UP))
+			camera.y += 2;
+		if(Gdx.input.isKeyPressed(Keys.DOWN))
+			camera.y -= 2;
+		if(Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT))
+			camera.set(0, 0);
+		if(Gdx.input.isKeyJustPressed(Keys.ENTER) && circuit.isSolved())
+			return true;
 		if (editing)
 		{
 			edit(cursorX, cursorY);
@@ -70,6 +91,7 @@ public class CircuitInput
 		{
 			interact(cursorX, cursorY);
 		}
+		return false;
 	}
 
 	private void edit(int cursorX, int cursorY)
@@ -98,12 +120,6 @@ public class CircuitInput
 		{
 			putComponent(null, cursorX, cursorY);
 		}
-		if (Gdx.input.isKeyJustPressed(Keys.NUM_7))
-		{	
-			CircuitComponent r = CircuitComponent.resistor();
-			r.resistance = Double.MAX_VALUE;
-			circuit.grid[cursorY][cursorX] = r;
-		}
 		if (Gdx.input.isKeyJustPressed(Keys.L))
 		{
 			String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to load.");
@@ -114,12 +130,26 @@ public class CircuitInput
 		{
 			String circuitName = JOptionPane.showInputDialog("Enter the name of the circuit to save.");
 			circuitName += ".circuit";
+			circuit.name = circuitName.substring(0, circuitName.indexOf(".circuit"));
 			CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
+		}
+		if(Gdx.input.isKeyJustPressed(Keys.N)) 
+		{
+			String input = JOptionPane.showInputDialog("Enter the number of lamps required to win");
+			try
+			{
+				circuit.goalLamps = Integer.parseInt(input);
+			} catch (NumberFormatException | NullPointerException e)
+			{
+				JOptionPane.showMessageDialog(null, "Failed to parse number.");
+			}
 		}
 	}
 
 	private void interact(int cursorX, int cursorY)
 	{
+		if(cursorY < 0 || cursorX < 0 || cursorY >= circuit.grid.length || cursorX >= circuit.grid[cursorY].length || circuit.grid[cursorY][cursorX] == null)
+			return;
 		if (Gdx.input.isKeyJustPressed(Keys.SPACE))
 		{
 			if (!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0
