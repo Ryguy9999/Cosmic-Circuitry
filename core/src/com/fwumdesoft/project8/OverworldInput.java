@@ -59,7 +59,6 @@ public class OverworldInput extends InputAdapter
 	@Override
 	public boolean keyUp(int keycode)
 	{
-		System.out.println(heldKeys);
 		return heldKeys.remove(new Integer(keycode));
 	}
 	
