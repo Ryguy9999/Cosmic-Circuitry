@@ -53,7 +53,10 @@ public class Renderer
 	 * Toggled by tab
 	 */
 	private boolean showInventory;
-
+	/**
+	 * The location of the circuit camera
+	 */
+	private Vector2 circuitCamera;
 	/**
 	 * Create a Renderer
 	 * 
@@ -74,7 +77,7 @@ public class Renderer
 	 *            The height of the screen
 	 */
 	public Renderer(SpriteBatch batch, BitmapFont font, AssetManager assets, int cellSize, int componentSize,
-			int screenWidth, int screenHeight)
+			int screenWidth, int screenHeight, Vector2 camera)
 	{
 		// Initialize member variables
 		this.batch = batch;
@@ -119,6 +122,7 @@ public class Renderer
 		closedDoor = new TextureRegion(door, 0, 0, 32, 32);
 		openDoor = new TextureRegion(door, 128, 0, 32, 32);
 		showInventory = true;
+		circuitCamera = camera;
 	}
 
 	/**
@@ -213,8 +217,8 @@ public class Renderer
 				left = x > 0 && circuit[y][x - 1] != null;
 				right = x < circuit[y].length - 1 && circuit[y][x + 1] != null;
 				top = y < circuit.length - 1 && circuit[y + 1][x] != null;
-				int drawX = x * componentSize;
-				int drawY = y * componentSize;
+				int drawX = x * componentSize - (int)circuitCamera.x;
+				int drawY = y * componentSize - (int)circuitCamera.y;
 				CircuitComponent comp = circuit[y][x];
 				if (comp == null)
 				{
@@ -273,7 +277,7 @@ public class Renderer
 				font.draw(batch, outValue, 465, 90);
 			}
 		}
-		batch.draw(cursor, cursorX * componentSize, cursorY * componentSize);
+		batch.draw(cursor, cursorX * componentSize - circuitCamera.x, cursorY * componentSize - circuitCamera.y);
 		batch.end();
 		renderInventory(inventory);
 	}

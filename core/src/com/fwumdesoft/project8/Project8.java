@@ -34,6 +34,7 @@ public class Project8 extends ApplicationAdapter
 	Vector2 mousePosition;
 	AssetManager assets;
 	OverworldInput overInput;
+	Vector2 circuitCamera;
 	
 	@Override
 	public void create()
@@ -50,7 +51,8 @@ public class Project8 extends ApplicationAdapter
 		inventory.addComponent(CircuitComponent.resistor());
 
 		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory);
-		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480);
+		circuitCamera = new Vector2();
+		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480, circuitCamera);
 
 		Camera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.x = Gdx.graphics.getWidth() / 2;
@@ -59,7 +61,7 @@ public class Project8 extends ApplicationAdapter
 
 		Gdx.input.setInputProcessor(overInput = new OverworldInput(this, world));
 
-		input = new CircuitInput(new Circuit(new CircuitComponent[10][5], 0), assets, inventory);
+		input = new CircuitInput(new Circuit(new CircuitComponent[10][5], 0), assets, inventory, circuitCamera);
 		mousePosition = new Vector2();
 	}
 
@@ -76,8 +78,8 @@ public class Project8 extends ApplicationAdapter
 			Gdx.gl.glClearColor(1, 1, 1, 1);
 			mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
 			viewport.unproject(mousePosition);
-			int circuitX = (int) (mousePosition.x / 64);
-			int circuitY = (int) (mousePosition.y / 64);
+			int circuitX = (int) ((mousePosition.x + circuitCamera.x) / 64);
+			int circuitY = (int) ((mousePosition.y + circuitCamera.y) / 64);
 			boolean finished = input.update(circuitX, circuitY);
 			rend.renderCircuit(input.getCircuit(), inventory, circuitX, circuitY);
 			if(finished) 
