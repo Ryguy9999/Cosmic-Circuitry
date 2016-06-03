@@ -48,7 +48,9 @@ public class CircuitIO extends SynchronousAssetLoader<Circuit, CircuitIO.Circuit
 			e.printStackTrace();
 			System.exit(1);
 		}
-		return (Circuit) o;
+		Circuit c = (Circuit)o;
+		c.name = fileName.substring(0, fileName.indexOf(".circuit"));
+		return c;
 	}
 
 	/**
