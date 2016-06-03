@@ -332,6 +332,7 @@ public class Renderer
 
 	private void renderInventory(Inventory inventory)
 	{
+		font.setColor(Color.WHITE);
 		if (Gdx.input.isKeyJustPressed(Keys.TAB))
 			showInventory = !showInventory;
 		if (!showInventory)
