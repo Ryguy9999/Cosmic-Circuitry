@@ -20,6 +20,7 @@ public class Overworld
 		none, doorClosed, doorBroken, fireSuppression, destroyedWall, componentPile, fire, vacuum
 	}
 
+	Project8 app;
 	tiles[][] map;
 	mods[][] modifiers;
 	Point playerPos, playerFace;
@@ -30,7 +31,7 @@ public class Overworld
 	final int FIRE_SUPPRESSION_RANGE = 10;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.25;
 
-	public Overworld(int size, Array<Circuit> circuits, Inventory inventory)
+	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
 	{
 		this.inventory = inventory;
 		// contains permanent tiles
@@ -52,6 +53,7 @@ public class Overworld
 		playerPos = new Point(size / 2 - 1, size / 2);
 		boolean firstDoor = true;
 		this.playerFace = new Point();
+		this.app = app;
 		worldCircuits = new HashMap<Point, Circuit>();
 		currentCircuit = null;
 
@@ -181,7 +183,7 @@ public class Overworld
 		
 		//Death by fire
 		if(modifiers[playerPos.y][playerPos.x]== mods.fire)
-			System.out.println("FIRE FIRE FIRE");
+			app.restart();
 		
 		//Pick up bags
 		if(modifiers[playerPos.y][playerPos.x] == mods.componentPile)
@@ -373,7 +375,8 @@ public class Overworld
 	 */
 	public boolean isOpen(int x, int y)
 	{
-		return map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.doorBroken);
+		return (map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.doorBroken)) &&
+				modifiers[y][x] != mods.fire;
 	}
 
 	private class Door
