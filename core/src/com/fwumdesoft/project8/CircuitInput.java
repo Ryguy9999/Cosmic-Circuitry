@@ -247,25 +247,9 @@ public class CircuitInput
 	 * 
 	 * @return The circuit object
 	 */
-	public CircuitComponent[][] getCircuit()
+	public Circuit getCircuit()
 	{
-		return circuit.grid;
-	}
-	
-	/**
-	 * @return Get the nubmer of lamps needed to light up
-	 */
-	public int getLampNumber()
-	{
-		return circuit.goalLamps;
-	}
-	
-	/**
-	 * @return If the circuit is finished
-	 */
-	public boolean isFinished()
-	{
-		return circuit.isSolved();
+		return circuit;
 	}
 	
 	public void setCircuit(Circuit circ)
