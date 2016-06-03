@@ -90,7 +90,7 @@ public class Project8 extends ApplicationAdapter
 		}
 	}
 	
-	public void initSimulation()
+	private void initSimulation()
 	{
 		inventory = new Inventory();
 
@@ -107,7 +107,7 @@ public class Project8 extends ApplicationAdapter
 	/**
 	 * Use to load or refresh game assets
 	 */
-	public void loadAssets()
+	private void loadAssets()
 	{
 		if(assets != null)
 		{
@@ -128,8 +128,7 @@ public class Project8 extends ApplicationAdapter
 	 */
 	public void restart()
 	{
-		diposeAssets();
-		create();
+		initSimulation();
 	}
 	
 	/**
