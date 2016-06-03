@@ -224,7 +224,7 @@ public class CircuitInput
 	{
 		if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT))
 			component.isChangeable = true;
-		if (cursorY < circuit.grid.length && cursorX < circuit.grid[cursorY].length)
+		if (cursorY >= 0 && cursorX >= 0 && cursorY < circuit.grid.length && cursorX < circuit.grid[cursorY].length)
 		{
 			try
 			{

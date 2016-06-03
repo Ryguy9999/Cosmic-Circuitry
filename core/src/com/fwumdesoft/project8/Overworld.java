@@ -13,7 +13,7 @@ public class Overworld
 {
 	public static enum tiles
 	{
-		space, wall, door, floor, fireSuppression
+		space, wall, door, floor, fireSuppression, componentMachine
 	}
 
 	public static enum mods
@@ -181,8 +181,13 @@ public class Overworld
 						int j = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + y - FIRE_SUPPRESSION_RANGE;
 						int i = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + x - FIRE_SUPPRESSION_RANGE;
 						if(modifiers[j][i] == mods.fire)
-							modifiers[j][i] = null; 
+							modifiers[j][i] = mods.none;
 					}
+				
+				//Component machine
+				if(map[y][x] == tiles.componentMachine && Math.random() < 0.04)
+					if(y-1 >= 0 && modifiers[y-1][x] == mods.none)
+						modifiers[y-1][x] = mods.componentPile;
 			}
 		}
 		
@@ -193,7 +198,7 @@ public class Overworld
 		//Pick up bags
 		if(modifiers[playerPos.y][playerPos.x] == mods.componentPile)
 		{
-			modifiers[playerPos.y][playerPos.x] = null;
+			modifiers[playerPos.y][playerPos.x] = mods.none;
 			inventory.addComponent(CircuitComponent.randomComponent());
 			while(Math.random() < 1.0/3.0)
 				inventory.addComponent(CircuitComponent.randomComponent());

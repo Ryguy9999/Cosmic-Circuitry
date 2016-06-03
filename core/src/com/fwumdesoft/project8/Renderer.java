@@ -45,7 +45,7 @@ public class Renderer
 	 * The number of pixels of the screen's height
 	 */
 	private int screenHeight;
-	private Texture player, wall, floor, componentPile, fire_suppression, door, resistor, lamp, battery, cursor, blank;
+	private Texture player, wall, floor, componentPile, componentMachine, fireSuppression, door, resistor, lamp, battery, cursor, blank;
 	/**
 	 * All of the individual wire tileset images [right][top][left][bottom]
 	 */
@@ -116,7 +116,8 @@ public class Renderer
 		for(int i = 0; i < 4; i++)
 			this.fire[i] = new TextureRegion(fire, fire.getWidth() / 4 * i, 0, fire.getWidth() / 4, fire.getHeight());
 		this.componentPile = assets.get("component_pile.png", Texture.class);
-		this.fire_suppression = assets.get("fire_suppression.png", Texture.class);
+		this.componentMachine = assets.get("component_machine.png", Texture.class);
+		this.fireSuppression = assets.get("fire_suppression.png", Texture.class);
 		this.door = assets.get("station_door.png", Texture.class);
 		this.resistor = assets.get("resistor.png", Texture.class);
 		this.lamp = assets.get("lamp.png", Texture.class);
@@ -203,7 +204,10 @@ public class Renderer
 						batch.draw(fire[fireFrame], drawX, drawY);
 					break;
 				case fireSuppression:
-					batch.draw(fire_suppression, drawX, drawY);
+					batch.draw(fireSuppression, drawX, drawY);
+					break;
+				case componentMachine:
+					batch.draw(componentMachine, drawX, drawY);
 					break;
 				default:
 					break;
