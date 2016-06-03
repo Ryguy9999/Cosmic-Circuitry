@@ -20,6 +20,7 @@ public class Overworld
 		none, doorClosed, doorBroken, fireSuppression, destroyedWall, componentPile, fire, vacuum
 	}
 
+	Project8 app;
 	tiles[][] map;
 	mods[][] modifiers;
 	Point playerPos, playerFace;
@@ -27,9 +28,13 @@ public class Overworld
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
 	Inventory inventory;
-
-	public Overworld(int size, Array<Circuit> circuits, Inventory inventory)
+	final int FIRE_SUPPRESSION_RANGE = 10;
+	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.25;
+	private Overworld previous;
+	
+	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
 	{
+		previous = new Overworld(app, size, circuits, inventory);
 		this.inventory = inventory;
 		// contains permanent tiles
 		map = new tiles[size][size];
@@ -50,6 +55,7 @@ public class Overworld
 		playerPos = new Point(size / 2 - 1, size / 2);
 		boolean firstDoor = true;
 		this.playerFace = new Point();
+		this.app = app;
 		worldCircuits = new HashMap<Point, Circuit>();
 		currentCircuit = null;
 
@@ -149,7 +155,6 @@ public class Overworld
 	}
 	
 	public void turn() {
-		//spread fire
 		for(int y = 0; y < modifiers.length; y++)
 		{
 			for(int x = 0; x < modifiers[y].length; x++)
@@ -160,11 +165,27 @@ public class Overworld
 					int spreadY = (int)(Math.random() * 3) - 1;
 					if(map[y + spreadY][x + spreadX] == tiles.floor)
 						modifiers[y + spreadY][x + spreadX] = mods.fire;
+					else if(map[y + spreadY][x + spreadX] == tiles.door && Math.abs(spreadY)+Math.abs(spreadX) <= 1 &&
+							Math.random() < 0.2)
+						modifiers[y + spreadY*2][x + spreadX*2] = mods.fire;
 				}
+				
+				//Fire suppression
+				if(modifiers[y][x]== mods.fireSuppression)
+					for(int c = 0; c < Math.pow(FIRE_SUPPRESSION_RANGE*2+1, 2) * FIRE_SUPPRESSION_EFFECTIVENESS; c++)
+					{
+						int j = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + y - FIRE_SUPPRESSION_RANGE;
+						int i = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + x - FIRE_SUPPRESSION_RANGE;
+						if(modifiers[j][i] == mods.fire)
+							modifiers[j][i] = null;
+					}
 			}
 		}
-		if(modifiers[playerPos.y][playerPos.x]== mods.fire )
-			System.out.println("FIRE FIRE FIRE");
+		
+		//Death by fire
+		if(modifiers[playerPos.y][playerPos.x]== mods.fire)
+			app.restart();
+		
 		//Pick up bags
 		if(modifiers[playerPos.y][playerPos.x] == mods.componentPile)
 		{
@@ -172,7 +193,27 @@ public class Overworld
 			inventory.addComponent(CircuitComponent.randomComponent());
 			while(Math.random() < 1.0/3.0)
 				inventory.addComponent(CircuitComponent.randomComponent());
+
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Overworld getStateCopy()
+	{
+		previous.currentCircuit = currentCircuit;
+		previous.map = deepCopy(map);
+		previous.modifiers = deepCopy(modifiers);
+		previous.playerFace = new Point(playerFace);
+		previous.playerPos = new Point(playerPos);
+		previous.worldCircuits = (HashMap<Point, Circuit>)worldCircuits.clone();
+		return previous;
+	}
+	
+	public boolean equals(Overworld ow)
+	{
+		return ow != null && Arrays.deepEquals(map, ow.map) && 
+				Arrays.deepEquals(modifiers, previous.modifiers) && playerPos.equals(ow.playerPos) && 
+				playerFace.equals(ow.playerFace) && worldCircuits.equals(previous.worldCircuits);
 	}
 	
 	private void distributeCircuits()
@@ -193,6 +234,7 @@ public class Overworld
 					break;
 				case none:
 					//TODO: Unbroken doors
+					//^ Actually this is every other type of tile
 					break;
 				default:
 					break;
@@ -302,12 +344,27 @@ public class Overworld
 						modifiers[j][i] = mods.fire;
 					else if(Math.random() < 0.1)
 						modifiers[j][i] = mods.componentPile;
+					else if(Math.random() < 0.007)
+						modifiers[j][i] = mods.fireSuppression;
 					else
 						modifiers[j][i] = mods.none;
 				}
 			}
 		}
 		return nextDoor;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T> T[][] deepCopy(T[][] original)
+	{
+		T[][] copy = (T[][])new Object[original.length][];
+		for(int i = 0; i < original.length; i++)
+		{
+			copy[i] = (T[])new Object[original[i].length];
+			for(int j = 0; j < original[i].length; j++)
+				copy[i][j] = original[i][j];
+		}
+		return copy;
 	}
 
 	/**
@@ -351,7 +408,8 @@ public class Overworld
 	 */
 	public boolean isOpen(int x, int y)
 	{
-		return map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.doorBroken);
+		return (map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.doorBroken)) &&
+				modifiers[y][x] != mods.fire;
 	}
 
 	private class Door
