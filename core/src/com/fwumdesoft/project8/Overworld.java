@@ -30,9 +30,11 @@ public class Overworld
 	Inventory inventory;
 	final int FIRE_SUPPRESSION_RANGE = 10;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.25;
-
+	private Overworld previous;
+	
 	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
 	{
+		previous = new Overworld(app, size, circuits, inventory);
 		this.inventory = inventory;
 		// contains permanent tiles
 		map = new tiles[size][size];
@@ -196,6 +198,25 @@ public class Overworld
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Overworld getStateCopy()
+	{
+		previous.currentCircuit = currentCircuit;
+		previous.map = deepCopy(map);
+		previous.modifiers = deepCopy(modifiers);
+		previous.playerFace = new Point(playerFace);
+		previous.playerPos = new Point(playerPos);
+		previous.worldCircuits = (HashMap<Point, Circuit>)worldCircuits.clone();
+		return previous;
+	}
+	
+	public boolean equals(Overworld ow)
+	{
+		return ow != null && Arrays.deepEquals(map, ow.map) && 
+				Arrays.deepEquals(modifiers, previous.modifiers) && playerPos.equals(ow.playerPos) && 
+				playerFace.equals(ow.playerFace) && worldCircuits.equals(previous.worldCircuits);
+	}
+	
 	private void distributeCircuits()
 	{
 		List<Circuit> circuits = Arrays.asList(this.circuits.toArray());
@@ -332,6 +353,19 @@ public class Overworld
 			}
 		}
 		return nextDoor;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T> T[][] deepCopy(T[][] original)
+	{
+		T[][] copy = (T[][])new Object[original.length][];
+		for(int i = 0; i < original.length; i++)
+		{
+			copy[i] = (T[])new Object[original[i].length];
+			for(int j = 0; j < original[i].length; j++)
+				copy[i][j] = original[i][j];
+		}
+		return copy;
 	}
 
 	/**
