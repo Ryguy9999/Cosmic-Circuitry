@@ -312,7 +312,7 @@ public class Renderer
 		renderInventory(inventory);
 		shapes.begin(ShapeType.Filled);
 		shapes.setColor(Color.BLACK);
-		shapes.rect(0, Gdx.graphics.getHeight() - 32, 96, 32);
+		shapes.rect(0, Gdx.graphics.getHeight() - 32, 128, 32);
 		shapes.end();
 		batch.begin();
 		font.draw(batch, "Lamps needed: " + requiredLamps, 0, Gdx.graphics.getHeight() - 12);
