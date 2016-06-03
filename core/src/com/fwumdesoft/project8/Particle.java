@@ -20,6 +20,22 @@ public class Particle implements Poolable
 		velocity = new Vector2();		
 	}
 	
+	public Particle cloneTo(float x, float y)
+	{
+		Particle p = new Particle();
+		p.position.setVertices(position.getVertices());
+		p.position.setPosition(x, y);
+		p.position.setOrigin(position.getOriginX(), position.getOriginY());
+		p.texture = texture;
+		p.velocity.set(velocity);
+		p.rotationalVelocity = rotationalVelocity;
+		p.scaleVelocity = scaleVelocity;
+		p.opacity = opacity;
+		p.deltaOpacity = deltaOpacity;
+		p.lifetime = lifetime;
+		return p;
+	}
+	
 	public void tick()
 	{
 		lifetime--;
