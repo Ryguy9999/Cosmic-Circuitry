@@ -1,8 +1,8 @@
 package com.fwumdesoft.project8;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -25,44 +24,29 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 public class Project8 extends ApplicationAdapter
 {
-	Renderer rend;
-	Overworld world;
-	List<Disposable> manualCleanup;
-	Inventory inventory;
-	CircuitInput input;
-	Viewport viewport;
-	Vector2 mousePosition;
-	AssetManager assets;
-	OverworldInput overInput;
-	Vector2 circuitCamera;
+	private Renderer rend;
+	private Overworld world;
+	private Inventory inventory;
+	private CircuitInput input;
+	private Viewport viewport;
+	private Vector2 mousePosition;
+	private AssetManager assets;
+	private OverworldInput overInput;
+	private Vector2 circuitCamera;
+	private SpriteBatch batch;
 	
 	@Override
 	public void create()
 	{
-		manualCleanup = new ArrayList<>();
-
-		SpriteBatch batch = new SpriteBatch();
-		manualCleanup.add(batch);
+		batch = new SpriteBatch();
 
 		loadAssets();
+		initSimulation();
 		
-		inventory = new Inventory();
-		inventory.addComponent(CircuitComponent.battery());
-		inventory.addComponent(CircuitComponent.resistor());
-
-		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory, true);
-		circuitCamera = new Vector2();
-		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480, circuitCamera);
-
 		Camera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.x = Gdx.graphics.getWidth() / 2;
 		camera.position.y = Gdx.graphics.getHeight() / 2;
 		viewport = new FitViewport(640, 480, camera);
-
-		Gdx.input.setInputProcessor(overInput = new OverworldInput(this, world));
-
-		input = new CircuitInput(new Circuit(new CircuitComponent[10][20], 0), assets, inventory, circuitCamera);
-		mousePosition = new Vector2();
 	}
 
 	public boolean isCircuit = false;
@@ -106,15 +90,28 @@ public class Project8 extends ApplicationAdapter
 		}
 	}
 	
+	private void initSimulation()
+	{
+		inventory = new Inventory();
+
+		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory, true);
+		circuitCamera = new Vector2();
+		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480, circuitCamera);
+		
+		Gdx.input.setInputProcessor(overInput = new OverworldInput(this, world));
+
+		input = new CircuitInput(new Circuit(new CircuitComponent[10][20], 0), assets, inventory, circuitCamera);
+		mousePosition = new Vector2();
+	}
+	
 	/**
 	 * Use to load or refresh game assets
 	 */
-	public void loadAssets()
+	private void loadAssets()
 	{
 		if(assets != null)
 		{
 			assets.dispose();
-			manualCleanup.remove(assets);
 		}
 		assets = new AssetManager();
 		assets.setLoader(Circuit.class, new CircuitIO(assets.getFileHandleResolver()));
@@ -124,7 +121,6 @@ public class Project8 extends ApplicationAdapter
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("circuit"))
 				.forEach(name -> assets.load(name, Circuit.class));
 		assets.finishLoading();
-		manualCleanup.add(assets);
 	}
 	
 	/**
@@ -132,8 +128,7 @@ public class Project8 extends ApplicationAdapter
 	 */
 	public void restart()
 	{
-		diposeAssets();
-		create();
+		initSimulation();
 	}
 	
 	/**
@@ -141,7 +136,8 @@ public class Project8 extends ApplicationAdapter
 	 */
 	public void diposeAssets()
 	{
-		manualCleanup.forEach(x -> x.dispose());
+		assets.dispose();
+		batch.dispose();
 	}
 
 	@Override
