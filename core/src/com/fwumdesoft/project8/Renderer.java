@@ -184,7 +184,7 @@ public class Renderer
 					break;
 				case door:
 					TextureRegion t;
-					if (world.modifiers[y][x] == mods.doorBroken || world.modifiers[y][x] == mods.doorClosed
+					if (world.modifiers[y][x] == mods.broken || world.modifiers[y][x] == mods.doorClosed
 							|| Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > doorOpenDistance)
 						t = closedDoor;
 					else
@@ -200,8 +200,9 @@ public class Renderer
 						batch.draw(componentPile, drawX, drawY);
 					else if(world.modifiers[y][x] == mods.fire)
 						batch.draw(fire[fireFrame], drawX, drawY);
-					else if(world.modifiers[y][x] == mods.fireSuppression)
-						batch.draw(fire_suppression, drawX, drawY);
+					break;
+				case fireSuppression:
+					batch.draw(fire_suppression, drawX, drawY);
 					break;
 				default:
 					break;
