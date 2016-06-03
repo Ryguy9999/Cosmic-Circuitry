@@ -47,8 +47,6 @@ public class Project8 extends ApplicationAdapter
 		loadAssets();
 		
 		inventory = new Inventory();
-		inventory.addComponent(CircuitComponent.battery());
-		inventory.addComponent(CircuitComponent.resistor());
 
 		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory, true);
 		circuitCamera = new Vector2();
