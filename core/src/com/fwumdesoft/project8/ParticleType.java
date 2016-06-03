@@ -53,4 +53,12 @@ public class ParticleType
 	{
 		particles.forEach(particle -> particle.draw(batch));
 	}
+	
+	public void clear()
+	{
+		while(!particles.isEmpty())
+		{
+			particlePool.free(particles.remove(0));
+		}
+	}
 }
