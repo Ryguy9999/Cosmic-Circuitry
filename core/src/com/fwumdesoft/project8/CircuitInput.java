@@ -222,6 +222,8 @@ public class CircuitInput
 	 */
 	private void putComponent(CircuitComponent component, int cursorX, int cursorY)
 	{
+		if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT))
+			component.isChangeable = true;
 		if (cursorY < circuit.grid.length && cursorX < circuit.grid[cursorY].length)
 		{
 			try
