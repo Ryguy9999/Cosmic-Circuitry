@@ -8,6 +8,7 @@ import com.badlogic.gdx.InputAdapter;
 public class OverworldInput extends InputAdapter
 {
 	private Overworld world;
+	public Overworld previousWorld;
 	private Project8 topLevel;
 	private Stack<Integer> heldKeys;
 	private int cooldown = 0;
@@ -17,6 +18,7 @@ public class OverworldInput extends InputAdapter
 	{
 		this.topLevel = topLevel;
 		this.world = world;
+		this.previousWorld = world;
 		heldKeys = new Stack<>();
 	}
 
@@ -46,12 +48,16 @@ public class OverworldInput extends InputAdapter
 		case Keys.S:
 			move(0, -1);
 			break;
+		case Keys.R:
+			world.turn();
+			break;
 		case Keys.SPACE:
 			world.interact();
 			break;
 		default:
 			return false;
 		}
+		previousWorld = world.getStateCopy();
 		cooldown = MAX_COOLDOWN;
 		return true;
 	}

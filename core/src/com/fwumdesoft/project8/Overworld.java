@@ -32,9 +32,10 @@ public class Overworld
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.25;
 	private Overworld previous;
 	
-	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
+	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, boolean topLevel)
 	{
-		previous = new Overworld(app, size, circuits, inventory);
+		if(topLevel)
+			previous = new Overworld(app, size, circuits, inventory, false);
 		this.inventory = inventory;
 		// contains permanent tiles
 		map = new tiles[size][size];
@@ -201,8 +202,8 @@ public class Overworld
 	public Overworld getStateCopy()
 	{
 		previous.currentCircuit = currentCircuit;
-		previous.map = deepCopy(map);
-		previous.modifiers = deepCopy(modifiers);
+		deepCopy(map, previous.map);
+		deepCopy(modifiers, previous.modifiers);
 		previous.playerFace = new Point(playerFace);
 		previous.playerPos = new Point(playerPos);
 		previous.worldCircuits = (HashMap<Point, Circuit>)worldCircuits.clone();
@@ -355,16 +356,11 @@ public class Overworld
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T> T[][] deepCopy(T[][] original)
+	private <T> void deepCopy(T[][] original, T[][] target)
 	{
-		T[][] copy = (T[][])new Object[original.length][];
 		for(int i = 0; i < original.length; i++)
-		{
-			copy[i] = (T[])new Object[original[i].length];
 			for(int j = 0; j < original[i].length; j++)
-				copy[i][j] = original[i][j];
-		}
-		return copy;
+				target[i][j] = original[i][j];
 	}
 
 	/**

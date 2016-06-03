@@ -50,7 +50,7 @@ public class Project8 extends ApplicationAdapter
 		inventory.addComponent(CircuitComponent.battery());
 		inventory.addComponent(CircuitComponent.resistor());
 
-		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory);
+		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory, true);
 		circuitCamera = new Vector2();
 		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480, circuitCamera);
 

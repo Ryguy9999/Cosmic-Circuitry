@@ -26,6 +26,10 @@ public class Renderer
 	private ShapeRenderer shapes;
 	private BitmapFont font;
 	/**
+	 * The camera offset for the circuits
+	 */
+	private Vector2 circuitOffset;
+	/**
 	 * The number of pixels of the side of an overworld square
 	 */
 	private int cellSize;
@@ -47,7 +51,13 @@ public class Renderer
 	 */
 	private TextureRegion[][][][] wireTiles;
 	private TextureRegion unconnectedWire, openDoor, closedDoor;
+	/**
+	 * The frames in the fire animation
+	 */
 	private TextureRegion[] fire;
+	/**
+	 * The current frame in the fire animation
+	 */
 	private int fireFrame;
 	/**
 	 * If the class should draw the inventory </br>
@@ -112,6 +122,7 @@ public class Renderer
 		this.battery = assets.get("battery.png", Texture.class);
 		this.cursor = assets.get("cursor.png", Texture.class);
 		this.blank = assets.get("blank.png", Texture.class);
+		this.circuitOffset = new Vector2();
 		// Create wire tileset
 		Texture wires = assets.get("wires.png", Texture.class);
 		wireTiles = new TextureRegion[2][2][2][2];
@@ -314,6 +325,11 @@ public class Renderer
 		batch.draw(battery, 0, 64, 32, 32);
 		drawInventoryList(inventory.batteries, "", 64);
 		batch.end();
+	}
+
+	public void resetCircuitCamera()
+	{
+		circuitOffset.set(0, 0);
 	}
 
 	private int[] circuitAccumulator = new int[9];
