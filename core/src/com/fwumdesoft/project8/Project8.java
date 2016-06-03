@@ -33,6 +33,7 @@ public class Project8 extends ApplicationAdapter
 	Viewport viewport;
 	Vector2 mousePosition;
 	AssetManager assets;
+	OverworldInput overInput;
 	
 	@Override
 	public void create()
@@ -56,7 +57,7 @@ public class Project8 extends ApplicationAdapter
 		camera.position.y = Gdx.graphics.getHeight() / 2;
 		viewport = new FitViewport(640, 480, camera);
 
-		Gdx.input.setInputProcessor(new OverworldInput(this, world));
+		Gdx.input.setInputProcessor(overInput = new OverworldInput(this, world));
 
 		input = new CircuitInput(new Circuit(new CircuitComponent[10][5], 0), assets, inventory);
 		mousePosition = new Vector2();
@@ -92,6 +93,7 @@ public class Project8 extends ApplicationAdapter
 		} else
 		{
 			Gdx.gl.glClearColor(0, 0, 0, 1);
+			overInput.step();
 			rend.renderOverworld(world, inventory);
 			if(world.currentCircuit != null) 
 			{
