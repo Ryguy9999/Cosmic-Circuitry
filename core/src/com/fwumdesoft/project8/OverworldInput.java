@@ -7,7 +7,7 @@ import com.badlogic.gdx.InputAdapter;
 
 public class OverworldInput extends InputAdapter
 {
-	private Overworld world;
+	private Overworld world, previousWorld;
 	private Project8 topLevel;
 	private Stack<Integer> heldKeys;
 	private int cooldown = 0;
@@ -17,6 +17,7 @@ public class OverworldInput extends InputAdapter
 	{
 		this.topLevel = topLevel;
 		this.world = world;
+		this.previousWorld = world;
 		heldKeys = new Stack<>();
 	}
 
@@ -45,6 +46,9 @@ public class OverworldInput extends InputAdapter
 			break;
 		case Keys.S:
 			move(0, -1);
+			break;
+		case Keys.R:
+			turn();
 			break;
 		case Keys.SPACE:
 			world.interact();

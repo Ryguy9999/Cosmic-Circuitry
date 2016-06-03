@@ -32,9 +32,10 @@ public class Overworld
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.25;
 	private Overworld previous;
 	
-	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
+	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, boolean topLevel)
 	{
-		previous = new Overworld(app, size, circuits, inventory);
+		if(topLevel)
+			previous = new Overworld(app, size, circuits, inventory, false);
 		this.inventory = inventory;
 		// contains permanent tiles
 		map = new tiles[size][size];
