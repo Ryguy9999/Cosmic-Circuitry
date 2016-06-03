@@ -18,7 +18,7 @@ public class Overworld
 
 	public static enum mods
 	{
-		none, doorClosed, broken, destroyedWall, componentPile, fire, vacuum
+		none, doorClosed, broken, componentPile, fire
 	}
 
 	Project8 app;
@@ -29,7 +29,7 @@ public class Overworld
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
 	Inventory inventory;
-	final int FIRE_SUPPRESSION_RANGE = 10;
+	final int FIRE_SUPPRESSION_RANGE = 12;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.15;
 	private Overworld previous;
@@ -435,8 +435,7 @@ public class Overworld
 	 */
 	public boolean isOpen(int x, int y)
 	{
-		return (map[y][x] == tiles.floor || map[y][x] == tiles.fireSuppression || (map[y][x] == tiles.door && modifiers[y][x] != mods.broken)) &&
-				modifiers[y][x] != mods.fire;
+		return (map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.broken)) && modifiers[y][x] != mods.fire;
 	}
 
 	private class Door
