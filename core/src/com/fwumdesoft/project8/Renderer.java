@@ -318,9 +318,12 @@ public class Renderer
 				String outValue = "";
 				switch (comp.type)
 				{
-				case BATTERY:
 				case RESISTOR:
 					outValue += "R: " + sigFigs.format(comp.resistance) + "\n";
+					outValue += "A: " + sigFigs.format(comp.current)+ "\n";
+					outValue += "V: " + sigFigs.format(comp.current * comp.resistance) + "\n";
+					break;
+				case BATTERY:
 					outValue += "A: " + sigFigs.format(comp.current)+ "\n";
 					outValue += "V: " + sigFigs.format(comp.voltageDif) + "\n";
 					break;
