@@ -66,9 +66,8 @@ public class CircuitInput
 	 *            The square the mouse is hovering over
 	 * @param cursorY
 	 *            The square the mouse is hovering over
-	 * @return If the circuit has been completed
 	 */
-	public boolean update(int cursorX, int cursorY)
+	public void update(int cursorX, int cursorY)
 	{
 		if (Gdx.input.isKeyJustPressed(Keys.END))
 			editing = !editing;
@@ -82,8 +81,6 @@ public class CircuitInput
 			camera.y -= 2;
 		if(Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT))
 			camera.set(0, 0);
-		if(Gdx.input.isKeyJustPressed(Keys.ENTER) && circuit.isSolved())
-			return true;
 		if (editing)
 		{
 			edit(cursorX, cursorY);
@@ -91,7 +88,6 @@ public class CircuitInput
 		{
 			interact(cursorX, cursorY);
 		}
-		return false;
 	}
 
 	private void edit(int cursorX, int cursorY)

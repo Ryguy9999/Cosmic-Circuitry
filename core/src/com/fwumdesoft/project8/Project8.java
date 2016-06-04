@@ -89,13 +89,8 @@ public class Project8 extends ApplicationAdapter
 			viewport.unproject(mousePosition);
 			int circuitX = (int) ((mousePosition.x + circuitCamera.x) / 64);
 			int circuitY = (int) ((mousePosition.y + circuitCamera.y) / 64);
-			boolean finished = input.update(circuitX, circuitY);
+			input.update(circuitX, circuitY);
 			rend.renderCircuit(input.getCircuit(), inventory, circuitX, circuitY);
-			if(finished) 
-			{
-				world.circuitSuccess();
-				isCircuit = false;
-			}
 			if(Gdx.input.isKeyJustPressed(Keys.ESCAPE))
 			{
 				//Exiting a finished circuit means it was still a success
