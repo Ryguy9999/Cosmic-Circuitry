@@ -275,7 +275,7 @@ public class Renderer
 					batch.draw(region, drawX, drawY);
 				} else
 				{
-					if(comp.isChangeable && comp.type == null && Math.random() < 0.05)
+					if(comp.isChangeable && comp.type == null && Math.random() < 0.005)
 						ParticleSystem.burst("electricity", drawX + componentSize / 2, drawY + componentSize / 2, 5);
 					int rotation = (top && bottom) ? 90 : 0;
 					Texture tex;
