@@ -39,7 +39,13 @@ public class Overworld
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.10;
 	private Overworld previous;
-	
+	private final tiles[][] start = {
+			{tiles.floor, tiles.floor, tiles.floor, tiles.floor, tiles.floor},
+			{tiles.floor, tiles.floor, tiles.floor, tiles.floor, tiles.floor},
+			{tiles.floor, tiles.floor, tiles.floor, tiles.floor, tiles.floor},
+			{tiles.floor, tiles.floor, tiles.componentMachine, tiles.floor, tiles.floor},
+			{tiles.floor, tiles.floor, tiles.floor, tiles.floor, tiles.floor},
+	};
 	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, boolean topLevel)
 	{
 		if(topLevel)
@@ -89,6 +95,14 @@ public class Overworld
 					modifiers[playerPos.y + y][playerPos.x + x] = mods.none;
 			}
 		}
+		for(int y = playerPos.y - 2; y < playerPos.y + 2; y++)
+			for(int x = playerPos.x - 2; x < playerPos.x + 2; x++)
+				map[y][x] = start[y - playerPos.y + 2][x - playerPos.x + 2];
+		for(int y = playerPos.y - 2; y < playerPos.y + 2; y++)
+			for(int x = playerPos.x - 2; x < playerPos.x + 2; x++)
+				if(map[y - 1][x] == tiles.space || map[y + 1][x] == tiles.space 
+						|| map[y][x - 1] == tiles.space || map[y][x + 1] == tiles.space)
+					map[y][x] = tiles.wall;
 		map[playerPos.y][playerPos.x - 1] = tiles.fireSuppression;
 		distributeCircuits();
 		gameWon = false;
