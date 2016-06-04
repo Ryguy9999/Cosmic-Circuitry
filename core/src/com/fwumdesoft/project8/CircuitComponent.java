@@ -97,6 +97,15 @@ public class CircuitComponent implements Serializable
 		resistance = comp.resistance;
 		targetCurrent = comp.targetCurrent;
 		targetMargin = comp.targetMargin;
+		if(isLamp)
+		{
+			if(targetCurrent <= 1)
+				targetMargin = 0.75;
+			else if(targetCurrent <= 4)
+				targetMargin = 1;
+			else
+				targetMargin = 2;
+		}
 	}
 	
 	/**
@@ -186,7 +195,15 @@ public class CircuitComponent implements Serializable
 			break;
 		case RESISTOR:
 			if(isLamp)
+			{
 				targetCurrent = value;
+				if(targetCurrent <= 1)
+					targetMargin = 0.75;
+				else if(targetCurrent <= 4)
+					targetMargin = 1;
+				else
+					targetMargin = 2;
+			}
 			else
 				resistance = value;
 			break;
