@@ -131,6 +131,7 @@ public class Project8 extends ApplicationAdapter
 		ParticleSystem.draw(batch);
 		batch.end();
 		current.end();
+		batch.begin();
 		if(transitioning)
 		{
 			if(!transitionStarted)
@@ -140,25 +141,28 @@ public class Project8 extends ApplicationAdapter
 				transition = temp;
 				transitionStarted = true;
 			}
-			batch.begin();
-			transitionRegion.setRegion(transition.getColorBufferTexture());
-			transitionRegion.flip(false, true);
-			batch.draw(transitionRegion, transitionX, 0);
-			batch.end();
+			drawFrameBuffer(transition, transitionX, 0);
+			drawFrameBuffer(current, transitionX - Gdx.graphics.getWidth(), 0);
 			transitionX += 10;
 			if(transitionX >= Gdx.graphics.getWidth())
-			{
 				transitioning = false;
-			}
 		}
 		else
-		{
-			batch.begin();
-			transitionRegion.setRegion(current.getColorBufferTexture());
-			transitionRegion.flip(false, true);
-			batch.draw(transitionRegion, 0, 0);
-			batch.end();
-		}
+			drawFrameBuffer(current, 0, 0);
+		batch.end();
+	}
+	
+	/**
+	 * A helper method to draw a frame buffer to the screen
+	 * @param buffer The buffer to draw
+	 * @param x The position to draw it
+	 * @param y The position to draw it
+	 */
+	private void drawFrameBuffer(FrameBuffer buffer, int x, int y)
+	{
+		transitionRegion.setRegion(buffer.getColorBufferTexture());
+		transitionRegion.flip(false, true);
+		batch.draw(transitionRegion, 0, 0);
 	}
 	
 	public void startScreenTransition()
