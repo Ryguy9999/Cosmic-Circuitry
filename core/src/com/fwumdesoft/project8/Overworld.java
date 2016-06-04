@@ -32,6 +32,8 @@ public class Overworld
 	Circuit currentCircuit;
 	Inventory inventory;
 	boolean noClip;
+	int playerHealth;
+	final int MAX_PLAYER_HEALTH = 5;
 	final int FIRE_SUPPRESSION_RANGE = 12, TERMINAL_COUNT = 3;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.15;
@@ -77,6 +79,7 @@ public class Overworld
 		spawnFireSuppression();
 		spawnTerminals();
 		distributeCircuits();
+		playerHealth = MAX_PLAYER_HEALTH;
 	}
 
 	public String toString()
@@ -208,7 +211,11 @@ public class Overworld
 		
 		//Death by fire
 		if(modifiers[playerPos.y][playerPos.x]== mods.fire)
-			app.restart();
+			playerHealth -= 2;
+		else if(playerHealth < MAX_PLAYER_HEALTH)
+			playerHealth += 1;
+		if(playerHealth <= 0)
+			app.restart(); //TODO: Death screen
 		
 		//Pick up bags
 		if(modifiers[playerPos.y][playerPos.x] == mods.componentPile)
