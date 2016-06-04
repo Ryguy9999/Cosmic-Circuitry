@@ -113,7 +113,9 @@ public class Project8 extends ApplicationAdapter
 				startScreenTransition();
 			}
 		} else if(world.gameWon)
+		{
 			rend.renderCredits();
+		}
 		else {
 			if(!transitioning)
 				overInput.step();
@@ -125,6 +127,9 @@ public class Project8 extends ApplicationAdapter
 				world.currentCircuit = null;
 				startScreenTransition();
 			}
+			//The game has been won in this frame, so transition to the credits
+			if(world.gameWon)
+				startScreenTransition();
 		}
 		ParticleSystem.tick();
 		batch.begin();
