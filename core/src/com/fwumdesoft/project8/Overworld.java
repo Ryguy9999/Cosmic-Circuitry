@@ -181,7 +181,12 @@ public class Overworld
 							modifiers[y + spreadY*2][x + spreadX*2] = mods.fire;
 					}
 					else if(Math.random() < FIRE_SPREAD_CHANCE / 6)
+					{
 						modifiers[y][x] = mods.none;
+						int drawX = (x - playerPos.x) * 32 + Gdx.graphics.getWidth() / 2;
+						int drawY = (y - playerPos.y) * 32 + Gdx.graphics.getHeight() / 2;
+						ParticleSystem.burst("smoke", drawX, drawY, 4);
+					}
 				}
 				
 				//Fire suppression

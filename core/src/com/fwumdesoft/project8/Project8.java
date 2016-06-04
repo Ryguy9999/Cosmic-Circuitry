@@ -68,9 +68,9 @@ public class Project8 extends ApplicationAdapter
 			p.deltaOpacity = -0.05f;
 			p.scaleVelocity = (float)Math.random() / 2;
 			p.texture = new TextureRegion(assets.get("smoke_puff.png", Texture.class));
-			p.velocity.set(((float)Math.random() - 0.5f) * 5, ((float)Math.random() - 0.5f) * 5);
+			p.velocity.set(((float)Math.random() - 0.5f) * 2, ((float)Math.random()) * 2);
 			p.rotationalVelocity = 30;
-			p.scaleVelocity = 0;
+			p.scaleVelocity = -0.05f;
 		});
 	}
 
