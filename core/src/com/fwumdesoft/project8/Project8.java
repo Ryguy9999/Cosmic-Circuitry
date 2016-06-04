@@ -101,8 +101,9 @@ public class Project8 extends ApplicationAdapter
 				isCircuit = false;
 				rend.resetCircuitCamera();
 			}
-		} else
-		{
+		} else if(world.gameWon)
+			rend.renderCredits();
+		else {
 			Gdx.gl.glClearColor(0, 0, 0, 1);
 			overInput.step();
 			rend.renderOverworld(world, inventory);

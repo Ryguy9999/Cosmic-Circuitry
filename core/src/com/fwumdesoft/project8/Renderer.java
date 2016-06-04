@@ -49,7 +49,7 @@ public class Renderer
 	 */
 	private int screenHeight;
 	private Texture player, wall, floor, pod, componentPile, componentMachine, fireSuppression, terminal, door,
-						resistor, lamp, battery, cursor, blank;
+						resistor, lamp, battery, cursor, blank, credits;
 	/**
 	 * All of the individual wire tileset images [right][top][left][bottom]
 	 */
@@ -134,6 +134,7 @@ public class Renderer
 		this.battery = assets.get("battery.png", Texture.class);
 		this.cursor = assets.get("cursor.png", Texture.class);
 		this.blank = assets.get("blank.png", Texture.class);
+		this.credits = assets.get("credits.png", Texture.class);
 		this.circuitOffset = new Vector2();
 		// Create wire tileset
 		Texture wires = assets.get("wires.png", Texture.class);
@@ -376,6 +377,13 @@ public class Renderer
 		drawInventoryList(inventory.chips, "", 32);
 		batch.draw(battery, 0, 64, 32, 32);
 		drawInventoryList(inventory.batteries, "", 64);
+		batch.end();
+	}
+	
+	public void renderCredits()
+	{
+		batch.begin();
+		batch.draw(credits, 0, 0);
 		batch.end();
 	}
 
