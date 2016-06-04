@@ -33,7 +33,7 @@ public class Overworld
 	Inventory inventory;
 	boolean noClip;
 	int playerHealth;
-	final int MAX_PLAYER_HEALTH = 99;
+	final int MAX_PLAYER_HEALTH = 5;
 	final int FIRE_SUPPRESSION_RANGE = 12, TERMINAL_COUNT = 3;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.10;
@@ -68,7 +68,7 @@ public class Overworld
 		noClip = false;
 		currentCircuit = null;
 
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 100; i++)
 		{
 			door = generateRoom(door, firstDoor);
 			firstDoor = false;
@@ -478,7 +478,7 @@ public class Overworld
 				{
 					for(int j = -1; j < 2 && !valid; j++)
 					{
-						if((i == 0 || j == 0) && map[y + i][x + j] == tiles.space)
+						if((i == 0 || j == 0) && (map[y + i][x + j] == tiles.space && map[y + (i * -1)][x + (j * -1)] == tiles.floor))
 						{
 							map[y + i][x + j] = tiles.pod;
 							map[y][x] = tiles.door;
