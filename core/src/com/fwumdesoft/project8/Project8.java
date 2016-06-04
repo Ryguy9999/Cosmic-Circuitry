@@ -40,7 +40,7 @@ public class Project8 extends ApplicationAdapter
 	private FrameBuffer transition, current;
 	private TextureRegion transitionRegion;
 	private boolean transitioning = false, transitionStarted = false;
-	private int transitionX = 0;
+	private int transitionX = 0, deltaTransitionX = 0;
 	
 	@Override
 	public void create()
@@ -114,7 +114,7 @@ public class Project8 extends ApplicationAdapter
 					world.circuitFail();
 				isCircuit = false;
 				rend.resetCircuitCamera(); //Ensure that the circuit camera will be centered next time
-				startScreenTransition(); //Transition back into the overworld
+				startScreenTransition(-20); //Transition back into the overworld
 			}
 		} else if(world.gameWon)
 		{
@@ -132,11 +132,11 @@ public class Project8 extends ApplicationAdapter
 				input.setCircuit(world.currentCircuit);
 				isCircuit = true;
 				world.currentCircuit = null;
-				startScreenTransition();
+				startScreenTransition(20);
 			}
 			//The game has been won in this frame, so transition to the credits
 			if(world.gameWon)
-				startScreenTransition();
+				startScreenTransition(10);
 		}
 		//Draw the particle system
 		ParticleSystem.tick();
@@ -158,10 +158,14 @@ public class Project8 extends ApplicationAdapter
 				transitionStarted = true;
 			}
 			drawFrameBuffer(transition, transitionX, 0);
-			drawFrameBuffer(current, transitionX - Gdx.graphics.getWidth(), 0);
+			//Place the target screen in the correct place
+			if(deltaTransitionX > 0)
+				drawFrameBuffer(current, transitionX - Gdx.graphics.getWidth(), 0);
+			else
+				drawFrameBuffer(current, transitionX + Gdx.graphics.getWidth(), 0);
 			//Slide the transition along
-			transitionX += 10;
-			if(transitionX >= Gdx.graphics.getWidth())
+			transitionX += deltaTransitionX;
+			if(transitionX >= Gdx.graphics.getWidth() || transitionX <= -Gdx.graphics.getWidth())
 				transitioning = false;
 		}
 		else
@@ -182,11 +186,12 @@ public class Project8 extends ApplicationAdapter
 		batch.draw(transitionRegion, x, y);
 	}
 	
-	public void startScreenTransition()
+	public void startScreenTransition(int deltaX)
 	{
 		transitioning = true;
 		transitionStarted = false;
 		transitionX = 0;
+		deltaTransitionX = deltaX;
 	}
 	
 	private void initSimulation()
