@@ -10,19 +10,59 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
 
-public class Transitions implements Disposable
+/**
+ * A class to manage switching between different screens
+ */
+public class TransitionManager implements Disposable
 {
+	/**
+	 * Framebuffer to store screens to show during transition
+	 */
 	private FrameBuffer transition, current;
+	/**
+	 * TextureRegion to use to make drawing the frame buffer easier
+	 */
 	private final TextureRegion transitionRegion;
+	/**
+	 * Flag to manage transition state
+	 */
 	private boolean transitioning = false, transitionStarted = false;
-	private int transitionX = 0, deltaTransitionX = 0;
+	/**
+	 * The current progress of the transition
+	 */
+	private int transitionX = 0;
+	/**
+	 * The progress each frame of the transition
+	 */
+	private int deltaTransitionX = 0;
+	/**
+	 * A timer for a game over screen
+	 */
 	private int gameOverTimer = 0;
+	/**
+	 * Texture for the game over screen
+	 */
 	private final Texture gameOver, gameOverBkg;
+	/**
+	 * The batch to draw the frame buffer to the screen
+	 */
 	private final SpriteBatch batch;
+	/**
+	 * The maximum time for the game over screen to be up
+	 */
 	final int MAX_GAME_OVER = 120;
+	/**
+	 * The app object to restart when necessary
+	 */
 	private Project8 app;
 	
-	public Transitions(Project8 app, AssetManager assets, SpriteBatch batch)
+	/**
+	 * Create a new TransitionManager
+	 * @param app The main class to use to restart
+	 * @param assets The asset manager to load textures with
+	 * @param batch The sprite batch to use to draw textures
+	 */
+	public TransitionManager(Project8 app, AssetManager assets, SpriteBatch batch)
 	{
 		this.app = app;
 		transition = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
@@ -33,6 +73,10 @@ public class Transitions implements Disposable
 		gameOverBkg = assets.get("game_over_bkg.png", Texture.class);
 	}
 	
+	/**
+	 * Start a wipe transition
+	 * @param xSlidePerFrame The amount to move every frame
+	 */
 	public void transition(int xSlidePerFrame)
 	{
 		transitioning = true;
@@ -41,11 +85,17 @@ public class Transitions implements Disposable
 		deltaTransitionX = xSlidePerFrame;
 	}
 	
+	/**
+	 * Start the draw
+	 */
 	public void startDraw()
 	{
 		current.begin();
 	}
 	
+	/**
+	 * End the draw
+	 */
 	public void endDraw()
 	{
 		batch.begin();
@@ -93,11 +143,18 @@ public class Transitions implements Disposable
 		}
 	}
 	
+	
+	/**
+	 * Begin a game over state
+	 */
 	public void gameOver()
 	{
 		gameOverTimer = MAX_GAME_OVER;
 	}
 	
+	/**
+	 * @return If game updates should be performed
+	 */
 	public boolean shouldUpdate()
 	{
 		return gameOverTimer <= 0 && !transitioning;
@@ -116,6 +173,9 @@ public class Transitions implements Disposable
 		batch.draw(transitionRegion, x, y);
 	}
 	
+	/**
+	 * Dispose of transition manager internals
+	 */
 	public void dispose()
 	{
 		current.dispose();

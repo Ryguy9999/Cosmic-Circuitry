@@ -35,7 +35,7 @@ public class Project8 extends ApplicationAdapter
 	private OverworldInput overInput;
 	private Vector2 circuitCamera;
 	private SpriteBatch batch;
-	private Transitions transition;
+	private TransitionManager transition;
 	
 	@Override
 	public void create()
@@ -180,7 +180,7 @@ public class Project8 extends ApplicationAdapter
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("circuit"))
 				.forEach(name -> assets.load(name, Circuit.class));
 		assets.finishLoading();
-		transition = new Transitions(this, assets, batch);
+		transition = new TransitionManager(this, assets, batch);
 	}
 	
 	/***
