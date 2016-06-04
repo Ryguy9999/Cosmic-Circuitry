@@ -28,7 +28,6 @@ public class CircuitIO extends SynchronousAssetLoader<Circuit, CircuitIO.Circuit
 	public CircuitIO(FileHandleResolver resolver)
 	{
 		super(resolver);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
