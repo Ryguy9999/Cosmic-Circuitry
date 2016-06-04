@@ -11,10 +11,12 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -35,6 +37,10 @@ public class Project8 extends ApplicationAdapter
 	private OverworldInput overInput;
 	private Vector2 circuitCamera;
 	private SpriteBatch batch;
+	private FrameBuffer transition, current;
+	private TextureRegion transitionRegion;
+	private boolean transitioning = false, transitionStarted = false;
+	private int transitionX = 0;
 	
 	@Override
 	public void create()
@@ -72,6 +78,7 @@ public class Project8 extends ApplicationAdapter
 			p.rotationalVelocity = 30;
 			p.scaleVelocity = -0.05f;
 		});
+		startScreenTransition();
 	}
 
 	public boolean isCircuit = false;
@@ -79,6 +86,17 @@ public class Project8 extends ApplicationAdapter
 	@Override
 	public void render()
 	{
+		if(transitioning)
+		{
+			if(!transitionStarted)
+			{
+				transition.begin();
+			} 
+			else
+			{
+				current.begin();
+			}
+		}
 		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -100,24 +118,65 @@ public class Project8 extends ApplicationAdapter
 					world.circuitFail();
 				isCircuit = false;
 				rend.resetCircuitCamera();
+				startScreenTransition();
 			}
 		} else if(world.gameWon)
 			rend.renderCredits();
 		else {
 			Gdx.gl.glClearColor(0, 0, 0, 1);
-			overInput.step();
+			if(!transitioning)
+				overInput.step();
 			rend.renderOverworld(world, inventory);
 			if(world.currentCircuit != null) 
 			{
 				input.setCircuit(world.currentCircuit);
 				isCircuit = true;
 				world.currentCircuit = null;
+				startScreenTransition();
 			}
 		}
 		ParticleSystem.tick();
 		batch.begin();
 		ParticleSystem.draw(batch);
 		batch.end();
+		if(transitioning)
+		{
+			if(!transitionStarted)
+			{
+				transition.end();
+			}
+			else
+			{
+				current.end();
+			}
+			batch.begin();
+			transitionRegion.setRegion(transition.getColorBufferTexture());
+			transitionRegion.flip(false, true);
+			batch.draw(transitionRegion, transitionX, 0);
+			if(transitionStarted)
+			{
+				transitionRegion.setRegion(current.getColorBufferTexture());
+				transitionRegion.flip(false, true);
+				batch.draw(transitionRegion, Gdx.graphics.getWidth() - transitionX, 0);
+			}
+			else
+			{
+				transitionStarted = true;
+			}
+			batch.end();
+			transitionX += 10;
+			if(transitionX >= Gdx.graphics.getWidth())
+			{
+				transitioning = false;
+			}
+		}
+	}
+	
+	public void startScreenTransition()
+	{
+		transitioning = true;
+		transitionStarted = false;
+		transitionX = 0;
 	}
 	
 	private void initSimulation()
@@ -151,6 +210,9 @@ public class Project8 extends ApplicationAdapter
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("circuit"))
 				.forEach(name -> assets.load(name, Circuit.class));
 		assets.finishLoading();
+		transition = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+		current = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+		transitionRegion = new TextureRegion();
 	}
 	
 	/**
@@ -168,6 +230,8 @@ public class Project8 extends ApplicationAdapter
 	{
 		assets.dispose();
 		batch.dispose();
+		transition.dispose();
+		current.dispose();
 	}
 
 	@Override
