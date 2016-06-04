@@ -1,7 +1,9 @@
 package com.fwumdesoft.project8;
 
 import java.awt.Point;
+import java.text.DecimalFormat;
 import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
@@ -80,6 +82,10 @@ public class Renderer
 	 */
 	//private final int FRAMES_PER_ANIMATION = 15; 
 	/**
+	 * A formatter to print numbers to the player correctly
+	 */
+	private DecimalFormat sigFigs;
+	/**
 	 * Create a Renderer
 	 * 
 	 * @param batch
@@ -149,6 +155,7 @@ public class Renderer
 		openDoor = new TextureRegion(door, 128, 0, 32, 32);
 		showInventory = true;
 		circuitCamera = camera;
+		sigFigs = new DecimalFormat("0.00");
 	}
 
 	/**
@@ -312,16 +319,16 @@ public class Renderer
 				{
 				case BATTERY:
 				case RESISTOR:
-					outValue += "R: " + comp.resistance + "\n";
-					outValue += "A: " + comp.current + "\n";
-					outValue += "V: " + comp.voltageDif + "\n";
+					outValue += "R: " + sigFigs.format(comp.resistance) + "\n";
+					outValue += "A: " + sigFigs.format(comp.current)+ "\n";
+					outValue += "V: " + sigFigs.format(comp.voltageDif) + "\n";
 					break;
 				case WIRE:
 					break;
 				}
 				if (comp.isLamp)
 				{
-					outValue += "Target A: " + comp.targetCurrent + "+/-" + comp.targetMargin + "\n";
+					outValue += "Target A: " + sigFigs.format(comp.targetCurrent) + "+/-" + sigFigs.format(comp.targetMargin) + "\n";
 					outValue += Math.abs(comp.targetCurrent - comp.current) < comp.targetMargin ? "On" : "Off";
 				}
 				font.draw(batch, outValue, 465, 90);
