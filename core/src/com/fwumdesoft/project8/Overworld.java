@@ -80,12 +80,11 @@ public class Overworld
 			door = generateRoom(door, firstDoor);
 			firstDoor = false;
 		}
-
 		this.circuits = circuits;
 		removeStrayDoors();
 		spawnFireSuppression();
 		spawnTerminals();
-		spawnEscapePod();
+		spawnProducerMachines();
 		//Remove fire near spawn
 		for (int x = -5; x < 6; x++)
 		{
@@ -104,6 +103,7 @@ public class Overworld
 						|| map[y][x - 1] == tiles.space || map[y][x + 1] == tiles.space)
 					map[y][x] = tiles.wall;
 		map[playerPos.y][playerPos.x - 1] = tiles.fireSuppression;
+		spawnEscapePod();
 		distributeCircuits();
 		gameWon = false;
 		playerHealth = MAX_PLAYER_HEALTH;
@@ -483,6 +483,21 @@ public class Overworld
 					map[y][x] = tiles.fireSuppression;
 					modifiers[y][x] = (Math.random() < 0.75)? mods.broken: mods.none;
 					x += (Math.random() * FIRE_SUPPRESSION_RANGE) + (FIRE_SUPPRESSION_RANGE);
+				}
+			}
+		}
+	}
+	
+	private void spawnProducerMachines()
+	{
+		for(int y = 0; y < map.length; y += 15)
+		{
+			for(int x = 0; x < map[y].length; x++)
+			{
+				if(map[y][x] == tiles.floor && map[y - 1][x] == tiles.floor && Math.random() < 0.75)
+				{
+					map[y][x] = tiles.componentMachine;
+					x += (Math.random() * 20) + (20);
 				}
 			}
 		}
