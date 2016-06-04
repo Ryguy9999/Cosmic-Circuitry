@@ -53,9 +53,9 @@ public class Project8 extends ApplicationAdapter
 			p.position.setVertices(new float[]{0,0, 4,0, 0,4, 4,4});
 			p.position.setScale(1, 1);
 			p.position.setOrigin(2, 2);
-			p.lifetime = 100;
+			p.lifetime = 20;
 			p.texture = new TextureRegion(assets.get("electricity_particle.png", Texture.class));
-			p.velocity.set(((float)Math.random() - 0.5f) * 10, ((float)Math.random() - 0.5f) * 10);
+			p.velocity.set(((float)Math.random() - 0.5f) * 5, ((float)Math.random() - 0.5f) * 5);
 			p.rotationalVelocity = 30;
 			p.scaleVelocity = 0;
 		});
