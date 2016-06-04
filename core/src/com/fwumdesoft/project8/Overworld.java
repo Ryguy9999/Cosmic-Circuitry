@@ -15,7 +15,7 @@ public class Overworld
 {
 	public static enum tiles
 	{
-		space, wall, door, floor, fireSuppression, componentMachine, terminal
+		space, wall, door, floor, fireSuppression, componentMachine, terminal, pod
 	}
 
 	public static enum mods
@@ -33,10 +33,10 @@ public class Overworld
 	Inventory inventory;
 	boolean noClip;
 	int playerHealth;
-	final int MAX_PLAYER_HEALTH = 5;
+	final int MAX_PLAYER_HEALTH = 99;
 	final int FIRE_SUPPRESSION_RANGE = 12, TERMINAL_COUNT = 3;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
-	final double FIRE_SPREAD_CHANCE = 0.15;
+	final double FIRE_SPREAD_CHANCE = 0.10;
 	private Overworld previous;
 	
 	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, boolean topLevel)
@@ -78,6 +78,17 @@ public class Overworld
 		removeStrayDoors();
 		spawnFireSuppression();
 		spawnTerminals();
+		spawnEscapePod();
+		//Remove fire near spawn
+		for (int x = -5; x < 6; x++)
+		{
+			for (int y = -5; y < 6; y++)
+			{
+				if (modifiers[playerPos.y + y][playerPos.x + x] == mods.fire)
+					modifiers[playerPos.y + y][playerPos.x + x] = mods.none;
+			}
+		}
+		map[playerPos.y][playerPos.x - 1] = tiles.fireSuppression;
 		distributeCircuits();
 		playerHealth = MAX_PLAYER_HEALTH;
 	}
@@ -431,11 +442,38 @@ public class Overworld
 				if(map[y][x] == tiles.floor)// && Math.random() < 0.25)
 				{
 					map[y][x] = tiles.fireSuppression;
-					modifiers[y][x] = mods.broken;
+					modifiers[y][x] = (Math.random() < 0.75)? mods.broken: mods.none;
 					x += (Math.random() * FIRE_SUPPRESSION_RANGE) + (FIRE_SUPPRESSION_RANGE);
 				}
 			}
 		}
+	}
+	
+	private void spawnEscapePod()
+	{
+		//randomly pick spots until a wall next to space is picked
+		int x, y;
+		boolean valid = false;
+		do
+		{
+			y = (int)(Math.random() * map.length);
+			x = (int)(Math.random() * map[y].length);
+			if(map[y][x] == tiles.wall)
+			{
+				for(int i = -1; i < 2 && !valid; i++)
+				{
+					for(int j = -1; j < 2 && !valid; j++)
+					{
+						if((i == 0 || j == 0) && map[y + i][x + j] == tiles.space)
+						{
+							map[y + i][x + j] = tiles.pod;
+							map[y][x] = tiles.door;
+							valid = true;
+						}
+					}
+				}
+			}
+		}while(!valid);
 	}
 	
 	private <T> void deepCopy(T[][] original, T[][] target)
@@ -459,17 +497,21 @@ public class Overworld
 			{
 				if (map[j][i] == tiles.door)
 				{
-					boolean connectingWall = false;
+					boolean adjacentWall = false, adjacentSpace = false;
 					for (int x = -1; x < 2; x++)
 					{
 						for (int y = -1; y < 2; y++)
 						{
-							if (map[j + y][i + x] == tiles.wall)
-								connectingWall = true;
+							if (map[j + y][i + x] == tiles.space)
+								adjacentSpace = true;
+							else if (map[j + y][i + x] == tiles.wall)
+								adjacentWall =true;
 						}
 					}
-					if (!connectingWall)
+					if (!adjacentWall)
 						map[j][i] = tiles.floor;
+					if(adjacentSpace)
+						map[j][i] = tiles.wall;
 				}
 			}
 		}

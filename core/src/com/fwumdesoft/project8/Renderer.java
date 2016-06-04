@@ -46,7 +46,7 @@ public class Renderer
 	 * The number of pixels of the screen's height
 	 */
 	private int screenHeight;
-	private Texture player, wall, floor, componentPile, componentMachine, fireSuppression, terminal, door,
+	private Texture player, wall, floor, pod, componentPile, componentMachine, fireSuppression, terminal, door,
 						resistor, lamp, battery, cursor, blank;
 	/**
 	 * All of the individual wire tileset images [right][top][left][bottom]
@@ -113,6 +113,7 @@ public class Renderer
 		this.player = assets.get("player_idle.png", Texture.class);
 		this.wall = assets.get("station_wall.png", Texture.class);
 		this.floor = assets.get("station_floor.png", Texture.class);
+		this.pod = assets.get("pod_temp.png", Texture.class);
 		Texture fire = assets.get("fire.png", Texture.class);
 		this.fire = new TextureRegion[4];
 		for(int i = 0; i < 4; i++)
@@ -205,6 +206,9 @@ public class Renderer
 						batch.draw(componentPile, drawX, drawY);
 					else if(world.modifiers[y][x] == mods.fire)
 						batch.draw(fire[fireFrame], drawX, drawY);
+					break;
+				case pod:
+					batch.draw(pod, drawX, drawY);
 					break;
 				case fireSuppression:
 					batch.draw(fireSuppression, drawX, drawY);
