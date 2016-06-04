@@ -78,7 +78,6 @@ public class Project8 extends ApplicationAdapter
 			p.rotationalVelocity = 30;
 			p.scaleVelocity = -0.05f;
 		});
-		startScreenTransition();
 	}
 
 	public boolean isCircuit = false;
