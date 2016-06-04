@@ -99,6 +99,7 @@ public class Project8 extends ApplicationAdapter
 				else
 					world.circuitFail();
 				isCircuit = false;
+				rend.resetCircuitCamera();
 			}
 		} else
 		{
