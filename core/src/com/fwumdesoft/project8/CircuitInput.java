@@ -188,9 +188,13 @@ public class CircuitInput
 					if (comp.getMainValue() == value)
 						place = comp;
 				}
-			} catch (NumberFormatException | NullPointerException e)
+			} catch (NumberFormatException e)
 			{
 				JOptionPane.showMessageDialog(null, "Failed to parse number.");
+				return;
+			} catch (NullPointerException e)
+			{
+				System.err.println("Nullptr in CircuitInput, probably intentional though.");
 				return;
 			}
 		} else
