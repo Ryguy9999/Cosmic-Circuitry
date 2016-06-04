@@ -7,55 +7,6 @@ import com.fwumdesoft.project8.CircuitComponent.Type;
 
 public class CircuitSolver
 {
-//	public static void main(String[] args)
-//	{
-//		SystemOfEquations system = new SystemOfEquations();
-//		Branch b1 = new Branch(null, null, null, null), b2 = new Branch(null, null, null, null),
-//				b3 = new Branch(null, null, null, null);
-//		Equation e1 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[]
-//		{ new Term(0, b1), new Term(1, b2), new Term(1, b3) })), 5);
-//		Equation e2 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[]
-//		{ new Term(1, b1), new Term(2, b2), new Term(3, b3) })), 14);
-//		Equation e3 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[]
-//		{ new Term(7, b1), new Term(4, b2), new Term(9, b3) })), 42);
-//		Equation e4 = new Equation(new ArrayList<Term>(Arrays.asList(new Term[]
-//		{ new Term(7, b1), new Term(4, b2), new Term(0, b3) })), 15);
-//		system.equations.add(e1);
-//		system.equations.add(e2);
-//		system.equations.add(e3);
-//		system.equations.add(e4);
-////		System.out.println(system.solve());
-//		
-//		CircuitComponent n = null;
-//		CircuitComponent w = CircuitComponent.wire();
-//		CircuitComponent v = CircuitComponent.battery();
-//		CircuitComponent x = CircuitComponent.resistor();
-//		CircuitComponent y = CircuitComponent.resistor();
-//		v.voltageDif = 1;
-//		x.resistance = 1;
-//		y.resistance = 1;
-//		CircuitComponent[][] circuit = new CircuitComponent[][]
-//		{
-//				{ w, w, w, v, w, w, w },
-//				{ w, n, n, n, n, n, w },
-//				{ w, w, w, y, w, w, w },
-//				{ w, n, n, n, n, n, w },
-//				{ w, w, w, x, w, w, w } };
-//
-//		ArrayList<Vector2> junctions = new ArrayList<Vector2>();
-//		ArrayList<Branch> branches = new ArrayList<Branch>();
-//		buildJunctions(circuit, junctions);
-//		buildBranches(circuit, junctions, branches);
-//		System.out.println(junctions);
-//		System.out.println(branches);
-//
-//		// System.out.println(buildEquation(circuit, junctions, branches,
-//		// branches.get(0).startDirection, branches.get(0).start,
-//		// branches.get(0), branches.get(0), new ArrayList<Branch>()));
-//
-//		solve(circuit);
-//		System.out.println("X: " + x.current + " Y: " + y.current + " V: " + v.current);
-//	}
 
 	/**
 	 * Takes in a 2D array representing a PROPER circuit, and sets each
