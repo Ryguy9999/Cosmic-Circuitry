@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -47,6 +48,19 @@ public class Project8 extends ApplicationAdapter
 		camera.position.x = Gdx.graphics.getWidth() / 2;
 		camera.position.y = Gdx.graphics.getHeight() / 2;
 		viewport = new FitViewport(640, 480, camera);
+		
+		ParticleSystem.addParticleType("electricity", () -> {
+			Particle p = new Particle();
+			p.position.setVertices(new float[]{0,0, 4,0, 0,4, 4,4});
+			p.position.setScale(1, 1);
+			p.position.setOrigin(2, 2);
+			p.lifetime = 100;
+			p.texture = new TextureRegion(assets.get("electricity_particle.png", Texture.class));
+			p.velocity.set(((float)Math.random() - 0.5f) * 5, ((float)Math.random() - 0.5f) * 5);
+			p.rotationalVelocity = 30;
+			p.scaleVelocity = 0;
+			return p;
+		});
 	}
 
 	public boolean isCircuit = false;
@@ -92,6 +106,10 @@ public class Project8 extends ApplicationAdapter
 				world.currentCircuit = null;
 			}
 		}
+		ParticleSystem.tick();
+		batch.begin();
+		ParticleSystem.draw(batch);
+		batch.end();
 	}
 	
 	private void initSimulation()
