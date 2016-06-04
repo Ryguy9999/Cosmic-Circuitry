@@ -56,7 +56,7 @@ public class Project8 extends ApplicationAdapter
 			p.position.setOrigin(2, 2);
 			p.lifetime = 100;
 			p.texture = new TextureRegion(assets.get("electricity_particle.png", Texture.class));
-			p.velocity.set(((float)Math.random() - 0.5f) * 5, ((float)Math.random() - 0.5f) * 5);
+			p.velocity.set(((float)Math.random() - 0.5f) * 10, ((float)Math.random() - 0.5f) * 10);
 			p.rotationalVelocity = 30;
 			p.scaleVelocity = 0;
 			return p;
