@@ -369,7 +369,7 @@ public class Renderer
 			return;
 		// Draw a background for the overlay
 		shapes.begin(ShapeRenderer.ShapeType.Filled);
-		shapes.setColor(0.5f, 0.5f, 0.5f, 0.75f);
+		shapes.setColor(0.5f, 0.5f, 0.5f, 1);
 		shapes.rect(0, 0, 464, 96);
 		shapes.end();
 		batch.begin();
