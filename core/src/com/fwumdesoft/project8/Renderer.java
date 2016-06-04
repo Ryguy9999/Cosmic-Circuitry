@@ -229,6 +229,14 @@ public class Renderer
 				rotation);
 		batch.end();
 		renderInventory(inventory);
+		//Draw the health indicator
+		shapes.begin(ShapeType.Filled);
+		shapes.setColor(Color.BLACK);
+		shapes.rect(0, Gdx.graphics.getHeight() - 32, 24 * world.MAX_PLAYER_HEALTH, 32);
+		shapes.setColor(Color.RED);
+		for(int i = 0; i < world.playerHealth; i++)
+			shapes.rect(i * 24 + 4, Gdx.graphics.getHeight() - 20, 16, 16);
+		shapes.end();
 	}
 
 	public void renderCircuit(Circuit circuit, Inventory inventory, int cursorX, int cursorY)
