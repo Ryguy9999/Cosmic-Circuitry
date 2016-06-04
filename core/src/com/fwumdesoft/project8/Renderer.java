@@ -202,8 +202,7 @@ public class Renderer
 					break;
 				case door:
 					TextureRegion t;
-					if (world.modifiers[y][x] == mods.broken || world.modifiers[y][x] == mods.doorClosed
-							|| Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > doorOpenDistance)
+					if (world.modifiers[y][x] == mods.broken || Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > doorOpenDistance)
 						t = closedDoor;
 					else
 						t = openDoor;

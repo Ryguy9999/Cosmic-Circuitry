@@ -20,7 +20,7 @@ public class Overworld
 
 	public static enum mods
 	{
-		none, doorClosed, broken, componentPile, fire
+		none, broken, componentPile, fire
 	}
 
 	Project8 app;
