@@ -149,10 +149,6 @@ public class Project8 extends ApplicationAdapter
 			if(transitionX >= Gdx.graphics.getWidth())
 			{
 				transitioning = false;
-				FrameBuffer temp = current;
-				current = transition;
-				transition = temp;
-				transitionStarted = true;
 			}
 		}
 		else
