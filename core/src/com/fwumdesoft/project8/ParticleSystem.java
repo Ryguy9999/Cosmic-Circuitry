@@ -1,7 +1,7 @@
 package com.fwumdesoft.project8;
 
 import java.util.HashMap;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -13,7 +13,7 @@ public class ParticleSystem
 	
 	private static final int MAX_PARTICLE_SIZE = 1_000;
 	
-	public static void addParticleType(String name, Supplier<Particle> spawner)
+	public static void addParticleType(String name, Consumer<Particle> spawner)
 	{
 		types.put(name, new ParticleType(spawner, MAX_PARTICLE_SIZE));
 	}
