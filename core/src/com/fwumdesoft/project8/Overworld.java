@@ -553,7 +553,7 @@ public class Overworld
 			open = true;
 		else if(map[y][x] == tiles.floor)
 			open = true;
-		else if((map[y][x] == tiles.door || map[y][x] == tiles.fireSuppression) && modifiers[y][x] != mods.broken)
+		else if(map[y][x] == tiles.door && modifiers[y][x] != mods.broken)
 			open = true;
 		else if(map[y][x] == tiles.pod && allTerminalsSolved())
 			open = true;
