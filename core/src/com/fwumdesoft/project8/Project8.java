@@ -86,6 +86,11 @@ public class Project8 extends ApplicationAdapter
 	@Override
 	public void render()
 	{
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		if(isCircuit)
+			Gdx.gl.glClearColor(0.9f, 0.9f, 0.9f, 1);
+		else
+			Gdx.gl.glClearColor(0, 0, 0, 1);
 		if(transitioning)
 		{
 			if(!transitionStarted)
@@ -99,10 +104,9 @@ public class Project8 extends ApplicationAdapter
 		}
 		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
 		if (isCircuit)
 		{
-			Gdx.gl.glClearColor(0.9f, 0.9f, 0.9f, 1);
 			mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
 			viewport.unproject(mousePosition);
 			int circuitX = (int) ((mousePosition.x + circuitCamera.x) / 64);
@@ -123,7 +127,6 @@ public class Project8 extends ApplicationAdapter
 		} else if(world.gameWon)
 			rend.renderCredits();
 		else {
-			Gdx.gl.glClearColor(0, 0, 0, 1);
 			if(!transitioning)
 				overInput.step();
 			rend.renderOverworld(world, inventory);
