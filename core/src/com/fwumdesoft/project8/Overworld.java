@@ -247,7 +247,7 @@ public class Overworld
 		if(modifiers[playerPos.y][playerPos.x]== mods.fire)
 			playerHealth -= 2;
 		if(playerHealth <= 0)
-			app.restart(); //TODO: Death screen
+			app.gameOver(); //TODO: Death screen
 		
 		//Pick up bags
 		if(modifiers[playerPos.y][playerPos.x] == mods.componentPile)

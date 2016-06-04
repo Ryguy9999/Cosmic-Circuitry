@@ -9,6 +9,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -41,6 +42,8 @@ public class Project8 extends ApplicationAdapter
 	private TextureRegion transitionRegion;
 	private boolean transitioning = false, transitionStarted = false;
 	private int transitionX = 0, deltaTransitionX = 0;
+	private int gameOverTimer = 0;
+	final int MAX_GAME_OVER = 120;
 	
 	@Override
 	public void create()
@@ -123,7 +126,10 @@ public class Project8 extends ApplicationAdapter
 		}
 		else {
 			//Advance the simulation by 1 frame
-			overInput.step();
+			if(gameOverTimer <= 0)
+				overInput.step();
+			else if(--gameOverTimer <= 0)
+				restart();
 			//Draw the game
 			rend.renderOverworld(world, inventory);
 			//Handle switching to a circuit
@@ -142,6 +148,13 @@ public class Project8 extends ApplicationAdapter
 		ParticleSystem.tick();
 		batch.begin();
 		ParticleSystem.draw(batch);
+		if(gameOverTimer > 0)
+		{
+			batch.setColor(1, 1, 1, 0.5f);
+			batch.draw(assets.get("game_over_bkg.png", Texture.class), 0, 0);
+			batch.setColor(Color.WHITE);
+			batch.draw(assets.get("game_over.png", Texture.class), 0, 0);
+		}
 		batch.end();
 		//Stop drawing to the frame buffer
 		current.end();
@@ -228,6 +241,14 @@ public class Project8 extends ApplicationAdapter
 		transition = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 		current = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 		transitionRegion = new TextureRegion();
+	}
+	
+	/***
+	 * Call when a game over should be displayed
+	 */
+	public void gameOver()
+	{
+		gameOverTimer = MAX_GAME_OVER;
 	}
 	
 	/**
