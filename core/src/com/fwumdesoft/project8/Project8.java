@@ -179,7 +179,7 @@ public class Project8 extends ApplicationAdapter
 	{
 		transitionRegion.setRegion(buffer.getColorBufferTexture());
 		transitionRegion.flip(false, true);
-		batch.draw(transitionRegion, 0, 0);
+		batch.draw(transitionRegion, x, y);
 	}
 	
 	public void startScreenTransition()
