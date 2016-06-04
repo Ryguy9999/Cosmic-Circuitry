@@ -87,21 +87,9 @@ public class Project8 extends ApplicationAdapter
 	public void render()
 	{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		if(isCircuit)
-			Gdx.gl.glClearColor(0.9f, 0.9f, 0.9f, 1);
-		else
-			Gdx.gl.glClearColor(0, 0, 0, 1);
-		if(transitioning)
-		{
-			if(!transitionStarted)
-			{
-				transition.begin();
-			} 
-			else
-			{
-				current.begin();
-			}
-		}
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		
+		current.begin();
 		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
 		
@@ -142,36 +130,38 @@ public class Project8 extends ApplicationAdapter
 		batch.begin();
 		ParticleSystem.draw(batch);
 		batch.end();
+		current.end();
 		if(transitioning)
 		{
 			if(!transitionStarted)
 			{
-				transition.end();
-			}
-			else
-			{
-				current.end();
+				FrameBuffer temp = current;
+				current = transition;
+				transition = temp;
+				transitionStarted = true;
 			}
 			batch.begin();
 			transitionRegion.setRegion(transition.getColorBufferTexture());
 			transitionRegion.flip(false, true);
 			batch.draw(transitionRegion, transitionX, 0);
-			if(transitionStarted)
-			{
-				transitionRegion.setRegion(current.getColorBufferTexture());
-				transitionRegion.flip(false, true);
-				batch.draw(transitionRegion, Gdx.graphics.getWidth() - transitionX, 0);
-			}
-			else
-			{
-				transitionStarted = true;
-			}
 			batch.end();
 			transitionX += 10;
 			if(transitionX >= Gdx.graphics.getWidth())
 			{
 				transitioning = false;
+				FrameBuffer temp = current;
+				current = transition;
+				transition = temp;
+				transitionStarted = true;
 			}
+		}
+		else
+		{
+			batch.begin();
+			transitionRegion.setRegion(current.getColorBufferTexture());
+			transitionRegion.flip(false, true);
+			batch.draw(transitionRegion, 0, 0);
+			batch.end();
 		}
 	}
 	
