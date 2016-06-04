@@ -355,7 +355,6 @@ public class Overworld
 				map[door.y][door.x - 1] = tiles.floor;
 				break;
 			}
-			System.out.println(map[door.y][door.x]);
 		}
 		// Fills in walls and floor
 		for (int i = x; i < x + 5; i++)
