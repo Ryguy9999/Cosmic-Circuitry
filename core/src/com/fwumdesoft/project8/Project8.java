@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -50,29 +49,7 @@ public class Project8 extends ApplicationAdapter
 		camera.position.y = Gdx.graphics.getHeight() / 2;
 		viewport = new FitViewport(640, 480, camera);
 		
-		ParticleSystem.addParticleType("electricity", p -> {
-			p.position.setVertices(new float[]{0,0, 4,0, 0,4, 4,4});
-			p.position.setScale(1, 1);
-			p.position.setOrigin(2, 2);
-			p.lifetime = 10 + (int)(Math.random() * 15);
-			p.texture = new TextureRegion(assets.get("electricity_particle.png", Texture.class));
-			p.velocity.set(((float)Math.random() - 0.5f) * 5, ((float)Math.random() - 0.5f) * 5);
-			p.rotationalVelocity = 30;
-			p.scaleVelocity = 0;
-		});
-		ParticleSystem.addParticleType("smoke", p -> {
-			p.position.setVertices(new float[]{0,0, 16,0, 0,16, 16,16});
-			p.position.setScale(1, 1);
-			p.position.setOrigin(8, 8);
-			p.rotationalVelocity = (int)(Math.random() * 20);
-			p.lifetime = (int)(Math.random() * 25);
-			p.deltaOpacity = -0.05f;
-			p.scaleVelocity = (float)Math.random() / 2;
-			p.texture = new TextureRegion(assets.get("smoke_puff.png", Texture.class));
-			p.velocity.set(((float)Math.random() - 0.5f) * 2, ((float)Math.random()) * 2);
-			p.rotationalVelocity = 30;
-			p.scaleVelocity = -0.05f;
-		});
+		ParticleSystem.init(assets);
 	}
 
 	public boolean isCircuit = false;
