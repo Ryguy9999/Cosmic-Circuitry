@@ -68,7 +68,7 @@ public class Overworld
 		noClip = false;
 		currentCircuit = null;
 
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			door = generateRoom(door, firstDoor);
 			firstDoor = false;
@@ -433,6 +433,20 @@ public class Overworld
 		}
 	}
 	
+	private boolean allTerminalsSolved()
+	{
+		boolean solved = true;
+		for(int y = 0; y < map.length; y++)
+		{
+			for(int x = 0; x < map[y].length; x++)
+			{
+				if(map[y][x] == tiles.terminal && modifiers[y][x] == mods.broken)
+					solved = false;
+			}
+		}
+		return solved;
+	}
+	
 	private void spawnFireSuppression()
 	{
 		for(int y = 0; y < map.length; y += FIRE_SUPPRESSION_RANGE * 2)
@@ -528,7 +542,16 @@ public class Overworld
 	 */
 	public boolean isOpen(int x, int y)
 	{
-		return noClip || (map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.broken));
+		boolean open = false;
+		if(noClip)
+			open = true;
+		else if(map[y][x] == tiles.floor)
+			open = true;
+		else if((map[y][x] == tiles.door || map[y][x] == tiles.fireSuppression) && modifiers[y][x] != mods.broken)
+			open = true;
+		else if(map[y][x] == tiles.pod && allTerminalsSolved())
+			open = true;
+		return open;
 	}
 
 	private class Door
