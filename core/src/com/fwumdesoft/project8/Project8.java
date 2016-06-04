@@ -85,21 +85,26 @@ public class Project8 extends ApplicationAdapter
 	@Override
 	public void render()
 	{
+		//Clear the screen
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-		
+		//Start drawing to the frame buffer
 		current.begin();
+		//TODO: Developer shortcut, remove from final build
 		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
-		
 		if (isCircuit)
 		{
+			//Calculate the cursor position in the circuit
 			mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
 			viewport.unproject(mousePosition);
 			int circuitX = (int) ((mousePosition.x + circuitCamera.x) / 64);
 			int circuitY = (int) ((mousePosition.y + circuitCamera.y) / 64);
+			//Update the circuit accordingly
 			input.update(circuitX, circuitY);
+			//Draw the circuit
 			rend.renderCircuit(input.getCircuit(), inventory, circuitX, circuitY);
+			//Handle exiting
 			if(Gdx.input.isKeyJustPressed(Keys.ESCAPE))
 			{
 				//Exiting a finished circuit means it was still a success
@@ -108,17 +113,20 @@ public class Project8 extends ApplicationAdapter
 				else
 					world.circuitFail();
 				isCircuit = false;
-				rend.resetCircuitCamera();
-				startScreenTransition();
+				rend.resetCircuitCamera(); //Ensure that the circuit camera will be centered next time
+				startScreenTransition(); //Transition back into the overworld
 			}
 		} else if(world.gameWon)
 		{
+			//The game is over, draw credits
 			rend.renderCredits();
 		}
 		else {
-			if(!transitioning)
-				overInput.step();
+			//Advance the simulation by 1 frame
+			overInput.step();
+			//Draw the game
 			rend.renderOverworld(world, inventory);
+			//Handle switching to a circuit
 			if(world.currentCircuit != null) 
 			{
 				input.setCircuit(world.currentCircuit);
@@ -130,16 +138,20 @@ public class Project8 extends ApplicationAdapter
 			if(world.gameWon)
 				startScreenTransition();
 		}
+		//Draw the particle system
 		ParticleSystem.tick();
 		batch.begin();
 		ParticleSystem.draw(batch);
 		batch.end();
+		//Stop drawing to the frame buffer
 		current.end();
+		//Draw the frame buffer to the screen, possibly using a transition effect
 		batch.begin();
 		if(transitioning)
 		{
 			if(!transitionStarted)
 			{
+				//Switch the buffers
 				FrameBuffer temp = current;
 				current = transition;
 				transition = temp;
@@ -147,6 +159,7 @@ public class Project8 extends ApplicationAdapter
 			}
 			drawFrameBuffer(transition, transitionX, 0);
 			drawFrameBuffer(current, transitionX - Gdx.graphics.getWidth(), 0);
+			//Slide the transition along
 			transitionX += 10;
 			if(transitionX >= Gdx.graphics.getWidth())
 				transitioning = false;
