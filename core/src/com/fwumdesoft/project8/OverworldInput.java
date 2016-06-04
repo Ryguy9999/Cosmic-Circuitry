@@ -49,7 +49,7 @@ public class OverworldInput extends InputAdapter
 			move(0, -1);
 			break;
 		case Keys.R:
-			world.turn();
+			world.rest();
 			break;
 		case Keys.SPACE:
 			world.interact();

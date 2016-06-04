@@ -174,7 +174,14 @@ public class Overworld
 		}
 	}
 	
-	public void turn() {
+	public void rest()
+	{
+		if(playerHealth < MAX_PLAYER_HEALTH)
+			playerHealth++;
+		turn();
+	}
+	
+	private void turn() {
 		//TODO Remove before finished, for now: NO CLIP
 		if(Gdx.input.isKeyPressed(Keys.END))
 			noClip = !noClip;
@@ -225,8 +232,6 @@ public class Overworld
 		//Death by fire
 		if(modifiers[playerPos.y][playerPos.x]== mods.fire)
 			playerHealth -= 2;
-		else if(playerHealth < MAX_PLAYER_HEALTH)
-			playerHealth += 1;
 		if(playerHealth <= 0)
 			app.restart(); //TODO: Death screen
 		
