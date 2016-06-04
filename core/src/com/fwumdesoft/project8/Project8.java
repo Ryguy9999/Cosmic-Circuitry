@@ -9,15 +9,12 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -38,12 +35,7 @@ public class Project8 extends ApplicationAdapter
 	private OverworldInput overInput;
 	private Vector2 circuitCamera;
 	private SpriteBatch batch;
-	private FrameBuffer transition, current;
-	private TextureRegion transitionRegion;
-	private boolean transitioning = false, transitionStarted = false;
-	private int transitionX = 0, deltaTransitionX = 0;
-	private int gameOverTimer = 0;
-	final int MAX_GAME_OVER = 120;
+	private Transitions transition;
 	
 	@Override
 	public void create()
@@ -91,8 +83,7 @@ public class Project8 extends ApplicationAdapter
 		//Clear the screen
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-		//Start drawing to the frame buffer
-		current.begin();
+		transition.startDraw();
 		//TODO: Developer shortcut, remove from final build
 		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
@@ -103,8 +94,11 @@ public class Project8 extends ApplicationAdapter
 			viewport.unproject(mousePosition);
 			int circuitX = (int) ((mousePosition.x + circuitCamera.x) / 64);
 			int circuitY = (int) ((mousePosition.y + circuitCamera.y) / 64);
-			//Update the circuit accordingly
-			input.update(circuitX, circuitY);
+			if(transition.shouldUpdate())
+			{
+				//Update the circuit accordingly
+				input.update(circuitX, circuitY);
+			}
 			//Draw the circuit
 			rend.renderCircuit(input.getCircuit(), inventory, circuitX, circuitY);
 			//Handle exiting
@@ -126,10 +120,8 @@ public class Project8 extends ApplicationAdapter
 		}
 		else {
 			//Advance the simulation by 1 frame
-			if(gameOverTimer <= 0)
+			if(transition.shouldUpdate())
 				overInput.step();
-			else if(--gameOverTimer <= 0)
-				restart();
 			//Draw the game
 			rend.renderOverworld(world, inventory);
 			//Handle switching to a circuit
@@ -148,63 +140,13 @@ public class Project8 extends ApplicationAdapter
 		ParticleSystem.tick();
 		batch.begin();
 		ParticleSystem.draw(batch);
-		if(gameOverTimer > 0)
-		{
-			batch.setColor(1, 1, 1, 0.5f);
-			batch.draw(assets.get("game_over_bkg.png", Texture.class), 0, 0);
-			batch.setColor(Color.WHITE);
-			batch.draw(assets.get("game_over.png", Texture.class), 0, 0);
-		}
 		batch.end();
-		//Stop drawing to the frame buffer
-		current.end();
-		//Draw the frame buffer to the screen, possibly using a transition effect
-		batch.begin();
-		if(transitioning)
-		{
-			if(!transitionStarted)
-			{
-				//Switch the buffers
-				FrameBuffer temp = current;
-				current = transition;
-				transition = temp;
-				transitionStarted = true;
-			}
-			drawFrameBuffer(transition, transitionX, 0);
-			//Place the target screen in the correct place
-			if(deltaTransitionX > 0)
-				drawFrameBuffer(current, transitionX - Gdx.graphics.getWidth(), 0);
-			else
-				drawFrameBuffer(current, transitionX + Gdx.graphics.getWidth(), 0);
-			//Slide the transition along
-			transitionX += deltaTransitionX;
-			if(transitionX >= Gdx.graphics.getWidth() || transitionX <= -Gdx.graphics.getWidth())
-				transitioning = false;
-		}
-		else
-			drawFrameBuffer(current, 0, 0);
-		batch.end();
-	}
-	
-	/**
-	 * A helper method to draw a frame buffer to the screen
-	 * @param buffer The buffer to draw
-	 * @param x The position to draw it
-	 * @param y The position to draw it
-	 */
-	private void drawFrameBuffer(FrameBuffer buffer, int x, int y)
-	{
-		transitionRegion.setRegion(buffer.getColorBufferTexture());
-		transitionRegion.flip(false, true);
-		batch.draw(transitionRegion, x, y);
+		transition.endDraw();
 	}
 	
 	public void startScreenTransition(int deltaX)
 	{
-		transitioning = true;
-		transitionStarted = false;
-		transitionX = 0;
-		deltaTransitionX = deltaX;
+		transition.transition(deltaX);
 	}
 	
 	private void initSimulation()
@@ -238,9 +180,7 @@ public class Project8 extends ApplicationAdapter
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("circuit"))
 				.forEach(name -> assets.load(name, Circuit.class));
 		assets.finishLoading();
-		transition = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-		current = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-		transitionRegion = new TextureRegion();
+		transition = new Transitions(this, assets, batch);
 	}
 	
 	/***
@@ -248,7 +188,7 @@ public class Project8 extends ApplicationAdapter
 	 */
 	public void gameOver()
 	{
-		gameOverTimer = MAX_GAME_OVER;
+		transition.gameOver();
 	}
 	
 	/**
@@ -267,7 +207,6 @@ public class Project8 extends ApplicationAdapter
 		assets.dispose();
 		batch.dispose();
 		transition.dispose();
-		current.dispose();
 	}
 
 	@Override
