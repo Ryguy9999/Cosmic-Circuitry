@@ -31,6 +31,7 @@ public class Overworld
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
 	Inventory inventory;
+	boolean gameWon;
 	boolean noClip;
 	int playerHealth;
 	final int MAX_PLAYER_HEALTH = 5;
@@ -90,6 +91,7 @@ public class Overworld
 		}
 		map[playerPos.y][playerPos.x - 1] = tiles.fireSuppression;
 		distributeCircuits();
+		gameWon = false;
 		playerHealth = MAX_PLAYER_HEALTH;
 	}
 
@@ -237,6 +239,10 @@ public class Overworld
 				inventory.addComponent(CircuitComponent.randomComponent());
 
 		}
+		
+		//victory
+		if(map[playerPos.y][playerPos.x] == tiles.pod)
+			gameWon = true;
 	}
 	
 	@SuppressWarnings("unchecked")
