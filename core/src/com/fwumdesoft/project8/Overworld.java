@@ -486,8 +486,7 @@ public class Overworld
 	 */
 	public boolean isOpen(int x, int y)
 	{
-		return noClip || (map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.broken))
-				&& modifiers[y][x] != mods.fire;
+		return noClip || (map[y][x] == tiles.floor || (map[y][x] == tiles.door && modifiers[y][x] != mods.broken));
 	}
 
 	private class Door
