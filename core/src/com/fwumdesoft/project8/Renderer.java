@@ -171,6 +171,10 @@ public class Renderer
 	 */
 	public void renderOverworld(Overworld world, Inventory inventory)
 	{
+		shapes.begin(ShapeType.Filled);
+		shapes.setColor(Color.BLACK);
+		shapes.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		shapes.end();
 		//currentFrame += FRAMES_PER_ANIMATION / 4f;
 		this.fireFrame = (fireFrame + 1) % 60;
 		int fireFrame = this.fireFrame / 15;
@@ -253,8 +257,10 @@ public class Renderer
 
 	public void renderCircuit(Circuit circuit, Inventory inventory, int cursorX, int cursorY)
 	{
+		shapes.begin(ShapeType.Filled);
+		shapes.setColor(Color.GRAY);
+		shapes.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		font.setColor(Color.WHITE);
-		shapes.begin(ShapeRenderer.ShapeType.Filled);
 		shapes.setColor(Color.WHITE);
 		shapes.rect(-circuitCamera.x, -circuitCamera.y, circuit.grid[0].length * componentSize, circuit.grid.length * componentSize);
 		if (showInventory)
