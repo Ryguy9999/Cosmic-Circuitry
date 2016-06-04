@@ -94,7 +94,7 @@ public class CircuitComponent implements Serializable
 		type = comp.type;
 		voltageDif = comp.voltageDif;
 		current = comp.current;
-		resistance = comp.current;
+		resistance = comp.resistance;
 		targetCurrent = comp.targetCurrent;
 		targetMargin = comp.targetMargin;
 	}
