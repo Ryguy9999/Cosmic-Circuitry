@@ -7,7 +7,6 @@ import com.fwumdesoft.project8.CircuitComponent.Type;
 
 public class CircuitSolver
 {
-
 	/**
 	 * Takes in a 2D array representing a PROPER circuit, and sets each
 	 * component's current value to its proper amount
@@ -575,7 +574,7 @@ public class CircuitSolver
 
 		public String toString()
 		{
-			return start + ":" + startDirection + "->" + endDirection;
+			return startDirection + ">" + endDirection;
 		}
 	}
 }

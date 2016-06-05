@@ -119,7 +119,7 @@ public class Renderer
 		this.player = assets.get("player_idle.png", Texture.class);
 		this.wall = assets.get("station_wall.png", Texture.class);
 		this.floor = assets.get("station_floor.png", Texture.class);
-		this.pod = assets.get("pod_temp.png", Texture.class);
+		this.pod = assets.get("escape_pod.png", Texture.class);
 		Texture fire = assets.get("fire.png", Texture.class);
 		this.fire = new TextureRegion[4];
 		for(int i = 0; i < 4; i++)
