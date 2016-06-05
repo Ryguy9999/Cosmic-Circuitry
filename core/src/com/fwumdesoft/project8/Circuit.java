@@ -35,7 +35,10 @@ public class Circuit implements Serializable
 			for(CircuitComponent[] row : grid)
 				for(CircuitComponent item : row)
 					if(item != null && item.type == null)
+					{
+						resetCurrent();
 						return false;
+					}
 			
 			CircuitSolver.solve(grid);
 	
@@ -48,7 +51,19 @@ public class Circuit implements Serializable
 			return count == goalLamps;
 		} catch(Exception e)
 		{
+			resetCurrent();
 			return false;
 		}
+	}
+	
+	/**
+	 * Resets the current of all components in the circuit
+	 */
+	private void resetCurrent()
+	{
+		for(CircuitComponent[] row : grid)
+			for(CircuitComponent item : row)
+				if(item != null)
+					item.current = 0;
 	}
 }
