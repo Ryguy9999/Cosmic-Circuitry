@@ -194,6 +194,11 @@ public class Renderer
 				// Find the position where the square will draw
 				int drawX = (x - player.x + halfGridWidth) * cellSize;
 				int drawY = (y - player.y + halfGridHeight) * cellSize;
+				if((world.map[y][x] == tiles.door || world.map[y][x] == tiles.fireSuppression)
+						&& world.modifiers[y][x] == mods.broken && Math.random() < 0.05)
+				{
+					ParticleSystem.burst("spark", drawX + cellSize / 2, drawY + cellSize / 2, 12);
+				}
 				// Draw the correct texture
 				switch (world.map[y][x])
 				{

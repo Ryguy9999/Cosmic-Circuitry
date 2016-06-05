@@ -18,6 +18,13 @@ public class ParticleSystem
 	
 	public static void init(AssetManager assets)
 	{
+		addParticleType("spark", p -> {
+			p.position.setVertices(new float[]{0,0, 1,0, 0,1, 1,1});
+			p.position.setScale(1, 1);
+			p.lifetime = 10;
+			p.texture = new TextureRegion(assets.get("broken.png", Texture.class));
+			p.velocity.set(((float)Math.random() - 0.5f) * 2.5f, ((float)Math.random() - 0.5f) * 2.5f);
+		});
 		addParticleType("electricity", p -> {
 			p.position.setVertices(new float[]{0,0, 4,0, 0,4, 4,4});
 			p.position.setScale(1, 1);
