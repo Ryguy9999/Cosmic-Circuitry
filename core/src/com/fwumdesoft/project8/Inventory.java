@@ -26,6 +26,13 @@ public class Inventory
 		resistors = new ArrayList<>();
 		chips = new ArrayList<>();
 		batteries = new ArrayList<>();
+		addComponent(CircuitComponent.battery());
+		addComponent(CircuitComponent.battery());
+		addComponent(CircuitComponent.lamp());
+		addComponent(CircuitComponent.lamp());
+		addComponent(CircuitComponent.resistor());
+		addComponent(CircuitComponent.resistor());
+
 	}
 
 	public void addComponent(CircuitComponent comp)
