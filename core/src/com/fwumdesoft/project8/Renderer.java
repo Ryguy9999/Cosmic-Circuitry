@@ -194,6 +194,11 @@ public class Renderer
 				// Find the position where the square will draw
 				int drawX = (x - player.x + halfGridWidth) * cellSize;
 				int drawY = (y - player.y + halfGridHeight) * cellSize;
+				if((world.map[y][x] == tiles.door || world.map[y][x] == tiles.fireSuppression)
+						&& world.modifiers[y][x] == mods.broken && Math.random() < 0.05)
+				{
+					ParticleSystem.burst("spark", drawX + cellSize / 2, drawY + cellSize / 2, 12);
+				}
 				// Draw the correct texture
 				switch (world.map[y][x])
 				{
@@ -257,6 +262,8 @@ public class Renderer
 
 	public void renderCircuit(Circuit circuit, Inventory inventory, int cursorX, int cursorY)
 	{
+		this.fireFrame = (fireFrame + 1) % 60;
+		int fireFrame = this.fireFrame / 15;
 		shapes.begin(ShapeType.Filled);
 		shapes.setColor(Color.GRAY);
 		shapes.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -312,6 +319,8 @@ public class Renderer
 						continue;
 					}
 					draw(batch, tex, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
+					if(Double.isNaN(comp.current))
+						batch.draw(fire[fireFrame], drawX, drawY, componentSize, componentSize);
 				}
 			}
 		}

@@ -169,6 +169,7 @@ public class CircuitComponent implements Serializable
 		comp.isLamp = true;
 		comp.resistance = 1;
 		comp.targetMargin = 0.75f;
+		comp.targetCurrent = 1;
 		return comp;
 	}
 
