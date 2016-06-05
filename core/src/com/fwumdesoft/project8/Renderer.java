@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -76,7 +77,7 @@ public class Renderer
 	 * The current animation frame for the overworld
 	 */
 	//TODO: Make a decision about animation
-	//private float currentFrame;
+	private float currentFrame;
 	/**
 	 * The game frames per one animation
 	 */
@@ -257,6 +258,10 @@ public class Renderer
 		shapes.setColor(Color.BLUE);
 		for(int i = 0; i < world.playerHealth; i++)
 			shapes.rect(i * 24 + 4, Gdx.graphics.getHeight() - 20, 16, 16);
+		Gdx.gl.glEnable(GL30.GL_BLEND);
+		shapes.setColor(new Color(1, 0, 0, 0.15f));
+		for(int i = 0; i < world.MAX_PLAYER_HEALTH - world.playerHealth; i++)
+			shapes.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		shapes.end();
 	}
 
