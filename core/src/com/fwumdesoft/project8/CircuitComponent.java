@@ -169,6 +169,7 @@ public class CircuitComponent implements Serializable
 		comp.isLamp = true;
 		comp.resistance = 1;
 		comp.targetMargin = 0.75f;
+		comp.targetCurrent = 1;
 		return comp;
 	}
 
@@ -219,11 +220,14 @@ public class CircuitComponent implements Serializable
 	 */
 	public double getMainValue()
 	{
+		System.out.println(type + " " + isLamp);
 		switch (type)
 		{
 		case BATTERY:
+			System.out.println(voltageDif);
 			return voltageDif;
 		case RESISTOR:
+			System.out.println(resistance + " " + targetCurrent);
 			if(!isLamp)
 				return resistance;
 			else
