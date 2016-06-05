@@ -55,8 +55,9 @@ public class Slideshow
 	public boolean next()
 	{
 		current++;
-		if(current > textures.length)
+		if(current >= textures.length)
 		{
+			transition.transition(transitionSpeed);
 			return false;
 		}
 		else
