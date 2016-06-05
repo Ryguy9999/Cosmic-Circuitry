@@ -257,6 +257,8 @@ public class Renderer
 
 	public void renderCircuit(Circuit circuit, Inventory inventory, int cursorX, int cursorY)
 	{
+		this.fireFrame = (fireFrame + 1) % 60;
+		int fireFrame = this.fireFrame / 15;
 		shapes.begin(ShapeType.Filled);
 		shapes.setColor(Color.GRAY);
 		shapes.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -312,6 +314,8 @@ public class Renderer
 						continue;
 					}
 					draw(batch, tex, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
+					if(Double.isNaN(comp.current))
+						batch.draw(fire[fireFrame], drawX, drawY, componentSize, componentSize);
 				}
 			}
 		}
