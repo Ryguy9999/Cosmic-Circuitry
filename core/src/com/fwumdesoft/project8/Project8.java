@@ -37,6 +37,7 @@ public class Project8 extends ApplicationAdapter
 	private SpriteBatch batch;
 	private TransitionManager transition;
 	private MusicPlayer music;
+	private final int CIRCUIT_TRANSITION_SPEED = 20;
 	
 	@Override
 	public void create()
@@ -92,7 +93,7 @@ public class Project8 extends ApplicationAdapter
 					world.circuitFail();
 				isCircuit = false;
 				rend.resetCircuitCamera(); //Ensure that the circuit camera will be centered next time
-				startScreenTransition(-20); //Transition back into the overworld
+				startScreenTransition(-CIRCUIT_TRANSITION_SPEED); //Transition back into the overworld
 			}
 		} else if(world.gameWon)
 		{
@@ -111,7 +112,7 @@ public class Project8 extends ApplicationAdapter
 				input.setCircuit(world.currentCircuit);
 				isCircuit = true;
 				world.currentCircuit = null;
-				startScreenTransition(20);
+				startScreenTransition(CIRCUIT_TRANSITION_SPEED);
 			}
 			//The game has been won in this frame, so transition to the credits
 			if(world.gameWon)
