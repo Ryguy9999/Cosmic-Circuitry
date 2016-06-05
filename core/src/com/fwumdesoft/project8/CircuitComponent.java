@@ -223,7 +223,6 @@ public class CircuitComponent implements Serializable
 		switch (type)
 		{
 		case BATTERY:
-			System.out.println(voltageDif);
 			return voltageDif;
 		case RESISTOR:
 			if(!isLamp)
