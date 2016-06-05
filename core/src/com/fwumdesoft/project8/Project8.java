@@ -7,6 +7,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -35,6 +36,7 @@ public class Project8 extends ApplicationAdapter
 	private Vector2 circuitCamera;
 	private SpriteBatch batch;
 	private TransitionManager transition;
+	private MusicPlayer music;
 	
 	@Override
 	public void create()
@@ -50,6 +52,7 @@ public class Project8 extends ApplicationAdapter
 		viewport = new FitViewport(640, 480, camera);
 		
 		ParticleSystem.init(assets);
+		music = new MusicPlayer(assets);
 	}
 
 	public boolean isCircuit = false;
@@ -64,6 +67,7 @@ public class Project8 extends ApplicationAdapter
 		//TODO: Developer shortcut, remove from final build
 		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
+		music.update(isCircuit);
 		if (isCircuit)
 		{
 			//Calculate the cursor position in the circuit
@@ -154,6 +158,8 @@ public class Project8 extends ApplicationAdapter
 		List<FileHandle> assetsFiles = Arrays.asList(Gdx.files.internal(".").list());
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("png") || string.endsWith("jpg"))
 				.forEach(name -> assets.load(name, Texture.class));
+		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("mp3"))
+		.forEach(name -> assets.load(name, Music.class));
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("circuit"))
 				.forEach(name -> assets.load(name, Circuit.class));
 		assets.finishLoading();
