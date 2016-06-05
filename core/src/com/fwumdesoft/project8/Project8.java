@@ -93,7 +93,7 @@ public class Project8 extends ApplicationAdapter
 					world.circuitFail();
 				isCircuit = false;
 				rend.resetCircuitCamera(); //Ensure that the circuit camera will be centered next time
-				startScreenTransition(-CIRCUIT_TRANSITION_SPEED); //Transition back into the overworld
+				transition.transition(-CIRCUIT_TRANSITION_SPEED); //Transition back into the overworld
 			}
 		} else if(world.gameWon)
 		{
@@ -112,11 +112,11 @@ public class Project8 extends ApplicationAdapter
 				input.setCircuit(world.currentCircuit);
 				isCircuit = true;
 				world.currentCircuit = null;
-				startScreenTransition(CIRCUIT_TRANSITION_SPEED);
+				transition.transition(CIRCUIT_TRANSITION_SPEED);
 			}
 			//The game has been won in this frame, so transition to the credits
 			if(world.gameWon)
-				startScreenTransition(10);
+				transition.transition(10);
 		}
 		//Draw the particle system
 		ParticleSystem.tick();
@@ -124,11 +124,6 @@ public class Project8 extends ApplicationAdapter
 		ParticleSystem.draw(batch);
 		batch.end();
 		transition.endDraw();
-	}
-	
-	public void startScreenTransition(int deltaX)
-	{
-		transition.transition(deltaX);
 	}
 	
 	private void initSimulation()
