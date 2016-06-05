@@ -100,7 +100,7 @@ public class CircuitSolver
 			{
 				circuit[(int) loc.x][(int) loc.y].current = Math.abs(current);
 				if (circuit[(int) loc.x][(int) loc.y].isLamp && Math.abs(Math.abs(current)
-						- circuit[(int) loc.x][(int) loc.y].targetCurrent) < circuit[(int) loc.x][(int) loc.y].targetMargin)
+						- circuit[(int) loc.x][(int) loc.y].targetCurrent) <= circuit[(int) loc.x][(int) loc.y].targetMargin)
 					circuit[(int) loc.x][(int) loc.y].isActive = true;
 			}
 
