@@ -1,7 +1,9 @@
 package com.fwumdesoft.project8;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -15,6 +17,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -38,6 +41,7 @@ public class Project8 extends ApplicationAdapter
 	private TransitionManager transition;
 	private MusicPlayer music;
 	private final int CIRCUIT_TRANSITION_SPEED = 20;
+	private Slideshow intro, current;
 	
 	@Override
 	public void create()
@@ -54,6 +58,14 @@ public class Project8 extends ApplicationAdapter
 		
 		ParticleSystem.init(assets);
 		music = new MusicPlayer(assets);
+		
+		List<Texture> textures = new ArrayList<>();
+		while(assets.isLoaded("intro_" + textures.size() + ".png"))
+			textures.add(assets.get("intro_" + textures.size() + ".png", Texture.class));
+		intro = new Slideshow(-20, transition, textures.stream()
+				.map(texture -> new TextureRegion(texture)).collect(Collectors.toList())
+				.toArray(new TextureRegion[textures.size()]));
+		current = intro;
 	}
 
 	public boolean isCircuit = false;
@@ -69,7 +81,16 @@ public class Project8 extends ApplicationAdapter
 		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
 		music.update(isCircuit);
-		if (isCircuit)
+		if(current != null)
+		{
+			batch.begin();
+			current.draw(batch);
+			if(Gdx.input.isKeyJustPressed(Keys.SPACE))
+				if(!current.next())
+					current = null;
+			batch.end();
+		}
+		else if (isCircuit)
 		{
 			//Calculate the cursor position in the circuit
 			mousePosition.set(Gdx.input.getX(), Gdx.input.getY());
