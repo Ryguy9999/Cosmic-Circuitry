@@ -228,7 +228,7 @@ public class Overworld
 					}
 				
 				//Component machine
-				if(map[y][x] == tiles.componentMachine && Math.random() < 0.04)
+				if(map[y][x] == tiles.componentMachine && Math.random() < 0.1)
 					if(y-1 >= 0 && modifiers[y-1][x] == mods.none)
 						modifiers[y-1][x] = mods.componentPile;
 			}

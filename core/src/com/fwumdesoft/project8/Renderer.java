@@ -235,7 +235,14 @@ public class Renderer
 						batch.draw(fire[fireFrame], drawX, drawY);
 					break;
 				case pod:
-					batch.draw(pod, drawX, drawY);
+					rotation = 0;
+					if(world.map[y - 1][x] != Overworld.tiles.space)
+						rotation = 90;
+					else if(world.map[y + 1][x] != Overworld.tiles.space)
+						rotation = 270;
+					else if(world.map[y][x + 1] != Overworld.tiles.space)
+						rotation = 180;
+					draw(batch, pod, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
 					break;
 				case fireSuppression:
 					batch.draw(fireSuppression, drawX, drawY);
