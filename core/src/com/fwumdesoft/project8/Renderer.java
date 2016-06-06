@@ -176,26 +176,34 @@ public class Renderer
 		shapes.setColor(Color.BLACK);
 		shapes.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		shapes.end();
-		//currentFrame += FRAMES_PER_ANIMATION / 4f;
+		if(currentFrame > 0)
+			currentFrame++;
+		if(currentFrame >= OverworldInput.MAX_COOLDOWN)
+			currentFrame = 0;
+		if(world.playerMoving)
+			currentFrame = 1;
+		world.playerMoving = false;
 		this.fireFrame = (fireFrame + 1) % 60;
 		int fireFrame = this.fireFrame / 15;
 		Point player = world.playerPos;
 		// Establish the drawable region
 		int halfGridWidth = (screenWidth / cellSize) / 2;
 		int halfGridHeight = (screenHeight / cellSize) / 2;
-		int xStart = Math.max(0, player.x - halfGridWidth);
-		int xEnd = Math.min(world.map.length, player.x + halfGridWidth);
-		int yStart = Math.max(0, player.y - halfGridHeight);
-		int yEnd = Math.min(world.map[0].length, player.y + halfGridHeight + cellSize);
+		int xStart = Math.max(0, player.x - halfGridWidth - 1);
+		int xEnd = Math.min(world.map.length, player.x + halfGridWidth + 1);
+		int yStart = Math.max(0, player.y - halfGridHeight - 1);
+		int yEnd = Math.min(world.map[0].length, player.y + halfGridHeight + 1 + cellSize);
 		batch.begin();
 		for (int y = yStart; y < yEnd; y++)
 		{
 			for (int x = xStart; x < xEnd; x++)
 			{
 				// Find the position where the square will draw
-				int drawX = (x - player.x + halfGridWidth) * cellSize;
-				int drawY = (y - player.y + halfGridHeight) * cellSize;
-				if((world.map[y][x] == tiles.door || world.map[y][x] == tiles.fireSuppression)
+				int drawX = (x - player.x + (currentFrame != 0 ? world.playerFace.x : 0) + halfGridWidth) * cellSize +
+						(int)(cellSize * currentFrame / OverworldInput.MAX_COOLDOWN) * -world.playerFace.x;
+				int drawY = (y - player.y + (currentFrame != 0 ? world.playerFace.y : 0) + halfGridHeight) * cellSize +
+						(int)(cellSize * currentFrame / OverworldInput.MAX_COOLDOWN) * -world.playerFace.y;
+				if((world.map[y][x] == tiles.door || world.map[y][x] == tiles.fireSuppression || world.map[y][x] == tiles.terminal)
 						&& world.modifiers[y][x] == mods.broken && Math.random() < 0.05)
 				{
 					ParticleSystem.burst("spark", drawX + cellSize / 2, drawY + cellSize / 2, 12);

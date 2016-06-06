@@ -33,6 +33,7 @@ public class Overworld
 	Inventory inventory;
 	boolean gameWon;
 	boolean noClip;
+	public boolean playerMoving;
 	int playerHealth;
 	final int MAX_PLAYER_HEALTH = 5;
 	final int FIRE_SUPPRESSION_RANGE = 12, TERMINAL_COUNT = 3;
@@ -70,6 +71,7 @@ public class Overworld
 		playerPos = new Point(size / 2 - 1, size / 2);
 		boolean firstDoor = true;
 		this.playerFace = new Point();
+		playerMoving = false;
 		this.app = app;
 		worldCircuits = new HashMap<Point, Circuit>();
 		noClip = false;
@@ -144,6 +146,7 @@ public class Overworld
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
 			turn();
+			playerMoving = true;
 		}
 		return spotFree;
 	}

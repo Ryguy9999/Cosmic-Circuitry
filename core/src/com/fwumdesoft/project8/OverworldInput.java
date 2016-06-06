@@ -12,7 +12,7 @@ public class OverworldInput extends InputAdapter
 	private Project8 topLevel;
 	private Stack<Integer> heldKeys;
 	private int cooldown = 0;
-	private final int MAX_COOLDOWN = 10;
+	public static final int MAX_COOLDOWN = 10;
 	
 	public OverworldInput(Project8 topLevel, Overworld world)
 	{
