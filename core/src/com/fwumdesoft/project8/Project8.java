@@ -64,6 +64,7 @@ public class Project8 extends ApplicationAdapter
 		introSound = assets.get("intro.ogg", Sound.class);
 		
 		List<Texture> textures = new ArrayList<>();
+		textures.add(assets.get("game_over_bkg.png", Texture.class));
 		while(assets.isLoaded("intro_" + textures.size() + ".png"))
 			textures.add(assets.get("intro_" + textures.size() + ".png", Texture.class));
 		intro = new Slideshow(-20, transition, textures.stream()
@@ -71,7 +72,11 @@ public class Project8 extends ApplicationAdapter
 				.toArray(new TextureRegion[textures.size()]));
 		current = intro;
 		introSound.play();
-		transition.transition(40);
+		//Manage appearance of intro slide and intro sound
+		transition.startDraw();
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		intro.next(-40);
+		transition.endDraw();
 	}
 
 	public boolean isCircuit = false;
