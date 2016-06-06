@@ -71,4 +71,9 @@ public class Slideshow
 			return true;
 		}
 	}
+	
+	public int getCurrent()
+	{
+		return current;
+	}
 }
