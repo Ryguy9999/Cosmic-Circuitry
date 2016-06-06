@@ -233,7 +233,7 @@ public class Overworld
 						if(modifiers[j][i] == mods.fire)
 						{
 							modifiers[j][i] = mods.none;
-							fireSupression.play();
+							playSound(i, j, 1, fireSupression);
 						}
 					}
 				
@@ -242,7 +242,7 @@ public class Overworld
 					if(y-1 >= 0 && modifiers[y-1][x] == mods.none)
 					{
 						modifiers[y-1][x] = mods.componentPile;
-						componentBuilt.play();
+						playSound(x, y, 1, componentBuilt);
 					}
 			}
 		}
@@ -573,6 +573,18 @@ public class Overworld
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Plays a sound taking into account distance from the player
+	 * @param x Sound origin
+	 * @param y Sound origin
+	 * @param initialVolume The volume of the sound with no dampening
+	 * @param sound The sound
+	 */
+	private void playSound(int x, int y, float initialVolume, Sound sound)
+	{
+		sound.play((float)Math.pow(0.9, playerPos.distance(x, y)) * initialVolume);
 	}
 
 	/**
