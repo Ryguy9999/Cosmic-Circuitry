@@ -151,8 +151,11 @@ public class CircuitInput
 			if (!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0
 					&& cursorX < circuit.grid[cursorY].length) || !circuit.grid[cursorY][cursorX].isChangeable)
 				return;
-			inventory.addComponent(circuit.grid[cursorY][cursorX]);
-			circuit.grid[cursorY][cursorX] = CircuitComponent.blank();
+			if(circuit.grid[cursorY][cursorX].type != null)
+			{
+				inventory.addComponent(circuit.grid[cursorY][cursorX]);
+				circuit.grid[cursorY][cursorX] = CircuitComponent.blank();
+			}
 		}
 		List<CircuitComponent> type = null;
 		String componentName = "";
