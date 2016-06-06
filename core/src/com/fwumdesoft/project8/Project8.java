@@ -86,7 +86,7 @@ public class Project8 extends ApplicationAdapter
 		//TODO: Developer shortcut, remove from final build
 		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
-		music.update(isCircuit);
+		music.update(current == null, isCircuit);
 		if(current != null)
 		{
 			batch.begin();
