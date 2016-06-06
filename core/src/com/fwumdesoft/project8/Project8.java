@@ -157,7 +157,7 @@ public class Project8 extends ApplicationAdapter
 	{
 		inventory = new Inventory();
 
-		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory, true);
+		world = new Overworld(this, 1000, assets.getAll(Circuit.class, new Array<>()), inventory, assets, true);
 		circuitCamera = new Vector2();
 		rend = new Renderer(batch, new BitmapFont(), assets, 32, 64, 640, 480, circuitCamera);
 		

@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
 
 public class Overworld
@@ -40,10 +42,15 @@ public class Overworld
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.30;
 	private Overworld previous;
-	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, boolean topLevel)
+	private Sound fireSupression, componentBuilt;
+	
+	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, AssetManager assets, boolean topLevel)
 	{
+		fireSupression = assets.get("fireSuppression.ogg", Sound.class);
+		componentBuilt = assets.get("componentMachine.ogg", Sound.class);
+		
 		if(topLevel)
-			previous = new Overworld(app, size, circuits, inventory, false);
+			previous = new Overworld(app, size, circuits, inventory, assets, false);
 		this.inventory = inventory;
 		// contains permanent tiles
 		map = new tiles[size][size];
@@ -224,13 +231,19 @@ public class Overworld
 						int j = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + y - FIRE_SUPPRESSION_RANGE;
 						int i = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + x - FIRE_SUPPRESSION_RANGE;
 						if(modifiers[j][i] == mods.fire)
+						{
 							modifiers[j][i] = mods.none;
+							fireSupression.play();
+						}
 					}
 				
 				//Component machine
 				if(map[y][x] == tiles.componentMachine && Math.random() < 0.1)
 					if(y-1 >= 0 && modifiers[y-1][x] == mods.none)
+					{
 						modifiers[y-1][x] = mods.componentPile;
+						componentBuilt.play();
+					}
 			}
 		}
 		
