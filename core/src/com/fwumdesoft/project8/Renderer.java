@@ -216,6 +216,8 @@ public class Renderer
 					if (y > 0 && world.map[y - 1][x] != tiles.wall)
 						rotation = 90;
 					draw(batch, t, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
+					if(world.modifiers[y][x] == mods.fire)
+						batch.draw(fire[fireFrame], drawX, drawY);
 					break;
 				case floor:
 					batch.draw(floor, drawX, drawY);

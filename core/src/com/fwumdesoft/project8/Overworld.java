@@ -202,9 +202,8 @@ public class Overworld
 						int spreadY = (int)(Math.random() * 3) - 1;
 						if(map[y + spreadY][x + spreadX] == tiles.floor)//Regular spread
 							modifiers[y + spreadY][x + spreadX] = mods.fire;
-						else if(map[y + spreadY][x + spreadX] == tiles.door && Math.abs(spreadY)+Math.abs(spreadX) <= 1 &&
-								Math.random() < 0.2)//Spread through door
-							modifiers[y + spreadY*2][x + spreadX*2] = mods.fire;
+						else if(map[y + spreadY][x + spreadX] == tiles.door && Math.random() < 0.2)//Spread through door
+							modifiers[y + spreadY][x + spreadX] = mods.fire;
 					}
 					else if(Math.random() < FIRE_SPREAD_CHANCE / 6)
 					{
