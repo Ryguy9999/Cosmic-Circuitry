@@ -10,6 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -42,6 +43,7 @@ public class Project8 extends ApplicationAdapter
 	private MusicPlayer music;
 	private final int CIRCUIT_TRANSITION_SPEED = 20;
 	private Slideshow intro, current;
+	private Sound introSound;
 	
 	@Override
 	public void create()
@@ -59,6 +61,8 @@ public class Project8 extends ApplicationAdapter
 		ParticleSystem.init(assets);
 		music = new MusicPlayer(assets);
 		
+		introSound = assets.get("intro.ogg", Sound.class);
+		
 		List<Texture> textures = new ArrayList<>();
 		while(assets.isLoaded("intro_" + textures.size() + ".png"))
 			textures.add(assets.get("intro_" + textures.size() + ".png", Texture.class));
@@ -66,6 +70,8 @@ public class Project8 extends ApplicationAdapter
 				.map(texture -> new TextureRegion(texture)).collect(Collectors.toList())
 				.toArray(new TextureRegion[textures.size()]));
 		current = intro;
+		introSound.play();
+		transition.transition(40);
 	}
 
 	public boolean isCircuit = false;
@@ -177,6 +183,8 @@ public class Project8 extends ApplicationAdapter
 				.forEach(name -> assets.load(name, Texture.class));
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("mp3"))
 		.forEach(name -> assets.load(name, Music.class));
+		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("ogg"))
+		.forEach(name -> assets.load(name, Sound.class));
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("circuit"))
 				.forEach(name -> assets.load(name, Circuit.class));
 		assets.finishLoading();

@@ -465,7 +465,7 @@ public class Overworld
 	
 	private void spawnFireSuppression()
 	{
-		for(int y = 0; y < map.length; y += FIRE_SUPPRESSION_RANGE * 2)
+		for(int y = 0; y < map.length; y += FIRE_SUPPRESSION_RANGE)
 		{
 			for(int x = 0; x < map[y].length; x++)
 			{
@@ -473,7 +473,7 @@ public class Overworld
 				{
 					map[y][x] = tiles.fireSuppression;
 					modifiers[y][x] = (Math.random() < 0.75)? mods.broken: mods.none;
-					x += (Math.random() * FIRE_SUPPRESSION_RANGE) + (FIRE_SUPPRESSION_RANGE);
+					x += (Math.random() * (FIRE_SUPPRESSION_RANGE / 2)) + (FIRE_SUPPRESSION_RANGE);
 				}
 			}
 		}

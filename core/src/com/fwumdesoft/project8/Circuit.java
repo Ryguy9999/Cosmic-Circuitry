@@ -50,7 +50,7 @@ public class Circuit implements Serializable
 
 			for (CircuitComponent[] row : grid)
 				for (CircuitComponent comp : row)
-					if (Double.isNaN(comp.current)
+					if (Double.isNaN(comp.current))
 						return false;
 
 	
