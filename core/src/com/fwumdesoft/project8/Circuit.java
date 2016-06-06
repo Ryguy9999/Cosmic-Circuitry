@@ -50,10 +50,9 @@ public class Circuit implements Serializable
 
 			for (CircuitComponent[] row : grid)
 				for (CircuitComponent comp : row)
-					if (Double.isNaN(comp.current))
+					if (comp != null && Double.isNaN(comp.current))
 						return false;
 
-	
 			return count == goalLamps;
 		} catch(Exception e)
 		{
