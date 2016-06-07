@@ -258,12 +258,14 @@ public class Renderer
 					break;
 				case pod:
 					rotation = 0;
-					if(world.map[y - 1][x] != Overworld.tiles.space)
+					if(world.map[y - 1][x] == Overworld.tiles.door)
+						rotation = 0;
+					else if(world.map[y][x + 1] == Overworld.tiles.door)
 						rotation = 90;
-					else if(world.map[y + 1][x] != Overworld.tiles.space)
-						rotation = 270;
-					else if(world.map[y][x + 1] != Overworld.tiles.space)
+					else if(world.map[y + 1][x] == Overworld.tiles.door)
 						rotation = 180;
+					else if(world.map[y][x - 1] == Overworld.tiles.door)
+						rotation = 270;
 					draw(batch, pod, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
 					break;
 				case fireSuppression:
