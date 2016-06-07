@@ -467,13 +467,14 @@ public class Renderer
 		{
 			circuitAccumulator[(int) inventoryItems.get(i).getMainValue() - 1] += 1;
 		}
-		String value = label;
+		String value = label + "  ";
 		for (int i = 0; i < circuitAccumulator.length; i++)
 		{
-			value += (i + 1) + ":" + circuitAccumulator[i] + "  ";
+			if(circuitAccumulator[i] != 0)
+				value += (i + 1) + ":" + circuitAccumulator[i] + "  ";
 			circuitAccumulator[i] = 0; // Reset the accumulator
 		}
-		font.draw(batch, value, 48, 24 + height, 32, Align.left, false);
+		font.draw(batch, value, 320, 24 + height, 32, Align.center, false);
 
 	}
 
