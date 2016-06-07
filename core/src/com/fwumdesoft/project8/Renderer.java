@@ -388,7 +388,6 @@ public class Renderer
 		shapes.rect(0, Gdx.graphics.getHeight() - 32, 640, 32);
 		shapes.end();
 		batch.begin();
-		font.draw(batch, "Lamps needed: " + circuit.goalLamps, 0, Gdx.graphics.getHeight() - 12);
 		if(circuit.isSolved()) 
 		{
 			font.setColor(Color.GREEN);
@@ -399,6 +398,7 @@ public class Renderer
 			font.setColor(Color.RED);
 			font.draw(batch, "In Progress", Gdx.graphics.getWidth() - 96, Gdx.graphics.getHeight() - 12);
 		}
+		font.draw(batch, "Lamps needed: " + circuit.goalLamps, 0, Gdx.graphics.getHeight() - 12);
 		batch.end();
 	}
 
