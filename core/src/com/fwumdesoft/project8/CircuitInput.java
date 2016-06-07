@@ -176,7 +176,7 @@ public class CircuitInput
 					componentName = "battery";
 					break;
 				case JOptionPane.NO_OPTION:
-					type = inventory.chips;
+					type = inventory.lamps;
 					componentName = "lamp";
 
 					break;

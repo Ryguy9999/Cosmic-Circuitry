@@ -462,7 +462,7 @@ public class Renderer
 		batch.setColor(Color.BLACK);
 		batch.draw(lamp, 0, 32, 32, 32);
 		batch.setColor(Color.WHITE);
-		drawInventoryList(inventory.chips, "Amps Needed  ", 32);
+		drawInventoryList(inventory.lamps, "Amps Needed  ", 32);
 		batch.draw(battery, 0, 64, 32, 32);
 		drawInventoryList(inventory.batteries, "Volts                 ", 64);
 		batch.end();
