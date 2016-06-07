@@ -50,17 +50,17 @@ public class Renderer
 	 * The number of pixels of the screen's height
 	 */
 	private int screenHeight;
-	private Texture player, wall, floor, pod, componentPile, componentMachine, fireSuppression, terminal, door,
+	private Texture wall, floor, pod, componentPile, componentMachine, fireSuppression, terminal,
 						resistor, lamp, battery, cursor, blank, credits;
 	/**
 	 * All of the individual wire tileset images [right][top][left][bottom]
 	 */
 	private TextureRegion[][][][] wireTiles;
-	private TextureRegion unconnectedWire, openDoor, closedDoor;
+	private TextureRegion unconnectedWire;
 	/**
 	 * The frames in the fire animation
 	 */
-	private TextureRegion[] fire;
+	private TextureRegion[] fire, playerWalk, door;
 	/**
 	 * The current frame in the fire animation
 	 */
@@ -77,8 +77,7 @@ public class Renderer
 	/**
 	 * The current animation frame for the overworld
 	 */
-	//TODO: Make a decision about animation
-	private float currentFrame;
+	private int currentFrame;
 	/**
 	 * The game frames per one animation
 	 */
@@ -118,7 +117,6 @@ public class Renderer
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
 		// Retrieve image assets
-		this.player = assets.get("player_idle.png", Texture.class);
 		this.wall = assets.get("station_wall.png", Texture.class);
 		this.floor = assets.get("station_floor.png", Texture.class);
 		this.pod = assets.get("escape_pod.png", Texture.class);
@@ -126,11 +124,20 @@ public class Renderer
 		this.fire = new TextureRegion[4];
 		for(int i = 0; i < 4; i++)
 			this.fire[i] = new TextureRegion(fire, fire.getWidth() / 4 * i, 0, fire.getWidth() / 4, fire.getHeight());
+		Texture playerWalk = assets.get("player_walking.png", Texture.class);
+		this.playerWalk = new TextureRegion[3];
+		for(int i = 0; i < this.playerWalk.length; i++)
+			this.playerWalk[i] = new TextureRegion(playerWalk, playerWalk.getWidth() / this.playerWalk.length * i, 0,
+					playerWalk.getWidth() / this.playerWalk.length, playerWalk.getHeight());
+		Texture door = assets.get("station_door.png", Texture.class);
+		this.door = new TextureRegion[5];
+		for(int i = 0; i < this.door.length; i++)
+			this.door[i] = new TextureRegion(door, door.getWidth() / this.door.length * i, 0,
+					door.getWidth() / this.door.length, door.getHeight());
 		this.componentPile = assets.get("component_pile.png", Texture.class);
 		this.componentMachine = assets.get("component_machine.png", Texture.class);
 		this.fireSuppression = assets.get("fire_suppression.png", Texture.class);
-		this.terminal = assets.get("terminal.png", Texture.class);
-		this.door = assets.get("station_door.png", Texture.class);
+		this.terminal = assets.get("terminal.png", Texture.class); 
 		this.resistor = assets.get("resistor.png", Texture.class);
 		this.lamp = assets.get("lamp.png", Texture.class);
 		this.battery = assets.get("battery.png", Texture.class);
@@ -155,8 +162,6 @@ public class Renderer
 		wireTiles[1][1][0][0] = new TextureRegion(wires, size, size * 2, size, size);
 		wireTiles[1][1][1][0] = new TextureRegion(wires, size * 2, size * 2, size, size);
 		wireTiles[0][1][1][0] = new TextureRegion(wires, size * 3, size * 2, size, size);
-		closedDoor = new TextureRegion(door, 0, 0, 32, 32);
-		openDoor = new TextureRegion(door, 128, 0, 32, 32);
 		showInventory = true;
 		circuitCamera = camera;
 		sigFigs = new DecimalFormat("0.00");
@@ -217,11 +222,26 @@ public class Renderer
 					batch.draw(wall, drawX, drawY);
 					break;
 				case door:
-					TextureRegion t;
-					if (world.modifiers[y][x] == mods.broken || Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > doorOpenDistance)
-						t = closedDoor;
-					else
-						t = openDoor;
+					TextureRegion t = door[2];
+					if (world.modifiers[y][x] == mods.broken)
+						t = door[0];
+					else if(currentFrame == 0)
+						if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) <= doorOpenDistance)
+							t = door[4];
+						else
+							t = door[0];
+					else if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) <= doorOpenDistance &&
+							Vector2.dst(x, y, world.previousPlayerPos.x, world.previousPlayerPos.y) <= doorOpenDistance)
+						t = door[4];
+					else if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > doorOpenDistance &&
+							Vector2.dst(x, y, world.previousPlayerPos.x, world.previousPlayerPos.y) > doorOpenDistance)
+						t = door[0];
+					else if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > doorOpenDistance &&
+							Vector2.dst(x, y, world.previousPlayerPos.x, world.previousPlayerPos.y) <= doorOpenDistance)
+						t = door[door.length - 1 - (int)((double)currentFrame / OverworldInput.MAX_COOLDOWN * door.length)];
+					else if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) <= doorOpenDistance &&
+							Vector2.dst(x, y, world.previousPlayerPos.x, world.previousPlayerPos.y) > doorOpenDistance)
+						t = door[(int)((double)currentFrame / OverworldInput.MAX_COOLDOWN * door.length)];
 					float rotation = 0;
 					if (y > 0 && world.map[y - 1][x] != tiles.wall)
 						rotation = 90;
@@ -265,8 +285,8 @@ public class Renderer
 		// centered
 		float rotation = (float) Math.atan2(world.playerFace.y, world.playerFace.x);
 		rotation = (float) Math.toDegrees(rotation);
-		draw(batch, this.player, halfGridWidth * cellSize, halfGridHeight * cellSize, cellSize / 2, cellSize / 2,
-				rotation);
+		draw(batch, playerWalk[(int)((double)currentFrame / OverworldInput.MAX_COOLDOWN * playerWalk.length)],
+				halfGridWidth * cellSize, halfGridHeight * cellSize, cellSize / 2, cellSize / 2, rotation-90);
 		batch.end();
 		renderInventory(inventory);
 		//Draw the health indicator
@@ -419,13 +439,13 @@ public class Renderer
 		batch.begin();
 		// Draw each icon followed by the quantity
 		batch.draw(resistor, 0, 0, 32, 32);
-		drawInventoryList(inventory.resistors, "", 0);
+		drawInventoryList(inventory.resistors, "Ohms               ", 0);
 		batch.setColor(Color.BLACK);
 		batch.draw(lamp, 0, 32, 32, 32);
 		batch.setColor(Color.WHITE);
-		drawInventoryList(inventory.chips, "", 32);
+		drawInventoryList(inventory.chips, "Amps Needed  ", 32);
 		batch.draw(battery, 0, 64, 32, 32);
-		drawInventoryList(inventory.batteries, "", 64);
+		drawInventoryList(inventory.batteries, "Volts                 ", 64);
 		batch.end();
 	}
 	
@@ -449,12 +469,14 @@ public class Renderer
 		{
 			circuitAccumulator[(int) inventoryItems.get(i).getMainValue() - 1] += 1;
 		}
+		String value = label;
 		for (int i = 0; i < circuitAccumulator.length; i++)
 		{
-			String value = (i + 1) + label + ": " + circuitAccumulator[i];
-			font.draw(batch, value, 48 * (i + 1), 24 + height, 32, Align.center, false);
+			value += (i + 1) + ":" + circuitAccumulator[i] + "  ";
 			circuitAccumulator[i] = 0; // Reset the accumulator
 		}
+		font.draw(batch, value, 48, 24 + height, 32, Align.left, false);
+
 	}
 
 	private void draw(SpriteBatch batch, Texture t, float x, float y, float originX, float originY, float rotation)
