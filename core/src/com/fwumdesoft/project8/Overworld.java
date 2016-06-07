@@ -102,6 +102,7 @@ public class Overworld
 		modifiers[playerPos.y - 1][playerPos.x - 1] = mods.componentPile;
 		spawnEscapePod();
 		distributeCircuits();
+		unblockDoors();
 		gameWon = false;
 		playerHealth = MAX_PLAYER_HEALTH;
 	}
@@ -329,6 +330,33 @@ public class Overworld
 				if(c != null)
 					worldCircuits.put(new Point(x, y), c);
 			}
+	}
+	
+	private void unblockDoors()
+	{
+		for(int y = 0; y < map.length; y++)
+			for(int x = 0; x < map[y].length; x++)
+				if(map[y][x] == tiles.door)
+					if(map[y+1][x] == tiles.componentMachine || map[y+1][x] == tiles.fireSuppression)
+					{
+						map[y+1][x+1] = map[y+1][x];
+						map[y+1][x] = tiles.floor;
+					}
+					else if(map[y][x+1] == tiles.componentMachine || map[y][x+1] == tiles.fireSuppression)
+					{
+						map[y+1][x+1] = map[y][x+1];
+						map[y][x+1] = tiles.floor;
+					}
+					else if(map[y-1][x] == tiles.componentMachine || map[y-1][x] == tiles.fireSuppression)
+					{
+						map[y-1][x+1] = map[y-1][x];
+						map[y-1][x] = tiles.floor;
+					}
+					else if(map[y][x-1] == tiles.componentMachine || map[y][x-1] == tiles.fireSuppression)
+					{
+						map[y+1][x-1] = map[y][x-1];
+						map[y][x-1] = tiles.floor;
+					}
 	}
 	
 	private <T> T getRandom(List<T> list)
