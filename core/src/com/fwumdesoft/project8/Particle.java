@@ -45,11 +45,12 @@ public class Particle implements Poolable
 		opacity += deltaOpacity;
 	}
 	
-	public void draw(SpriteBatch batch)
+	public void draw(SpriteBatch batch, Vector2 displacement)
 	{
-		batch.draw(texture, position.getX(), position.getY(), position.getOriginX(), 
-				position.getOriginY(), texture.getRegionWidth(), texture.getRegionHeight(), 
-				position.getScaleX(), position.getScaleY(), position.getRotation());
+		batch.draw(texture, position.getX() + displacement.x, position.getY() + displacement.y, 
+				position.getOriginX(), position.getOriginY(), texture.getRegionWidth(), 
+				texture.getRegionHeight(), position.getScaleX(), position.getScaleY(), 
+				position.getRotation());
 	}
 	
 	public boolean isDead()
