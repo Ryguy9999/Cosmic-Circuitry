@@ -298,6 +298,7 @@ public class Renderer
 		rotation = (float) Math.toDegrees(rotation);
 		draw(batch, playerWalk[(int)((double)currentFrame / OverworldInput.MAX_COOLDOWN * playerWalk.length)],
 				halfGridWidth * cellSize, halfGridHeight * cellSize, cellSize / 2, cellSize / 2, rotation-90);
+		ParticleSystem.draw(batch);
 		batch.end();
 		renderInventory(inventory);
 		//Draw the health indicator
@@ -418,6 +419,7 @@ public class Renderer
 			}
 		}
 		batch.draw(cursor, cursorX * componentSize - circuitCamera.x, cursorY * componentSize - circuitCamera.y);
+		ParticleSystem.draw(batch);
 		batch.end();
 		renderInventory(inventory);
 		shapes.begin(ShapeType.Filled);

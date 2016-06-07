@@ -98,6 +98,8 @@ public class Project8 extends ApplicationAdapter
 		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
 		music.update(current == null, isCircuit);
+		//Update the paricle system
+		ParticleSystem.tick();
 		if(current != null)
 		{
 			batch.begin();
@@ -158,11 +160,7 @@ public class Project8 extends ApplicationAdapter
 			if(world.gameWon)
 				transition.transition(10);
 		}
-		//Draw the particle system
-		ParticleSystem.tick();
-		batch.begin();
-		ParticleSystem.draw(batch);
-		batch.end();
+		
 		transition.endDraw();
 	}
 	
