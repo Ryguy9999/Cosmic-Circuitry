@@ -44,6 +44,10 @@ public class CircuitInput
 	 * If the mouse was pressed previoiusly
 	 */
 	private boolean previousPress;
+	/**
+	 * The number of pixels the camera can move per frame
+	 */
+	private final int CAMERA_SPEED = 2;
 
 	/**
 	 * Create a new circuit designer
@@ -74,35 +78,17 @@ public class CircuitInput
 	 */
 	public void update(int cursorX, int cursorY)
 	{
-		if (Gdx.input.isKeyJustPressed(Keys.END))
-			editing = !editing;
-		if(Gdx.input.isKeyPressed(Keys.LEFT))
-		{
-			camera.x -= 2;
-		}
-		if(Gdx.input.isKeyPressed(Keys.RIGHT))
-		{
-			camera.x += 2;
-		}
-		if(Gdx.input.isKeyPressed(Keys.UP))
-		{
-			camera.y += 2;
-		}
-		if(Gdx.input.isKeyPressed(Keys.DOWN))
-		{
-			camera.y -= 2;
-		}
-		if(Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT))
-		{
-			camera.set(0, 0);
-		}
-		if (editing)
-		{
-			edit(cursorX, cursorY);
-		} else
-		{
-			interact(cursorX, cursorY);
-		}
+		// TODO: Remove developer tools
+		if (Gdx.input.isKeyJustPressed(Keys.END)) editing = !editing;
+		// Camera controls
+		if (Gdx.input.isKeyPressed(Keys.LEFT)) camera.x -= CAMERA_SPEED;
+		if (Gdx.input.isKeyPressed(Keys.RIGHT)) camera.x += CAMERA_SPEED;
+		if (Gdx.input.isKeyPressed(Keys.UP)) camera.y += CAMERA_SPEED;
+		if (Gdx.input.isKeyPressed(Keys.DOWN)) camera.y -= CAMERA_SPEED;
+		if (Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) camera.set(0, 0);
+		// TODO: remove developer tools, put body of interact here
+		if (editing) edit(cursorX, cursorY);
+		else interact(cursorX, cursorY);
 	}
 
 	private void edit(int cursorX, int cursorY)
@@ -144,13 +130,14 @@ public class CircuitInput
 			circuit.name = circuitName.substring(0, circuitName.indexOf(".circuit"));
 			CircuitIO.write(assets.getFileHandleResolver().resolve(circuitName), circuit);
 		}
-		if(Gdx.input.isKeyJustPressed(Keys.N)) 
+		if (Gdx.input.isKeyJustPressed(Keys.N))
 		{
 			String input = JOptionPane.showInputDialog("Enter the number of lamps required to win");
 			try
 			{
 				circuit.goalLamps = Integer.parseInt(input);
-			} catch (NumberFormatException | NullPointerException e)
+			}
+			catch (NumberFormatException | NullPointerException e)
 			{
 				JOptionPane.showMessageDialog(null, "Failed to parse number.");
 			}
@@ -159,87 +146,101 @@ public class CircuitInput
 
 	private void interact(int cursorX, int cursorY)
 	{
-		if(cursorY < 0 || cursorX < 0 || cursorY >= circuit.grid.length || cursorX >= circuit.grid[cursorY].length || circuit.grid[cursorY][cursorX] == null)
+		// If the cursor is off the screen no input needs to be processed
+		if (cursorY < 0 || cursorX < 0 || cursorY >= circuit.grid.length || cursorX >= circuit.grid[cursorY].length
+				|| circuit.grid[cursorY][cursorX] == null)
 			return;
 		List<CircuitComponent> type = null;
 		String componentName = "";
-		if(Gdx.input.isTouched() && !previousPress)
+		// If there has been a click/tap
+		if (Gdx.input.isTouched() && !previousPress)
 		{
-			if (!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0
-					&& cursorX < circuit.grid[cursorY].length) || circuit.grid[cursorY][cursorX] == null || !circuit.grid[cursorY][cursorX].isChangeable)
-				return;
-			if(circuit.grid[cursorY][cursorX].type == null)
+			// There is nothing to interact with if the component isn't
+			// changeable
+			if (!circuit.grid[cursorY][cursorX].isChangeable) return;
+			// If the component slot is empty
+			if (circuit.grid[cursorY][cursorX].type == null)
 			{
-				Object[] options = {"Battery", "Lamp", "Resistor"};
+				Object[] options =
+				{ "Battery", "Lamp", "Resistor" };
 				JPanel typePanel = new JPanel();
+				// Prompt the player for what type of component to place
 				int result = JOptionPane.showOptionDialog(null, typePanel, "Choose a type",
-		                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-		                null, options, null);
-		        switch(result)
-		        {
-		        case JOptionPane.YES_OPTION:
-		        	type = inventory.batteries;
+						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+				// If the player clicked the first, second, or third option or
+				// closed the prompt
+				switch (result)
+				{
+				case JOptionPane.YES_OPTION:
+					type = inventory.batteries;
 					componentName = "battery";
 					break;
-		        case JOptionPane.NO_OPTION:
-		        	type = inventory.chips;
+				case JOptionPane.NO_OPTION:
+					type = inventory.chips;
 					componentName = "lamp";
-		        	
+
 					break;
-		        case JOptionPane.CANCEL_OPTION:
-		        	type = inventory.resistors;
+				case JOptionPane.CANCEL_OPTION:
+					type = inventory.resistors;
 					componentName = "resistor";
 					break;
-		        case JOptionPane.CLOSED_OPTION:
-		        	return;
-		        }
+				case JOptionPane.CLOSED_OPTION:
+					return;
+				}
 			}
-			else 
+			else
 			{
+				// Pick up the component in the slot
 				inventory.addComponent(circuit.grid[cursorY][cursorX]);
 				circuit.grid[cursorY][cursorX] = CircuitComponent.blank();
 			}
 			previousPress = true;
 		}
 		else
+		{
+			// Keep track of when mouse clicks occur
 			previousPress = false;
-		CircuitComponent place = null;
-		if (type != null)
+		}
+		// If no component has been set up to place
+		if (type == null) return;
+		CircuitComponent place = null; // The circuit to place
+		if (!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0 && cursorX < circuit.grid[cursorY].length)
+				|| !circuit.grid[cursorY][cursorX].isChangeable)
+			return;
+		// Prompt for the value of the component to place
+		String input = JOptionPane.showInputDialog("Enter the value of the " + componentName + " to place.");
+		try
 		{
-			if (!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0
-					&& cursorX < circuit.grid[cursorY].length) || !circuit.grid[cursorY][cursorX].isChangeable)
-				return;
-			String input = JOptionPane.showInputDialog("Enter the value of the " + componentName + " to place.");
-			try
+			double value = Double.parseDouble(input);
+			// Find the component to place
+			for (CircuitComponent comp : type)
 			{
-				double value = Double.parseDouble(input);
-				for (CircuitComponent comp : type)
-				{
-					if (comp.getMainValue() == value)
-						place = comp;
-				}
-			} catch (NumberFormatException e)
-			{
-				JOptionPane.showMessageDialog(null, "Failed to parse number.");
-				return;
-			} catch (NullPointerException e)
-			{
-				System.err.println("Nullptr in CircuitInput, probably intentional though.");
-				return;
+				if (comp.getMainValue() == value) place = comp;
 			}
-		} else
+		}
+		catch (NumberFormatException e)
 		{
+			// The user did not enter a valid double, so produce an error
+			JOptionPane.showMessageDialog(null, "Failed to parse number.");
+			return;
+		}
+		catch (NullPointerException e)
+		{
+			// This means that the user closed the value prompt, so no error box
+			// is required
 			return;
 		}
 		if (place != null)
 		{
+			// Swap out the components
 			CircuitComponent old = circuit.grid[cursorY][cursorX];
-			if (old.type != null)
-				inventory.addComponent(old);
+			if (old.type != null) inventory.addComponent(old);
 			circuit.grid[cursorY][cursorX] = place;
 			inventory.removeComponent(place);
-		} else
+		}
+		else
 		{
+			// Produce an error message because there is no component to place
 			JOptionPane.showMessageDialog(null, "No " + componentName + " of that value was found.");
 		}
 	}
@@ -254,10 +255,10 @@ public class CircuitInput
 	 * @param cursorY
 	 *            The position of the cursor
 	 */
+	// TODO: REMOVE THIS METHOD, ONLY USED IN DEV FUNCTIONS
 	private void putComponent(CircuitComponent component, int cursorX, int cursorY)
 	{
-		if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT))
-			component.isChangeable = true;
+		if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) component.isChangeable = true;
 		if (cursorY >= 0 && cursorX >= 0 && cursorY < circuit.grid.length && cursorX < circuit.grid[cursorY].length)
 		{
 			try
@@ -269,7 +270,8 @@ public class CircuitInput
 					component.setMainValue(value);
 				}
 				circuit.grid[cursorY][cursorX] = component;
-			} catch (NumberFormatException | NullPointerException e)
+			}
+			catch (NumberFormatException | NullPointerException e)
 			{
 				JOptionPane.showMessageDialog(null, "Failed to parse number.");
 			}
@@ -285,7 +287,13 @@ public class CircuitInput
 	{
 		return circuit;
 	}
-	
+
+	/**
+	 * Set the circuit to direct input to
+	 * 
+	 * @param circ
+	 *            The new circuit
+	 */
 	public void setCircuit(Circuit circ)
 	{
 		circuit = circ;
