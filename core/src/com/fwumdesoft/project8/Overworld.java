@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.utils.Array;
 
 public class Overworld
@@ -205,10 +204,6 @@ public class Overworld
 	 * A turn that occurs after moving or resting, allows time to progress
 	 */
 	private void turn() {
-		//TODO Remove before finished, for now: NO CLIP
-		if(Gdx.input.isKeyPressed(Keys.END))
-			noClip = !noClip;
-		
 		//check if player is within 5 tiles of fire
 		playFire = false;
 		for(int y = -1 * ((Gdx.graphics.getWidth() / (CELL_SIZE * 2)) + 3);
