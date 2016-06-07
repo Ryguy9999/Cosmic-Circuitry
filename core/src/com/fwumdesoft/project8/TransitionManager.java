@@ -54,7 +54,7 @@ public class TransitionManager implements Disposable
 	/**
 	 * The app object to restart when necessary
 	 */
-	private Project8 app;
+	private App app;
 	
 	/**
 	 * Create a new TransitionManager
@@ -62,7 +62,7 @@ public class TransitionManager implements Disposable
 	 * @param assets The asset manager to load textures with
 	 * @param batch The sprite batch to use to draw textures
 	 */
-	public TransitionManager(Project8 app, AssetManager assets, SpriteBatch batch)
+	public TransitionManager(App app, AssetManager assets, SpriteBatch batch)
 	{
 		this.app = app;
 		transition = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);

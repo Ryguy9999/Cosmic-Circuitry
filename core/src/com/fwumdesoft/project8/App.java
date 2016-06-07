@@ -27,7 +27,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 /**
  * The main entry point of the game
  */
-public class Project8 extends ApplicationAdapter
+public class App extends ApplicationAdapter
 {
 	private Renderer rend;
 	private Overworld world;

@@ -23,7 +23,7 @@ public class Overworld
 		none, broken, componentPile, fire
 	}
 
-	Project8 app;
+	App app;
 	tiles[][] map;
 	mods[][] modifiers;
 	Point playerPos, playerFace, previousPlayerPos;
@@ -41,7 +41,7 @@ public class Overworld
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.30;
 
-	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
+	public Overworld(App app, int size, Array<Circuit> circuits, Inventory inventory)
 	{
 		this.inventory = inventory;
 		// contains permanent tiles
@@ -132,7 +132,7 @@ public class Overworld
 		playerFace.setLocation(xAmt, yAmt);
 		if (spotFree)
 		{
-			Project8.playSound(Project8.sounds.walking, 1);
+			App.playSound(App.sounds.walking, 1);
 			previousPlayerPos = new Point(playerPos);
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
@@ -247,7 +247,7 @@ public class Overworld
 					if(y-1 >= 0 && modifiers[y-1][x] == mods.none)
 					{
 						modifiers[y-1][x] = mods.componentPile;
-						Project8.playSound(Project8.sounds.componentMachine, (float)playerPos.distance(x, y));
+						App.playSound(App.sounds.componentMachine, (float)playerPos.distance(x, y));
 					}
 			}
 		}

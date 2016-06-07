@@ -180,7 +180,7 @@ public class Renderer
 	public void renderOverworld(Overworld world, Inventory inventory)
 	{
 		if(world.playFire)
-			Project8.playSound(Project8.sounds.fire, 1);
+			App.playSound(App.sounds.fire, 1);
 		shapes.begin(ShapeType.Filled);
 		shapes.setColor(Color.BLACK);
 		shapes.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -216,7 +216,7 @@ public class Renderer
 						&& world.modifiers[y][x] == mods.broken && Math.random() < 0.05)
 				{
 					ParticleSystem.burst("spark", drawX + cellSize / 2, drawY + cellSize / 2, 12);
-					Project8.playSound(Project8.sounds.sparks, (float)world.playerPos.distance(x,  y));
+					App.playSound(App.sounds.sparks, (float)world.playerPos.distance(x,  y));
 				}
 				// Draw the correct texture
 				switch (world.map[y][x])
@@ -243,13 +243,13 @@ public class Renderer
 							Vector2.dst(x, y, world.previousPlayerPos.x, world.previousPlayerPos.y) <= doorOpenDistance)
 					{
 						t = door[door.length - 1 - (int)((double)currentFrame / OverworldInput.MAX_COOLDOWN * door.length)];
-						Project8.playSound(Project8.sounds.door, doorOpenDistance);
+						App.playSound(App.sounds.door, doorOpenDistance);
 					}
 					else if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) <= doorOpenDistance &&
 							Vector2.dst(x, y, world.previousPlayerPos.x, world.previousPlayerPos.y) > doorOpenDistance)
 					{
 						t = door[(int)((double)currentFrame / OverworldInput.MAX_COOLDOWN * door.length)];
-						Project8.playSound(Project8.sounds.door, doorOpenDistance);
+						App.playSound(App.sounds.door, doorOpenDistance);
 					}
 					float rotation = 0;
 					if (y > 0 && world.map[y - 1][x] != tiles.wall)
@@ -384,7 +384,7 @@ public class Renderer
 					if(Double.isNaN(comp.current))
 					{
 						batch.draw(fire[fireFrame], drawX, drawY, componentSize, componentSize);
-						Project8.playSound(Project8.sounds.fire, 1);
+						App.playSound(App.sounds.fire, 1);
 					}
 				}
 			}

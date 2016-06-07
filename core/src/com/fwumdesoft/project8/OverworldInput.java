@@ -18,7 +18,7 @@ public class OverworldInput extends InputAdapter
 	 * The top-level app that manages things like restarting the game </br>
 	 * Used to ensure that the overworld is active when input is received
 	 */
-	private Project8 topLevel;
+	private App topLevel;
 	/**
 	 * The keys that are being held
 	 */
@@ -42,7 +42,7 @@ public class OverworldInput extends InputAdapter
 	 * @param world
 	 *            The overworld to direct input to
 	 */
-	public OverworldInput(Project8 topLevel, Overworld world)
+	public OverworldInput(App topLevel, Overworld world)
 	{
 		this.topLevel = topLevel;
 		this.world = world;
