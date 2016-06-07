@@ -171,7 +171,7 @@ public class App extends ApplicationAdapter
 		
 		Gdx.input.setInputProcessor(overInput = new OverworldInput(this, world));
 
-		input = new CircuitInput(new Circuit(new CircuitComponent[10][20], 0), assets, inventory, circuitCamera);
+		input = new CircuitInput(new Circuit(new CircuitComponent[10][20], 0), inventory, circuitCamera);
 		mousePosition = new Vector2();
 	}
 	
