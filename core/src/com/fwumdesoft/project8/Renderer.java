@@ -340,7 +340,12 @@ public class Renderer
 					{
 						continue;
 					}
+					if(comp.isActive)
+						batch.setColor(Color.GREEN);
+					else
+						batch.setColor(Color.RED);
 					draw(batch, tex, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
+					batch.setColor(Color.WHITE);
 					if(Double.isNaN(comp.current))
 						batch.draw(fire[fireFrame], drawX, drawY, componentSize, componentSize);
 				}
@@ -413,7 +418,9 @@ public class Renderer
 		// Draw each icon followed by the quantity
 		batch.draw(resistor, 0, 0, 32, 32);
 		drawInventoryList(inventory.resistors, "", 0);
+		batch.setColor(Color.BLACK);
 		batch.draw(lamp, 0, 32, 32, 32);
+		batch.setColor(Color.WHITE);
 		drawInventoryList(inventory.chips, "", 32);
 		batch.draw(battery, 0, 64, 32, 32);
 		drawInventoryList(inventory.batteries, "", 64);
