@@ -7,6 +7,7 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
@@ -136,6 +137,7 @@ public class Renderer
 		this.cursor = assets.get("cursor.png", Texture.class);
 		this.blank = assets.get("blank.png", Texture.class);
 		this.credits = assets.get("credits.png", Texture.class);
+		
 		this.circuitOffset = new Vector2();
 		// Create wire tileset
 		Texture wires = assets.get("wires.png", Texture.class);
@@ -438,7 +440,7 @@ public class Renderer
 	{
 		circuitOffset.set(0, 0);
 	}
-
+	
 	private int[] circuitAccumulator = new int[9];
 
 	private void drawInventoryList(List<CircuitComponent> inventoryItems, String label, int height)

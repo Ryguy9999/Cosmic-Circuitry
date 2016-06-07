@@ -42,13 +42,9 @@ public class Overworld
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.30;
 	private Overworld previous;
-	private Sound fireSupression, componentBuilt;
 	
 	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, AssetManager assets, boolean topLevel)
 	{
-		fireSupression = assets.get("fireSuppression.ogg", Sound.class);
-		componentBuilt = assets.get("componentMachine.ogg", Sound.class);
-		
 		if(topLevel)
 			previous = new Overworld(app, size, circuits, inventory, assets, false);
 		this.inventory = inventory;
@@ -139,6 +135,7 @@ public class Overworld
 		playerFace.setLocation(xAmt, yAmt);
 		if (spotFree)
 		{
+			Project8.playSound(Project8.sounds.walking, 1);
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
 			ParticleSystem.displace(-xAmt, -yAmt);
@@ -234,7 +231,7 @@ public class Overworld
 						if(modifiers[j][i] == mods.fire)
 						{
 							modifiers[j][i] = mods.none;
-							playSound(i, j, 1, fireSupression);
+							//Project8.playSound(Project8.sounds.fireSuppression, 1);
 						}
 					}
 				
@@ -243,7 +240,7 @@ public class Overworld
 					if(y-1 >= 0 && modifiers[y-1][x] == mods.none)
 					{
 						modifiers[y-1][x] = mods.componentPile;
-						playSound(x, y, 1, componentBuilt);
+						Project8.playSound(Project8.sounds.componentMachine, 1);
 					}
 			}
 		}
