@@ -72,10 +72,10 @@ public class Project8 extends ApplicationAdapter
 				.map(texture -> new TextureRegion(texture)).collect(Collectors.toList())
 				.toArray(new TextureRegion[textures.size()]));
 		current = intro;
-		this.doorSound = assets.get("door.ogg", Sound.class);
-		this.componentMachineSound = assets.get("componentMachine.ogg", Sound.class);
-		this.walkingSound = assets.get("walking.ogg", Sound.class);
-		this.fireSound = assets.get("fire.ogg", Music.class);
+		doorSound = assets.get("door.ogg", Sound.class);
+		componentMachineSound = assets.get("componentMachine.ogg", Sound.class);
+		walkingSound = assets.get("walking.ogg", Sound.class);
+		fireSound = assets.get("fire.ogg", Music.class);
 		introSound.play();
 		//Manage appearance of intro slide and intro sound
 		transition.startDraw();
