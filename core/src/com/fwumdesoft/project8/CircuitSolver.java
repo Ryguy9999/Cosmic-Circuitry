@@ -172,7 +172,12 @@ public class CircuitSolver
 				workingSet.add(new Term(currentFactor * circuit[(int) loc.x][(int) loc.y].resistance, currentBranch));
 				break;
 			case BATTERY:
-				workingSet.add(new Term(-currentFactor * circuit[(int) loc.x][(int) loc.y].voltageDif, null));
+				int directionFactor = 1;
+				if(loc.x != prev.x)
+					directionFactor = (int) (loc.x - prev.x);
+				else if(loc.y != prev.y)
+					directionFactor = (int) (loc.y - prev.y);
+				workingSet.add(new Term(directionFactor * circuit[(int) loc.x][(int) loc.y].voltageDif, null));
 				break;
 			default:
 				break;
