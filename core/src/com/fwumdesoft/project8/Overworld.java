@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
 
 public class Overworld
@@ -28,29 +26,23 @@ public class Overworld
 	Project8 app;
 	tiles[][] map;
 	mods[][] modifiers;
-	Point playerPos, playerFace;
+	Point playerPos, playerFace, previousPlayerPos;
 	Array<Circuit> circuits;
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
 	Inventory inventory;
 	boolean gameWon;
 	boolean noClip;
+	boolean playFire;
 	public boolean playerMoving;
 	int playerHealth;
 	final int MAX_PLAYER_HEALTH = 5;
 	final int FIRE_SUPPRESSION_RANGE = 12, TERMINAL_COUNT = 3;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.30;
-	private Overworld previous;
-	private Sound fireSupression, componentBuilt;
-	
-	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, AssetManager assets, boolean topLevel)
+
+	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
 	{
-		fireSupression = assets.get("fireSuppression.ogg", Sound.class);
-		componentBuilt = assets.get("componentMachine.ogg", Sound.class);
-		
-		if(topLevel)
-			previous = new Overworld(app, size, circuits, inventory, assets, false);
 		this.inventory = inventory;
 		// contains permanent tiles
 		map = new tiles[size][size];
@@ -69,6 +61,7 @@ public class Overworld
 		// rooms to said doors
 		Door door = new Door(size / 2, size / 2, 0);
 		playerPos = new Point(size / 2 - 2, size / 2);
+		previousPlayerPos = new Point(playerPos);
 		boolean firstDoor = true;
 		this.playerFace = new Point();
 		playerMoving = false;
@@ -139,6 +132,8 @@ public class Overworld
 		playerFace.setLocation(xAmt, yAmt);
 		if (spotFree)
 		{
+			Project8.playSound(Project8.sounds.walking, 1);
+			previousPlayerPos = new Point(playerPos);
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
 			ParticleSystem.displace(-xAmt, -yAmt);
@@ -166,7 +161,8 @@ public class Overworld
 		switch(modifiers[lookAt.y][lookAt.x])
 		{
 		case broken:
-			if(map[lookAt.y][lookAt.x] == tiles.door || map[lookAt.y][lookAt.x] == tiles.fireSuppression)
+			if(map[lookAt.y][lookAt.x] == tiles.door || map[lookAt.y][lookAt.x] == tiles.fireSuppression ||
+			map[lookAt.y][lookAt.x] == tiles.terminal)
 				modifiers[lookAt.y][lookAt.x] = mods.none;
 			break;
 		default:
@@ -200,6 +196,15 @@ public class Overworld
 		if(Gdx.input.isKeyPressed(Keys.END))
 			noClip = !noClip;
 		
+		//check if player is within 5 tiles of fire
+		playFire = false;
+		for(int y = -1 * ((Gdx.graphics.getWidth() / 64) + 3); y < ((Gdx.graphics.getWidth() / 64) + 4); y++)
+		{
+			for(int x = -1 * ((Gdx.graphics.getHeight() / 64) + 3); x < ((Gdx.graphics.getHeight() / 64) + 4); x++)
+			{
+				playFire = playFire || modifiers[playerPos.y + y][playerPos.x + x] == mods.fire;
+			}
+		}
 		for(int y = 0; y < modifiers.length; y++)
 		{
 			for(int x = 0; x < modifiers[y].length; x++)
@@ -234,7 +239,6 @@ public class Overworld
 						if(modifiers[j][i] == mods.fire)
 						{
 							modifiers[j][i] = mods.none;
-							playSound(i, j, 1, fireSupression);
 						}
 					}
 				
@@ -243,7 +247,7 @@ public class Overworld
 					if(y-1 >= 0 && modifiers[y-1][x] == mods.none)
 					{
 						modifiers[y-1][x] = mods.componentPile;
-						playSound(x, y, 1, componentBuilt);
+						Project8.playSound(Project8.sounds.componentMachine, (float)playerPos.distance(x, y));
 					}
 			}
 		}
@@ -269,23 +273,11 @@ public class Overworld
 			gameWon = true;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Overworld getStateCopy()
-	{
-		previous.currentCircuit = currentCircuit;
-		deepCopy(map, previous.map);
-		deepCopy(modifiers, previous.modifiers);
-		previous.playerFace = new Point(playerFace);
-		previous.playerPos = new Point(playerPos);
-		previous.worldCircuits = (HashMap<Point, Circuit>)worldCircuits.clone();
-		return previous;
-	}
-	
 	public boolean equals(Overworld ow)
 	{
 		return ow != null && Arrays.deepEquals(map, ow.map) && 
-				Arrays.deepEquals(modifiers, previous.modifiers) && playerPos.equals(ow.playerPos) && 
-				playerFace.equals(ow.playerFace) && worldCircuits.equals(previous.worldCircuits);
+				Arrays.deepEquals(modifiers, ow.modifiers) && playerPos.equals(ow.playerPos) && 
+				playerFace.equals(ow.playerFace) && worldCircuits.equals(ow.worldCircuits);
 	}
 	
 	private void distributeCircuits()
@@ -483,7 +475,8 @@ public class Overworld
 		{
 			for(int x = 0; x < map[y].length; x++)
 			{
-				if(map[y][x] == tiles.floor)// && Math.random() < 0.25)
+				if(map[y][x] == tiles.floor && !(map[y + 1][x] == tiles.door || map[y - 1][x] == tiles.door ||
+						map[y][x - 1] == tiles.door || map[y][x + 1] == tiles.door))
 				{
 					map[y][x] = tiles.fireSuppression;
 					modifiers[y][x] = (Math.random() < 0.75)? mods.broken: mods.none;
@@ -534,13 +527,6 @@ public class Overworld
 			}
 		}while(!valid);
 	}
-	
-	private <T> void deepCopy(T[][] original, T[][] target)
-	{
-		for(int i = 0; i < original.length; i++)
-			for(int j = 0; j < original[i].length; j++)
-				target[i][j] = original[i][j];
-	}
 
 	/**
 	 * Captain's log: Star Date sometime I have given up. The doors won't go
@@ -574,18 +560,6 @@ public class Overworld
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Plays a sound taking into account distance from the player
-	 * @param x Sound origin
-	 * @param y Sound origin
-	 * @param initialVolume The volume of the sound with no dampening
-	 * @param sound The sound
-	 */
-	private void playSound(int x, int y, float initialVolume, Sound sound)
-	{
-		sound.play((float)Math.pow(0.9, playerPos.distance(x, y)) * initialVolume);
 	}
 
 	/**

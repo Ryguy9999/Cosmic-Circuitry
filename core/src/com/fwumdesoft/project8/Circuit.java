@@ -71,6 +71,9 @@ public class Circuit implements Serializable
 		for(CircuitComponent[] row : grid)
 			for(CircuitComponent item : row)
 				if(item != null)
+				{
 					item.current = 0;
+					item.isActive = false;
+				}
 	}
 }

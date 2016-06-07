@@ -3,6 +3,7 @@ package com.fwumdesoft.project8;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -39,6 +40,10 @@ public class CircuitInput
 	 * The location of the circuit camera
 	 */
 	private Vector2 camera;
+	/**
+	 * If the mouse was pressed previoiusly
+	 */
+	private boolean previousPress;
 
 	/**
 	 * Create a new circuit designer
@@ -161,32 +166,48 @@ public class CircuitInput
 	{
 		if(cursorY < 0 || cursorX < 0 || cursorY >= circuit.grid.length || cursorX >= circuit.grid[cursorY].length || circuit.grid[cursorY][cursorX] == null)
 			return;
-		if (Gdx.input.isKeyJustPressed(Keys.SPACE))
+		List<CircuitComponent> type = null;
+		String componentName = "";
+		if(Gdx.input.isTouched() && !previousPress)
 		{
 			if (!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0
-					&& cursorX < circuit.grid[cursorY].length) || !circuit.grid[cursorY][cursorX].isChangeable)
+					&& cursorX < circuit.grid[cursorY].length) || circuit.grid[cursorY][cursorX] == null || !circuit.grid[cursorY][cursorX].isChangeable)
 				return;
-			if(circuit.grid[cursorY][cursorX].type != null)
+			if(circuit.grid[cursorY][cursorX].type == null)
+			{
+				Object[] options = {"Battery", "Lamp", "Resistor"};
+				JPanel typePanel = new JPanel();
+				int result = JOptionPane.showOptionDialog(null, typePanel, "Choose a type",
+		                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+		                null, options, null);
+		        switch(result)
+		        {
+		        case JOptionPane.YES_OPTION:
+		        	type = inventory.batteries;
+					componentName = "battery";
+					break;
+		        case JOptionPane.NO_OPTION:
+		        	type = inventory.chips;
+					componentName = "lamp";
+		        	
+					break;
+		        case JOptionPane.CANCEL_OPTION:
+		        	type = inventory.resistors;
+					componentName = "resistor";
+					break;
+		        case JOptionPane.CLOSED_OPTION:
+		        	return;
+		        }
+			}
+			else 
 			{
 				inventory.addComponent(circuit.grid[cursorY][cursorX]);
 				circuit.grid[cursorY][cursorX] = CircuitComponent.blank();
 			}
+			previousPress = true;
 		}
-		List<CircuitComponent> type = null;
-		String componentName = "";
-		if (Gdx.input.isKeyJustPressed(Keys.R))
-		{
-			type = inventory.resistors;
-			componentName = "resistor";
-		} else if (Gdx.input.isKeyJustPressed(Keys.B))
-		{
-			type = inventory.batteries;
-			componentName = "battery";
-		} else if (Gdx.input.isKeyJustPressed(Keys.L))
-		{
-			type = inventory.chips;
-			componentName = "lamp";
-		}
+		else
+			previousPress = false;
 		CircuitComponent place = null;
 		if (type != null)
 		{
