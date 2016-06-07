@@ -430,6 +430,8 @@ public class Renderer
 			font.draw(batch, "In Progress", Gdx.graphics.getWidth() - 96, Gdx.graphics.getHeight() - 12);
 		}
 		font.draw(batch, "Lamps needed: " + circuit.goalLamps, 0, Gdx.graphics.getHeight() - 12);
+		if(circuit.isSolved())
+			font.draw(batch, "Press Escape to back out.", 130, Gdx.graphics.getHeight() - 12);
 		batch.end();
 	}
 
