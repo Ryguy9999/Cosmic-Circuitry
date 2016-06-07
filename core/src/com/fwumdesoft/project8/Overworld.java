@@ -315,7 +315,7 @@ public class Overworld
 					else if(map[y][x] == tiles.fireSuppression)
 						c = new Circuit(getRandom(fireSuppression));
 					else if(map[y][x] == tiles.terminal)
-						c = new Circuit(getRandom(terminalCircuits));
+						c = new Circuit(terminalCircuits.remove(0));
 					break;
 				case none:
 					if(map[y][x] == tiles.door)
