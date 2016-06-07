@@ -50,7 +50,7 @@ public class Renderer
 	 */
 	private int screenHeight;
 	private Texture wall, floor, pod, componentPile, componentMachine, fireSuppression, terminal,
-						resistor, lamp, battery, cursor, blank, credits;
+						resistor, lamp, battery, cursor, blank, filledBlank, credits;
 	/**
 	 * All of the individual wire tileset images [right][top][left][bottom]
 	 */
@@ -142,6 +142,7 @@ public class Renderer
 		this.battery = assets.get("battery.png", Texture.class);
 		this.cursor = assets.get("cursor.png", Texture.class);
 		this.blank = assets.get("blank.png", Texture.class);
+		this.filledBlank = assets.get("filled_blank.png", Texture.class);
 		this.credits = assets.get("credits.png", Texture.class);
 		
 		this.circuitOffset = new Vector2();
@@ -359,7 +360,8 @@ public class Renderer
 					Texture tex;
 					if (comp.isChangeable)
 					{
-						draw(batch, blank, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
+						Texture t = comp.type == null ? blank : filledBlank;
+						draw(batch, t, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
 					}
 					if (comp.type == Type.RESISTOR)
 					{
