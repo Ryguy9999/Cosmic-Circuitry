@@ -417,13 +417,13 @@ public class Renderer
 		batch.begin();
 		// Draw each icon followed by the quantity
 		batch.draw(resistor, 0, 0, 32, 32);
-		drawInventoryList(inventory.resistors, "", 0);
+		drawInventoryList(inventory.resistors, "Ohms               ", 0);
 		batch.setColor(Color.BLACK);
 		batch.draw(lamp, 0, 32, 32, 32);
 		batch.setColor(Color.WHITE);
-		drawInventoryList(inventory.chips, "", 32);
+		drawInventoryList(inventory.chips, "Amps Needed  ", 32);
 		batch.draw(battery, 0, 64, 32, 32);
-		drawInventoryList(inventory.batteries, "", 64);
+		drawInventoryList(inventory.batteries, "Volts                 ", 64);
 		batch.end();
 	}
 	
@@ -447,12 +447,14 @@ public class Renderer
 		{
 			circuitAccumulator[(int) inventoryItems.get(i).getMainValue() - 1] += 1;
 		}
+		String value = label;
 		for (int i = 0; i < circuitAccumulator.length; i++)
 		{
-			String value = (i + 1) + label + ": " + circuitAccumulator[i];
-			font.draw(batch, value, 48 * (i + 1), 24 + height, 32, Align.center, false);
+			value += (i + 1) + ":" + circuitAccumulator[i] + "  ";
 			circuitAccumulator[i] = 0; // Reset the accumulator
 		}
+		font.draw(batch, value, 48, 24 + height, 32, Align.left, false);
+
 	}
 
 	private void draw(SpriteBatch batch, Texture t, float x, float y, float originX, float originY, float rotation)
