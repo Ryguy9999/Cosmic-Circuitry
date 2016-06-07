@@ -474,7 +474,8 @@ public class Overworld
 		{
 			for(int x = 0; x < map[y].length; x++)
 			{
-				if(map[y][x] == tiles.floor)// && Math.random() < 0.25)
+				if(map[y][x] == tiles.floor && !(map[y + 1][x] == tiles.door || map[y - 1][x] == tiles.door ||
+						map[y][x - 1] == tiles.door || map[y][x + 1] == tiles.door))
 				{
 					map[y][x] = tiles.fireSuppression;
 					modifiers[y][x] = (Math.random() < 0.75)? mods.broken: mods.none;
