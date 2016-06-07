@@ -42,12 +42,13 @@ public class CircuitIO extends SynchronousAssetLoader<Circuit, CircuitIO.Circuit
 			ObjectInputStream stream = new ObjectInputStream(new FileInputStream(file.file()));
 			o = stream.readObject();
 			stream.close();
-		} catch (IOException | ClassNotFoundException e)
+		}
+		catch (IOException | ClassNotFoundException e)
 		{
 			e.printStackTrace();
 			System.exit(1);
 		}
-		Circuit c = (Circuit)o;
+		Circuit c = (Circuit) o;
 		c.name = fileName.substring(0, fileName.indexOf(".circuit"));
 		return c;
 	}
@@ -67,7 +68,8 @@ public class CircuitIO extends SynchronousAssetLoader<Circuit, CircuitIO.Circuit
 			ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(file.file()));
 			stream.writeObject(circuit);
 			stream.close();
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 			System.exit(1);
