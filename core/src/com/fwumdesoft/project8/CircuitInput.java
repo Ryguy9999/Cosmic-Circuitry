@@ -94,7 +94,7 @@ public class CircuitInput
 		if(Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT))
 		{
 			camera.set(0, 0);
-			ParticleSystem.clearDisplacement();
+			ParticleSystem.clearDisplace();
 		}
 		if (editing)
 		{
