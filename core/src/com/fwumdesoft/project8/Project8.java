@@ -44,12 +44,13 @@ public class Project8 extends ApplicationAdapter
 	private final int CIRCUIT_TRANSITION_SPEED = 20;
 	private Slideshow intro, current;
 	private Sound introSound;
+	private static Sound doorSound, componentMachineSound, walkingSound;
+	private static Music fireSound;
 	
 	@Override
 	public void create()
 	{
 		batch = new SpriteBatch();
-
 		loadAssets();
 		initSimulation();
 		
@@ -71,6 +72,10 @@ public class Project8 extends ApplicationAdapter
 				.map(texture -> new TextureRegion(texture)).collect(Collectors.toList())
 				.toArray(new TextureRegion[textures.size()]));
 		current = intro;
+		this.doorSound = assets.get("door.ogg", Sound.class);
+		this.componentMachineSound = assets.get("componentMachine.ogg", Sound.class);
+		this.walkingSound = assets.get("walking.ogg", Sound.class);
+		this.fireSound = assets.get("fire.ogg", Music.class);
 		introSound.play();
 		//Manage appearance of intro slide and intro sound
 		transition.startDraw();
@@ -188,9 +193,9 @@ public class Project8 extends ApplicationAdapter
 		List<FileHandle> assetsFiles = Arrays.asList(Gdx.files.internal(".").list());
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("png") || string.endsWith("jpg"))
 				.forEach(name -> assets.load(name, Texture.class));
-		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("mp3"))
+		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("mp3") || string.equals("fire.ogg"))
 		.forEach(name -> assets.load(name, Music.class));
-		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("ogg"))
+		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("ogg") && !string.equals("fire.ogg"))
 		.forEach(name -> assets.load(name, Sound.class));
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("circuit"))
 				.forEach(name -> assets.load(name, Circuit.class));
@@ -198,6 +203,30 @@ public class Project8 extends ApplicationAdapter
 		transition = new TransitionManager(this, assets, batch);
 	}
 	
+	public static enum sounds
+	{
+		door, componentMachine, fire, fireSuppression, walking
+	}
+	public static void playSound(sounds s, float distance)
+	{
+		switch (s) {
+			case door:
+				doorSound.play(1f/distance);
+				break;
+			case componentMachine:
+				componentMachineSound.play(1f/distance);
+				break;
+			case walking:
+				walkingSound.play(1f/distance);
+				break;
+			case fire:
+				if(!fireSound.isPlaying())
+					fireSound.play();
+				break;
+			default:
+				break;
+		}
+	}
 	/***
 	 * Call when a game over should be displayed
 	 */

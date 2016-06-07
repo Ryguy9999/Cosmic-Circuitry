@@ -7,6 +7,7 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
@@ -143,6 +144,7 @@ public class Renderer
 		this.cursor = assets.get("cursor.png", Texture.class);
 		this.blank = assets.get("blank.png", Texture.class);
 		this.credits = assets.get("credits.png", Texture.class);
+		
 		this.circuitOffset = new Vector2();
 		// Create wire tileset
 		Texture wires = assets.get("wires.png", Texture.class);
@@ -177,6 +179,8 @@ public class Renderer
 	 */
 	public void renderOverworld(Overworld world, Inventory inventory)
 	{
+		if(world.playFire)
+			Project8.playSound(Project8.sounds.fire, 1);
 		shapes.begin(ShapeType.Filled);
 		shapes.setColor(Color.BLACK);
 		shapes.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -236,10 +240,16 @@ public class Renderer
 						t = door[0];
 					else if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > doorOpenDistance &&
 							Vector2.dst(x, y, world.previousPlayerPos.x, world.previousPlayerPos.y) <= doorOpenDistance)
+					{
 						t = door[door.length - 1 - (int)((double)currentFrame / OverworldInput.MAX_COOLDOWN * door.length)];
+						Project8.playSound(Project8.sounds.door, doorOpenDistance);
+					}
 					else if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) <= doorOpenDistance &&
 							Vector2.dst(x, y, world.previousPlayerPos.x, world.previousPlayerPos.y) > doorOpenDistance)
+					{
 						t = door[(int)((double)currentFrame / OverworldInput.MAX_COOLDOWN * door.length)];
+						Project8.playSound(Project8.sounds.door, doorOpenDistance);
+					}
 					float rotation = 0;
 					if (y > 0 && world.map[y - 1][x] != tiles.wall)
 						rotation = 90;
@@ -256,12 +266,14 @@ public class Renderer
 					break;
 				case pod:
 					rotation = 0;
-					if(world.map[y - 1][x] != Overworld.tiles.space)
+					if(world.map[y - 1][x] == Overworld.tiles.door)
+						rotation = 0;
+					else if(world.map[y][x + 1] == Overworld.tiles.door)
 						rotation = 90;
-					else if(world.map[y + 1][x] != Overworld.tiles.space)
-						rotation = 270;
-					else if(world.map[y][x + 1] != Overworld.tiles.space)
+					else if(world.map[y + 1][x] == Overworld.tiles.door)
 						rotation = 180;
+					else if(world.map[y][x - 1] == Overworld.tiles.door)
+						rotation = 270;
 					draw(batch, pod, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
 					break;
 				case fireSuppression:
@@ -458,7 +470,7 @@ public class Renderer
 	{
 		circuitOffset.set(0, 0);
 	}
-
+	
 	private int[] circuitAccumulator = new int[9];
 
 	private void drawInventoryList(List<CircuitComponent> inventoryItems, String label, int height)
