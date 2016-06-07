@@ -67,6 +67,8 @@ public class CircuitSolver
 		for (Equation equation : system.equations)
 			equation.sort(branches);
 
+		if(Math.random() < 0.01)
+			System.out.println(system);
 		ArrayList<Double> result = system.solve();
 
 		// With the branch results (finally!) put the numbers into each branch's
