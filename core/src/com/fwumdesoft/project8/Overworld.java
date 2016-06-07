@@ -26,7 +26,7 @@ public class Overworld
 	Project8 app;
 	tiles[][] map;
 	mods[][] modifiers;
-	Point playerPos, playerFace;
+	Point playerPos, playerFace, previousPlayerPos;
 	Array<Circuit> circuits;
 	HashMap<Point, Circuit> worldCircuits;
 	Circuit currentCircuit;
@@ -39,11 +39,8 @@ public class Overworld
 	final int FIRE_SUPPRESSION_RANGE = 12, TERMINAL_COUNT = 3;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.30;
-	private Overworld previous;
-	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory, boolean topLevel)
+	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
 	{
-		if(topLevel)
-			previous = new Overworld(app, size, circuits, inventory, false);
 		this.inventory = inventory;
 		// contains permanent tiles
 		map = new tiles[size][size];
@@ -62,6 +59,7 @@ public class Overworld
 		// rooms to said doors
 		Door door = new Door(size / 2, size / 2, 0);
 		playerPos = new Point(size / 2 - 2, size / 2);
+		previousPlayerPos = new Point(playerPos);
 		boolean firstDoor = true;
 		this.playerFace = new Point();
 		playerMoving = false;
@@ -132,6 +130,7 @@ public class Overworld
 		playerFace.setLocation(xAmt, yAmt);
 		if (spotFree)
 		{
+			previousPlayerPos = new Point(playerPos);
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
 			turn();
@@ -255,23 +254,11 @@ public class Overworld
 			gameWon = true;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Overworld getStateCopy()
-	{
-		previous.currentCircuit = currentCircuit;
-		deepCopy(map, previous.map);
-		deepCopy(modifiers, previous.modifiers);
-		previous.playerFace = new Point(playerFace);
-		previous.playerPos = new Point(playerPos);
-		previous.worldCircuits = (HashMap<Point, Circuit>)worldCircuits.clone();
-		return previous;
-	}
-	
 	public boolean equals(Overworld ow)
 	{
 		return ow != null && Arrays.deepEquals(map, ow.map) && 
-				Arrays.deepEquals(modifiers, previous.modifiers) && playerPos.equals(ow.playerPos) && 
-				playerFace.equals(ow.playerFace) && worldCircuits.equals(previous.worldCircuits);
+				Arrays.deepEquals(modifiers, ow.modifiers) && playerPos.equals(ow.playerPos) && 
+				playerFace.equals(ow.playerFace) && worldCircuits.equals(ow.worldCircuits);
 	}
 	
 	private void distributeCircuits()
@@ -519,13 +506,6 @@ public class Overworld
 				}
 			}
 		}while(!valid);
-	}
-	
-	private <T> void deepCopy(T[][] original, T[][] target)
-	{
-		for(int i = 0; i < original.length; i++)
-			for(int j = 0; j < original[i].length; j++)
-				target[i][j] = original[i][j];
 	}
 
 	/**
