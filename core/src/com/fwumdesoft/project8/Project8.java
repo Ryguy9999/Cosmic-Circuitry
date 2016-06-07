@@ -124,6 +124,7 @@ public class Project8 extends ApplicationAdapter
 				else
 					world.circuitFail();
 				isCircuit = false;
+				ParticleSystem.clear();
 				rend.resetCircuitCamera(); //Ensure that the circuit camera will be centered next time
 				transition.transition(-CIRCUIT_TRANSITION_SPEED); //Transition back into the overworld
 			}
@@ -145,6 +146,7 @@ public class Project8 extends ApplicationAdapter
 				isCircuit = true;
 				world.currentCircuit = null;
 				transition.transition(CIRCUIT_TRANSITION_SPEED);
+				ParticleSystem.clear();
 			}
 			//The game has been won in this frame, so transition to the credits
 			if(world.gameWon)
