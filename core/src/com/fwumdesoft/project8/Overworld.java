@@ -33,6 +33,7 @@ public class Overworld
 	Inventory inventory;
 	boolean gameWon;
 	boolean noClip;
+	boolean playFire;
 	public boolean playerMoving;
 	int playerHealth;
 	final int MAX_PLAYER_HEALTH = 5;
@@ -194,6 +195,15 @@ public class Overworld
 		if(Gdx.input.isKeyPressed(Keys.END))
 			noClip = !noClip;
 		
+		//check if player is within 5 tiles of fire
+		playFire = false;
+		for(int y = -1 * ((Gdx.graphics.getWidth() / 64) + 3); y < ((Gdx.graphics.getWidth() / 64) + 4); y++)
+		{
+			for(int x = -1 * ((Gdx.graphics.getHeight() / 64) + 3); x < ((Gdx.graphics.getHeight() / 64) + 4); x++)
+			{
+				playFire = playFire || modifiers[playerPos.y + y][playerPos.x + x] == mods.fire;
+			}
+		}
 		for(int y = 0; y < modifiers.length; y++)
 		{
 			for(int x = 0; x < modifiers[y].length; x++)
@@ -236,7 +246,7 @@ public class Overworld
 					if(y-1 >= 0 && modifiers[y-1][x] == mods.none)
 					{
 						modifiers[y-1][x] = mods.componentPile;
-						Project8.playSound(Project8.sounds.componentMachine, 1);
+						Project8.playSound(Project8.sounds.componentMachine, (float)playerPos.distance(x, y));
 					}
 			}
 		}

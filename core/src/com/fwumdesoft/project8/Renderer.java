@@ -179,6 +179,8 @@ public class Renderer
 	 */
 	public void renderOverworld(Overworld world, Inventory inventory)
 	{
+		if(world.playFire)
+			Project8.playSound(Project8.sounds.fire, 1);
 		shapes.begin(ShapeType.Filled);
 		shapes.setColor(Color.BLACK);
 		shapes.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -238,10 +240,16 @@ public class Renderer
 						t = door[0];
 					else if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) > doorOpenDistance &&
 							Vector2.dst(x, y, world.previousPlayerPos.x, world.previousPlayerPos.y) <= doorOpenDistance)
+					{
 						t = door[door.length - 1 - (int)((double)currentFrame / OverworldInput.MAX_COOLDOWN * door.length)];
+						Project8.playSound(Project8.sounds.door, doorOpenDistance);
+					}
 					else if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) <= doorOpenDistance &&
 							Vector2.dst(x, y, world.previousPlayerPos.x, world.previousPlayerPos.y) > doorOpenDistance)
+					{
 						t = door[(int)((double)currentFrame / OverworldInput.MAX_COOLDOWN * door.length)];
+						Project8.playSound(Project8.sounds.door, doorOpenDistance);
+					}
 					float rotation = 0;
 					if (y > 0 && world.map[y - 1][x] != tiles.wall)
 						rotation = 90;
