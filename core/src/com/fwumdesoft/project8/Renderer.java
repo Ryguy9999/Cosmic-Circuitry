@@ -216,6 +216,7 @@ public class Renderer
 						&& world.modifiers[y][x] == mods.broken && Math.random() < 0.05)
 				{
 					ParticleSystem.burst("spark", drawX + cellSize / 2, drawY + cellSize / 2, 12);
+					Project8.playSound(Project8.sounds.sparks, (float)world.playerPos.distance(x,  y));
 				}
 				// Draw the correct texture
 				switch (world.map[y][x])
@@ -380,7 +381,10 @@ public class Renderer
 					draw(batch, tex, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
 					batch.setColor(Color.WHITE);
 					if(Double.isNaN(comp.current))
+					{
 						batch.draw(fire[fireFrame], drawX, drawY, componentSize, componentSize);
+						Project8.playSound(Project8.sounds.fire, 1);
+					}
 				}
 			}
 		}

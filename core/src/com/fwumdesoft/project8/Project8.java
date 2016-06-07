@@ -44,7 +44,7 @@ public class Project8 extends ApplicationAdapter
 	private final int CIRCUIT_TRANSITION_SPEED = 20;
 	private Slideshow intro, current;
 	private Sound introSound;
-	private static Sound doorSound, componentMachineSound, walkingSound;
+	private static Sound doorSound, componentMachineSound, sparkSound, walkingSound;
 	private static Music fireSound;
 	
 	@Override
@@ -75,6 +75,7 @@ public class Project8 extends ApplicationAdapter
 		doorSound = assets.get("door.ogg", Sound.class);
 		componentMachineSound = assets.get("componentMachine.ogg", Sound.class);
 		walkingSound = assets.get("walking.ogg", Sound.class);
+		sparkSound = assets.get("spark.ogg", Sound.class);
 		fireSound = assets.get("fire.ogg", Music.class);
 		introSound.play();
 		//Manage appearance of intro slide and intro sound
@@ -205,7 +206,7 @@ public class Project8 extends ApplicationAdapter
 	
 	public static enum sounds
 	{
-		door, componentMachine, fire, fireSuppression, walking
+		door, componentMachine, fire, sparks, walking
 	}
 	public static void playSound(sounds s, float distance)
 	{
@@ -215,6 +216,9 @@ public class Project8 extends ApplicationAdapter
 				break;
 			case componentMachine:
 				componentMachineSound.play(1f/distance);
+				break;
+			case sparks:
+				sparkSound.play(1f/distance);
 				break;
 			case walking:
 				walkingSound.play(1f/distance);
