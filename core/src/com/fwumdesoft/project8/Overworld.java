@@ -161,7 +161,8 @@ public class Overworld
 		switch(modifiers[lookAt.y][lookAt.x])
 		{
 		case broken:
-			if(map[lookAt.y][lookAt.x] == tiles.door || map[lookAt.y][lookAt.x] == tiles.fireSuppression)
+			if(map[lookAt.y][lookAt.x] == tiles.door || map[lookAt.y][lookAt.x] == tiles.fireSuppression ||
+			map[lookAt.y][lookAt.x] == tiles.terminal)
 				modifiers[lookAt.y][lookAt.x] = mods.none;
 			break;
 		default:
