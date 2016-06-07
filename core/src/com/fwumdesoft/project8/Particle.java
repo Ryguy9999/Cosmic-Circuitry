@@ -98,9 +98,9 @@ public class Particle implements Poolable
 	 * @param displacement
 	 *            The displacement from the origin
 	 */
-	public void draw(SpriteBatch batch, Vector2 displacement)
+	public void draw(SpriteBatch batch)
 	{
-		batch.draw(texture, position.getX() + displacement.x, position.getY() + displacement.y, position.getOriginX(),
+		batch.draw(texture, position.getX(), position.getY(), position.getOriginX(),
 				position.getOriginY(), texture.getRegionWidth(), texture.getRegionHeight(), position.getScaleX(),
 				position.getScaleY(), position.getRotation());
 	}
