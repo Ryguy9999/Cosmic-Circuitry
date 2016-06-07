@@ -36,7 +36,7 @@ public class Renderer
 	/**
 	 * The number of pixels of the side of an overworld square
 	 */
-	private int cellSize;
+	public int cellSize;
 	/**
 	 * The number of pixels of the side of a circuit.grid component
 	 */
