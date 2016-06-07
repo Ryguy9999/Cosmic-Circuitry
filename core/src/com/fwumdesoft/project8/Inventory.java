@@ -38,6 +38,7 @@ public class Inventory
 	public void addComponent(CircuitComponent comp)
 	{
 		comp.isChangeable = true;
+		comp.isActive = false;
 		switch (comp.type)
 		{
 		case RESISTOR:
