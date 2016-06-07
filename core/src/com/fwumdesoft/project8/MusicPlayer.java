@@ -3,10 +3,22 @@ package com.fwumdesoft.project8;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 
+/**
+ * A class that plays music
+ */
 public class MusicPlayer
 {
+	/**
+	 * The music tracks for the game
+	 */
 	private Music overworld, circuit;
-	
+
+	/**
+	 * Create a new music player
+	 * 
+	 * @param assets
+	 *            The AssetManager with all assets loaded
+	 */
 	public MusicPlayer(AssetManager assets)
 	{
 		overworld = assets.get("overworld.mp3", Music.class);
@@ -14,18 +26,25 @@ public class MusicPlayer
 		overworld.setLooping(true);
 		circuit.setLooping(true);
 	}
-	
-	
+
+	/**
+	 * Update the state of the music player
+	 * 
+	 * @param playAnything
+	 *            Whether any music should be played or not
+	 * @param isCircuit
+	 *            Whether the game is currently on a circuit
+	 */
 	public void update(boolean playAnything, boolean isCircuit)
 	{
-		if(!playAnything)
+		if (!playAnything)
 		{
 			circuit.stop();
 			overworld.stop();
 		}
-		else if(isCircuit)
+		else if (isCircuit)
 		{
-			if(!circuit.isPlaying())
+			if (!circuit.isPlaying())
 			{
 				circuit.play();
 				overworld.stop();
@@ -33,7 +52,7 @@ public class MusicPlayer
 		}
 		else
 		{
-			if(!overworld.isPlaying())
+			if (!overworld.isPlaying())
 			{
 				overworld.play();
 				circuit.stop();
