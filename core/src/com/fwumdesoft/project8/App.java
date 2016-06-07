@@ -94,9 +94,6 @@ public class App extends ApplicationAdapter
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		transition.startDraw();
-		//TODO: Developer shortcut, remove from final build
-		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
-			isCircuit = !isCircuit;
 		music.update(current == null, isCircuit);
 		//Update the paricle system
 		ParticleSystem.tick();
