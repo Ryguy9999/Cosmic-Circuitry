@@ -30,38 +30,37 @@ public class Circuit implements Serializable
 
 	public boolean isSolved()
 	{
-		return false;
-//		try
-//		{
-//			for(CircuitComponent[] row : grid)
-//				for(CircuitComponent item : row)
-//					if(item != null && item.type == null)
-//					{
-//						resetCurrent();
-//						return false;
-//					}
-//			
-//			CircuitSolver.solve(grid);
-//	
-//			int count = 0;
-//			for (CircuitComponent[] row : grid)
-//				for (CircuitComponent comp : row)
-//					if (comp != null)
-//					{
-//						if(comp.isActive)
-//							count++;
-//						else if(comp.isLamp)
-//							return false;
-//						else if(Double.isNaN(comp.current))
-//							return false;
-//					}
-//
-//			return count == goalLamps;
-//		} catch(Exception e)
-//		{
-//			resetCurrent();
-//			return false;
-//		}
+		try
+		{
+			for(CircuitComponent[] row : grid)
+				for(CircuitComponent item : row)
+					if(item != null && item.type == null)
+					{
+						resetCurrent();
+						return false;
+					}
+			
+			CircuitSolver.solve(grid);
+	
+			int count = 0;
+			for (CircuitComponent[] row : grid)
+				for (CircuitComponent comp : row)
+					if (comp != null)
+					{
+						if(comp.isActive)
+							count++;
+						else if(comp.isLamp)
+							return false;
+						else if(Double.isNaN(comp.current))
+							return false;
+					}
+
+			return count == goalLamps;
+		} catch(Exception e)
+		{
+			resetCurrent();
+			return false;
+		}
 	}
 	
 	/**
