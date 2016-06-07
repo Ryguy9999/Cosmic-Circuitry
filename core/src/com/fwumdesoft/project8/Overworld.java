@@ -141,6 +141,7 @@ public class Overworld
 		{
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
+			ParticleSystem.displace(-xAmt, -yAmt);
 			turn();
 			playerMoving = true;
 		}

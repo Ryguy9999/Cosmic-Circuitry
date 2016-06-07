@@ -73,6 +73,11 @@ public class ParticleType
 		}
 	}
 	
+	public void undisplace()
+	{
+		displacement.set(0, 0);
+	}
+	
 	public void displace(float x, float y)
 	{
 		displacement.add(x, y);
