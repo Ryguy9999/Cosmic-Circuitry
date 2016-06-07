@@ -18,8 +18,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 import com.fwumdesoft.project8.CircuitComponent.Type;
-import com.fwumdesoft.project8.Overworld.mods;
-import com.fwumdesoft.project8.Overworld.tiles;
+import com.fwumdesoft.project8.Overworld.Modifier;
+import com.fwumdesoft.project8.Overworld.Tile;
 
 /**
  * Draws the game to separate drawing from simulation
@@ -212,8 +212,8 @@ public class Renderer
 						(int)(cellSize * currentFrame / OverworldInput.MAX_COOLDOWN) * -world.playerFace.x;
 				int drawY = (y - player.y + (currentFrame != 0 ? world.playerFace.y : 0) + halfGridHeight) * cellSize +
 						(int)(cellSize * currentFrame / OverworldInput.MAX_COOLDOWN) * -world.playerFace.y;
-				if((world.map[y][x] == tiles.door || world.map[y][x] == tiles.fireSuppression || world.map[y][x] == tiles.terminal)
-						&& world.modifiers[y][x] == mods.broken && Math.random() < 0.05)
+				if((world.map[y][x] == Tile.door || world.map[y][x] == Tile.fireSuppression || world.map[y][x] == Tile.terminal)
+						&& world.modifiers[y][x] == Modifier.broken && Math.random() < 0.05)
 				{
 					ParticleSystem.burst("spark", drawX + cellSize / 2, drawY + cellSize / 2, 12);
 					App.playSound(App.sounds.sparks, (float)world.playerPos.distance(x,  y));
@@ -226,7 +226,7 @@ public class Renderer
 					break;
 				case door:
 					TextureRegion t = door[2];
-					if (world.modifiers[y][x] == mods.broken)
+					if (world.modifiers[y][x] == Modifier.broken)
 						t = door[0];
 					else if(currentFrame == 0)
 						if(Vector2.dst(x, y, world.playerPos.x, world.playerPos.y) <= doorOpenDistance)
@@ -252,28 +252,28 @@ public class Renderer
 						App.playSound(App.sounds.door, doorOpenDistance);
 					}
 					float rotation = 0;
-					if (y > 0 && world.map[y - 1][x] != tiles.wall)
+					if (y > 0 && world.map[y - 1][x] != Tile.wall)
 						rotation = 90;
 					draw(batch, t, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
-					if(world.modifiers[y][x] == mods.fire)
+					if(world.modifiers[y][x] == Modifier.fire)
 						batch.draw(fire[fireFrame], drawX, drawY);
 					break;
 				case floor:
 					batch.draw(floor, drawX, drawY);
-					if(world.modifiers[y][x] == mods.componentPile)
+					if(world.modifiers[y][x] == Modifier.componentPile)
 						batch.draw(componentPile, drawX, drawY);
-					else if(world.modifiers[y][x] == mods.fire)
+					else if(world.modifiers[y][x] == Modifier.fire)
 						batch.draw(fire[fireFrame], drawX, drawY);
 					break;
 				case pod:
 					rotation = 0;
-					if(world.map[y - 1][x] == Overworld.tiles.door)
+					if(world.map[y - 1][x] == Overworld.Tile.door)
 						rotation = 0;
-					else if(world.map[y][x + 1] == Overworld.tiles.door)
+					else if(world.map[y][x + 1] == Overworld.Tile.door)
 						rotation = 90;
-					else if(world.map[y + 1][x] == Overworld.tiles.door)
+					else if(world.map[y + 1][x] == Overworld.Tile.door)
 						rotation = 180;
-					else if(world.map[y][x - 1] == Overworld.tiles.door)
+					else if(world.map[y][x - 1] == Overworld.Tile.door)
 						rotation = 270;
 					draw(batch, pod, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
 					break;
