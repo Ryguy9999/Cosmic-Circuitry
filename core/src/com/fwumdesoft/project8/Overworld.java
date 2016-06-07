@@ -133,6 +133,7 @@ public class Overworld
 			previousPlayerPos = new Point(playerPos);
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
+			ParticleSystem.displace(-xAmt, -yAmt);
 			turn();
 			playerMoving = true;
 		}
@@ -223,13 +224,17 @@ public class Overworld
 						int j = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + y - FIRE_SUPPRESSION_RANGE;
 						int i = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + x - FIRE_SUPPRESSION_RANGE;
 						if(modifiers[j][i] == mods.fire)
+						{
 							modifiers[j][i] = mods.none;
+						}
 					}
 				
 				//Component machine
-				if(map[y][x] == tiles.componentMachine && Math.random() < 0.04)
+				if(map[y][x] == tiles.componentMachine && Math.random() < 0.1)
 					if(y-1 >= 0 && modifiers[y-1][x] == mods.none)
+					{
 						modifiers[y-1][x] = mods.componentPile;
+					}
 			}
 		}
 		
@@ -452,7 +457,7 @@ public class Overworld
 	
 	private void spawnFireSuppression()
 	{
-		for(int y = 0; y < map.length; y += FIRE_SUPPRESSION_RANGE * 2)
+		for(int y = 0; y < map.length; y += FIRE_SUPPRESSION_RANGE)
 		{
 			for(int x = 0; x < map[y].length; x++)
 			{
@@ -460,7 +465,7 @@ public class Overworld
 				{
 					map[y][x] = tiles.fireSuppression;
 					modifiers[y][x] = (Math.random() < 0.75)? mods.broken: mods.none;
-					x += (Math.random() * FIRE_SUPPRESSION_RANGE) + (FIRE_SUPPRESSION_RANGE);
+					x += (Math.random() * (FIRE_SUPPRESSION_RANGE / 2)) + (FIRE_SUPPRESSION_RANGE);
 				}
 			}
 		}

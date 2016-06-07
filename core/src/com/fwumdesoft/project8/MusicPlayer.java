@@ -15,9 +15,15 @@ public class MusicPlayer
 		circuit.setLooping(true);
 	}
 	
-	public void update(boolean isCircuit)
+	
+	public void update(boolean playAnything, boolean isCircuit)
 	{
-		if(isCircuit)
+		if(!playAnything)
+		{
+			circuit.stop();
+			overworld.stop();
+		}
+		else if(isCircuit)
 		{
 			if(!circuit.isPlaying())
 			{

@@ -45,9 +45,16 @@ public class Circuit implements Serializable
 			int count = 0;
 			for (CircuitComponent[] row : grid)
 				for (CircuitComponent comp : row)
-					if (comp != null && comp.isActive)
-						count++;
-	
+					if (comp != null)
+					{
+						if(comp.isActive)
+							count++;
+						else if(comp.isLamp)
+							return false;
+						else if(Double.isNaN(comp.current))
+							return false;
+					}
+
 			return count == goalLamps;
 		} catch(Exception e)
 		{

@@ -54,16 +54,26 @@ public class Slideshow
 	 */
 	public boolean next()
 	{
+		return next(transitionSpeed);
+	}
+	
+	public boolean next(int speed)
+	{
 		current++;
 		if(current >= textures.length)
 		{
-			transition.transition(transitionSpeed);
+			transition.transition(speed);
 			return false;
 		}
 		else
 		{
-			transition.transition(transitionSpeed);
+			transition.transition(speed);
 			return true;
 		}
+	}
+	
+	public int getCurrent()
+	{
+		return current;
 	}
 }

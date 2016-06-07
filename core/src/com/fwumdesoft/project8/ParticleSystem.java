@@ -74,4 +74,14 @@ public class ParticleSystem
 	{
 		types.values().forEach(pt -> pt.clear());
 	}
+	
+	public static void displace(float x, float y)
+	{
+		types.values().forEach(pt -> pt.displace(x, y));
+	}
+	
+	public static void clearDisplace()
+	{
+		types.values().forEach(pt -> pt.undisplace());
+	}
 }

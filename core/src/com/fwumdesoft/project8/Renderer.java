@@ -255,7 +255,14 @@ public class Renderer
 						batch.draw(fire[fireFrame], drawX, drawY);
 					break;
 				case pod:
-					batch.draw(pod, drawX, drawY);
+					rotation = 0;
+					if(world.map[y - 1][x] != Overworld.tiles.space)
+						rotation = 90;
+					else if(world.map[y + 1][x] != Overworld.tiles.space)
+						rotation = 270;
+					else if(world.map[y][x + 1] != Overworld.tiles.space)
+						rotation = 180;
+					draw(batch, pod, drawX, drawY, cellSize / 2, cellSize / 2, rotation);
 					break;
 				case fireSuppression:
 					batch.draw(fireSuppression, drawX, drawY);
@@ -353,7 +360,12 @@ public class Renderer
 					{
 						continue;
 					}
+					if(comp.isActive)
+						batch.setColor(Color.GREEN);
+					else
+						batch.setColor(Color.RED);
 					draw(batch, tex, drawX, drawY, componentSize / 2, componentSize / 2, rotation);
+					batch.setColor(Color.WHITE);
 					if(Double.isNaN(comp.current))
 						batch.draw(fire[fireFrame], drawX, drawY, componentSize, componentSize);
 				}
@@ -396,7 +408,6 @@ public class Renderer
 		shapes.rect(0, Gdx.graphics.getHeight() - 32, 640, 32);
 		shapes.end();
 		batch.begin();
-		font.draw(batch, "Lamps needed: " + circuit.goalLamps, 0, Gdx.graphics.getHeight() - 12);
 		if(circuit.isSolved()) 
 		{
 			font.setColor(Color.GREEN);
@@ -407,6 +418,7 @@ public class Renderer
 			font.setColor(Color.RED);
 			font.draw(batch, "In Progress", Gdx.graphics.getWidth() - 96, Gdx.graphics.getHeight() - 12);
 		}
+		font.draw(batch, "Lamps needed: " + circuit.goalLamps, 0, Gdx.graphics.getHeight() - 12);
 		batch.end();
 	}
 
@@ -426,7 +438,9 @@ public class Renderer
 		// Draw each icon followed by the quantity
 		batch.draw(resistor, 0, 0, 32, 32);
 		drawInventoryList(inventory.resistors, "", 0);
+		batch.setColor(Color.BLACK);
 		batch.draw(lamp, 0, 32, 32, 32);
+		batch.setColor(Color.WHITE);
 		drawInventoryList(inventory.chips, "", 32);
 		batch.draw(battery, 0, 64, 32, 32);
 		drawInventoryList(inventory.batteries, "", 64);

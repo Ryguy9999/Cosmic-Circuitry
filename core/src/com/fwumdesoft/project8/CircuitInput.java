@@ -72,15 +72,30 @@ public class CircuitInput
 		if (Gdx.input.isKeyJustPressed(Keys.END))
 			editing = !editing;
 		if(Gdx.input.isKeyPressed(Keys.LEFT))
+		{
 			camera.x -= 2;
+			ParticleSystem.displace(-2, 0);
+		}
 		if(Gdx.input.isKeyPressed(Keys.RIGHT))
+		{
 			camera.x += 2;
+			ParticleSystem.displace(2, 0);
+		}
 		if(Gdx.input.isKeyPressed(Keys.UP))
+		{
 			camera.y += 2;
+			ParticleSystem.displace(0, 2);
+		}
 		if(Gdx.input.isKeyPressed(Keys.DOWN))
+		{
 			camera.y -= 2;
+			ParticleSystem.displace(0, -2);
+		}
 		if(Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT))
+		{
 			camera.set(0, 0);
+			ParticleSystem.clearDisplace();
+		}
 		if (editing)
 		{
 			edit(cursorX, cursorY);
@@ -151,8 +166,11 @@ public class CircuitInput
 			if (!(cursorY >= 0 && cursorY < circuit.grid.length && cursorX >= 0
 					&& cursorX < circuit.grid[cursorY].length) || !circuit.grid[cursorY][cursorX].isChangeable)
 				return;
-			inventory.addComponent(circuit.grid[cursorY][cursorX]);
-			circuit.grid[cursorY][cursorX] = CircuitComponent.blank();
+			if(circuit.grid[cursorY][cursorX].type != null)
+			{
+				inventory.addComponent(circuit.grid[cursorY][cursorX]);
+				circuit.grid[cursorY][cursorX] = CircuitComponent.blank();
+			}
 		}
 		List<CircuitComponent> type = null;
 		String componentName = "";

@@ -6,16 +6,19 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 
 public class ParticleType
 {
 	private final List<Particle> particles;
 	private final Pool<Particle> particlePool;
+	private final Vector2 displacement;
 	
 	public ParticleType(Consumer<Particle> initializer, int max)
 	{
 		particles = new ArrayList<>(max);
+		displacement = new Vector2();
 		this.particlePool = new Pool<Particle>(max){
 			@Override
 			public Particle obtain()
@@ -58,14 +61,25 @@ public class ParticleType
 	
 	public void draw(SpriteBatch batch)
 	{
-		particles.forEach(particle -> particle.draw(batch));
+		particles.forEach(particle -> particle.draw(batch, displacement));
 	}
 	
 	public void clear()
 	{
+		displacement.set(0, 0);
 		while(!particles.isEmpty())
 		{
 			particlePool.free(particles.remove(0));
 		}
+	}
+	
+	public void undisplace()
+	{
+		displacement.set(0, 0);
+	}
+	
+	public void displace(float x, float y)
+	{
+		displacement.add(x, y);
 	}
 }

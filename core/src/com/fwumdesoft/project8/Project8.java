@@ -10,6 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -42,6 +43,7 @@ public class Project8 extends ApplicationAdapter
 	private MusicPlayer music;
 	private final int CIRCUIT_TRANSITION_SPEED = 20;
 	private Slideshow intro, current;
+	private Sound introSound;
 	
 	@Override
 	public void create()
@@ -59,13 +61,22 @@ public class Project8 extends ApplicationAdapter
 		ParticleSystem.init(assets);
 		music = new MusicPlayer(assets);
 		
+		introSound = assets.get("intro.ogg", Sound.class);
+		
 		List<Texture> textures = new ArrayList<>();
+		textures.add(assets.get("game_over_bkg.png", Texture.class));
 		while(assets.isLoaded("intro_" + textures.size() + ".png"))
 			textures.add(assets.get("intro_" + textures.size() + ".png", Texture.class));
 		intro = new Slideshow(-20, transition, textures.stream()
 				.map(texture -> new TextureRegion(texture)).collect(Collectors.toList())
 				.toArray(new TextureRegion[textures.size()]));
 		current = intro;
+		introSound.play();
+		//Manage appearance of intro slide and intro sound
+		transition.startDraw();
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		intro.next(-40);
+		transition.endDraw();
 	}
 
 	public boolean isCircuit = false;
@@ -80,7 +91,7 @@ public class Project8 extends ApplicationAdapter
 		//TODO: Developer shortcut, remove from final build
 		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
 			isCircuit = !isCircuit;
-		music.update(isCircuit);
+		music.update(current == null, isCircuit);
 		if(current != null)
 		{
 			batch.begin();
@@ -113,6 +124,7 @@ public class Project8 extends ApplicationAdapter
 				else
 					world.circuitFail();
 				isCircuit = false;
+				ParticleSystem.clear();
 				rend.resetCircuitCamera(); //Ensure that the circuit camera will be centered next time
 				transition.transition(-CIRCUIT_TRANSITION_SPEED); //Transition back into the overworld
 			}
@@ -134,6 +146,7 @@ public class Project8 extends ApplicationAdapter
 				isCircuit = true;
 				world.currentCircuit = null;
 				transition.transition(CIRCUIT_TRANSITION_SPEED);
+				ParticleSystem.clear();
 			}
 			//The game has been won in this frame, so transition to the credits
 			if(world.gameWon)
@@ -177,6 +190,8 @@ public class Project8 extends ApplicationAdapter
 				.forEach(name -> assets.load(name, Texture.class));
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("mp3"))
 		.forEach(name -> assets.load(name, Music.class));
+		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("ogg"))
+		.forEach(name -> assets.load(name, Sound.class));
 		assetsFiles.stream().map(file -> file.name()).filter(string -> string.endsWith("circuit"))
 				.forEach(name -> assets.load(name, Circuit.class));
 		assets.finishLoading();
