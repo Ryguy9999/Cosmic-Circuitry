@@ -13,11 +13,17 @@ import com.badlogic.gdx.utils.Array;
 
 public class Overworld
 {
+	/**
+	 * Types of tiles
+	 */
 	public static enum tiles
 	{
 		space, wall, door, floor, fireSuppression, componentMachine, terminal, pod
 	}
-
+	
+	/**
+	 * Tile modifiers such as being on fire
+	 */
 	public static enum mods
 	{
 		none, broken, componentPile, fire
@@ -32,14 +38,15 @@ public class Overworld
 	Circuit currentCircuit;
 	Inventory inventory;
 	boolean gameWon;
-	boolean noClip;
-	boolean playFire;
+	private boolean noClip;
+	public boolean playFire;
 	public boolean playerMoving;
 	int playerHealth;
 	final int MAX_PLAYER_HEALTH = 5;
 	final int FIRE_SUPPRESSION_RANGE = 12, TERMINAL_COUNT = 3;
 	final double FIRE_SUPPRESSION_EFFECTIVENESS = 0.15;
 	final double FIRE_SPREAD_CHANCE = 0.30;
+	final int CELL_SIZE = 32;
 
 	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
 	{
@@ -184,6 +191,9 @@ public class Overworld
 		}
 	}
 	
+	/**
+	 * Causes the player to rest. Health regenerates and one turn passes
+	 */
 	public void rest()
 	{
 		if(playerHealth < MAX_PLAYER_HEALTH)
@@ -191,6 +201,9 @@ public class Overworld
 		turn();
 	}
 	
+	/**
+	 * A turn that occurs after moving or resting, allows time to progress
+	 */
 	private void turn() {
 		//TODO Remove before finished, for now: NO CLIP
 		if(Gdx.input.isKeyPressed(Keys.END))
@@ -198,13 +211,17 @@ public class Overworld
 		
 		//check if player is within 5 tiles of fire
 		playFire = false;
-		for(int y = -1 * ((Gdx.graphics.getWidth() / 64) + 3); y < ((Gdx.graphics.getWidth() / 64) + 4); y++)
+		for(int y = -1 * ((Gdx.graphics.getWidth() / (CELL_SIZE * 2)) + 3);
+				y < ((Gdx.graphics.getWidth() / (CELL_SIZE * 2)) + 4); y++)
 		{
-			for(int x = -1 * ((Gdx.graphics.getHeight() / 64) + 3); x < ((Gdx.graphics.getHeight() / 64) + 4); x++)
+			for(int x = -1 * ((Gdx.graphics.getHeight() / (CELL_SIZE * 2)) + 3);
+					x < ((Gdx.graphics.getHeight() / (CELL_SIZE * 2)) + 4); x++)
 			{
 				playFire = playFire || modifiers[playerPos.y + y][playerPos.x + x] == mods.fire;
 			}
 		}
+		
+		//Changes to modifiers
 		for(int y = 0; y < modifiers.length; y++)
 		{
 			for(int x = 0; x < modifiers[y].length; x++)
@@ -252,7 +269,7 @@ public class Overworld
 			}
 		}
 		
-		//Death by fire
+		//Damage/ death by fire
 		if(modifiers[playerPos.y][playerPos.x]== mods.fire)
 			playerHealth -= 2;
 		if(playerHealth <= 0)
@@ -429,6 +446,9 @@ public class Overworld
 		return nextDoor;
 	}
 	
+	/**
+	 * Spawns terminals throughout the map.
+	 */
 	private void spawnTerminals()
 	{
 		for(int t = 0; t < TERMINAL_COUNT; t++)
@@ -455,6 +475,10 @@ public class Overworld
 		}
 	}
 	
+	/**
+	 * Checks if all terminals are solved.
+	 * @return true if all terminals are solved, false otherwise.
+	 */
 	private boolean allTerminalsSolved()
 	{
 		boolean solved = true;
@@ -469,6 +493,9 @@ public class Overworld
 		return solved;
 	}
 	
+	/**
+	 * Spawns fire suppression throughout the map.
+	 */
 	private void spawnFireSuppression()
 	{
 		for(int y = 0; y < map.length; y += FIRE_SUPPRESSION_RANGE)
@@ -486,6 +513,9 @@ public class Overworld
 		}
 	}
 	
+	/**
+	 * Spawns component producers throughout the map.
+	 */
 	private void spawnProducerMachines()
 	{
 		for(int y = 0; y < map.length; y += 15)
@@ -501,6 +531,10 @@ public class Overworld
 		}
 	}
 	
+	/**
+	 * Spawns the escape pod and a door leading to it. The pod is
+	 * on the exterior of the station.
+	 */
 	private void spawnEscapePod()
 	{
 		//randomly pick spots until a wall next to space is picked
@@ -529,6 +563,9 @@ public class Overworld
 	}
 
 	/**
+	 * Removes doors that are left over from room generation. Makes sure doors are
+	 * connected to walls.
+	 * 
 	 * Captain's log: Star Date sometime I have given up. The doors won't go
 	 * away. We've tried everything. I have accepted that this is as good a
 	 * solution as any for the time being. Save yourself, don't try to fix the
