@@ -30,6 +30,7 @@ public class Circuit implements Serializable
 
 	public boolean isSolved()
 	{
+//		return false;
 		try
 		{
 			for(CircuitComponent[] row : grid)

@@ -27,7 +27,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 /**
  * The main entry point of the game
  */
-public class Project8 extends ApplicationAdapter
+public class App extends ApplicationAdapter
 {
 	private Renderer rend;
 	private Overworld world;
@@ -94,9 +94,6 @@ public class Project8 extends ApplicationAdapter
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		transition.startDraw();
-		//TODO: Developer shortcut, remove from final build
-		if (Gdx.input.isKeyJustPressed(Keys.GRAVE))
-			isCircuit = !isCircuit;
 		music.update(current == null, isCircuit);
 		//Update the paricle system
 		ParticleSystem.tick();
@@ -174,7 +171,7 @@ public class Project8 extends ApplicationAdapter
 		
 		Gdx.input.setInputProcessor(overInput = new OverworldInput(this, world));
 
-		input = new CircuitInput(new Circuit(new CircuitComponent[10][20], 0), assets, inventory, circuitCamera);
+		input = new CircuitInput(new Circuit(new CircuitComponent[10][20], 0), inventory, circuitCamera);
 		mousePosition = new Vector2();
 	}
 	

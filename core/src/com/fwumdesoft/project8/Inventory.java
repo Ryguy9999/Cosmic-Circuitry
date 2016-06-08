@@ -11,21 +11,22 @@ public class Inventory
 	/**
 	 * The resistors the player currently holds
 	 */
-	public List<CircuitComponent> resistors;
+	public final List<CircuitComponent> resistors;
 	/**
 	 * The chips the player currently holds
 	 */
-	public List<CircuitComponent> chips;
+	public final List<CircuitComponent> lamps;
 	/**
 	 * The batteries the player currently holds
 	 */
-	public List<CircuitComponent> batteries;
+	public final List<CircuitComponent> batteries;
 
 	public Inventory()
 	{
 		resistors = new ArrayList<>();
-		chips = new ArrayList<>();
+		lamps = new ArrayList<>();
 		batteries = new ArrayList<>();
+		// Start the player off with some basic gear
 		addComponent(CircuitComponent.battery());
 		addComponent(CircuitComponent.battery());
 		addComponent(CircuitComponent.lamp());
@@ -35,17 +36,24 @@ public class Inventory
 
 	}
 
+	/**
+	 * Add a component to the inventory </br>
+	 * Resets the relevant values
+	 * 
+	 * @param comp
+	 *            The component to add
+	 */
 	public void addComponent(CircuitComponent comp)
 	{
+		// Reset values so that the component can be used correctly
 		comp.isChangeable = true;
 		comp.isActive = false;
+		// Choose the correct place to put the component
 		switch (comp.type)
 		{
 		case RESISTOR:
-			if (comp.isLamp)
-				chips.add(comp);
-			else
-				resistors.add(comp);
+			if (comp.isLamp) lamps.add(comp);
+			else resistors.add(comp);
 			break;
 		case BATTERY:
 			batteries.add(comp);
@@ -56,15 +64,19 @@ public class Inventory
 		}
 	}
 
+	/**
+	 * Remove a component from the inventory
+	 * 
+	 * @param comp
+	 *            The component to remove
+	 */
 	public void removeComponent(CircuitComponent comp)
 	{
 		switch (comp.type)
 		{
 		case RESISTOR:
-			if (comp.isLamp)
-				chips.remove(comp);
-			else
-				resistors.remove(comp);
+			if (comp.isLamp) lamps.remove(comp);
+			else resistors.remove(comp);
 			break;
 		case BATTERY:
 			batteries.remove(comp);

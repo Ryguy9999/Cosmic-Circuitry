@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.utils.Array;
 
 public class Overworld
@@ -16,7 +15,7 @@ public class Overworld
 	/**
 	 * Types of tiles
 	 */
-	public static enum tiles
+	public static enum Tile
 	{
 		space, wall, door, floor, fireSuppression, componentMachine, terminal, pod
 	}
@@ -24,14 +23,14 @@ public class Overworld
 	/**
 	 * Tile modifiers such as being on fire
 	 */
-	public static enum mods
+	public static enum Modifier
 	{
 		none, broken, componentPile, fire
 	}
 
-	Project8 app;
-	tiles[][] map;
-	mods[][] modifiers;
+	App app;
+	Tile[][] map;
+	Modifier[][] modifiers;
 	Point playerPos, playerFace, previousPlayerPos;
 	Array<Circuit> circuits;
 	HashMap<Point, Circuit> worldCircuits;
@@ -48,19 +47,19 @@ public class Overworld
 	final double FIRE_SPREAD_CHANCE = 0.30;
 	final int CELL_SIZE = 32;
 
-	public Overworld(Project8 app, int size, Array<Circuit> circuits, Inventory inventory)
+	public Overworld(App app, int size, Array<Circuit> circuits, Inventory inventory)
 	{
 		this.inventory = inventory;
 		// contains permanent tiles
-		map = new tiles[size][size];
+		map = new Tile[size][size];
 		// contains temporary modifiers or stuff that goes on walls
-		modifiers = new mods[size][size];
+		modifiers = new Modifier[size][size];
 		for (int i = 0; i < size; i++)
 		{
 			for (int j = 0; j < size; j++)
 			{
-				map[i][j] = tiles.space;
-				modifiers[i][j] = mods.none;
+				map[i][j] = Tile.space;
+				modifiers[i][j] = Modifier.none;
 			}
 		}
 
@@ -92,17 +91,18 @@ public class Overworld
 		{
 			for (int y = -5; y < 6; y++)
 			{
-				if (modifiers[playerPos.y + y][playerPos.x + x] == mods.fire)
-					modifiers[playerPos.y + y][playerPos.x + x] = mods.none;
+				if (modifiers[playerPos.y + y][playerPos.x + x] == Modifier.fire)
+					modifiers[playerPos.y + y][playerPos.x + x] = Modifier.none;
 			}
 		}
 		
-		map[playerPos.y + 1][playerPos.x + 1] = tiles.fireSuppression;
-		map[playerPos.y + 1][playerPos.x - 1] = tiles.componentMachine;
-		modifiers[playerPos.y - 1][playerPos.x + 1] = mods.componentPile;
-		modifiers[playerPos.y - 1][playerPos.x - 1] = mods.componentPile;
+		map[playerPos.y + 1][playerPos.x + 1] = Tile.fireSuppression;
+		map[playerPos.y + 1][playerPos.x - 1] = Tile.componentMachine;
+		modifiers[playerPos.y - 1][playerPos.x + 1] = Modifier.componentPile;
+		modifiers[playerPos.y - 1][playerPos.x - 1] = Modifier.componentPile;
 		spawnEscapePod();
 		distributeCircuits();
+		unblockDoors();
 		gameWon = false;
 		playerHealth = MAX_PLAYER_HEALTH;
 	}
@@ -139,11 +139,10 @@ public class Overworld
 		playerFace.setLocation(xAmt, yAmt);
 		if (spotFree)
 		{
-			Project8.playSound(Project8.sounds.walking, 1);
+			App.playSound(App.sounds.walking, 1);
 			previousPlayerPos = new Point(playerPos);
 			playerPos.x += xAmt;
 			playerPos.y += yAmt;
-			ParticleSystem.displace(-xAmt, -yAmt);
 			turn();
 			playerMoving = true;
 		}
@@ -168,9 +167,9 @@ public class Overworld
 		switch(modifiers[lookAt.y][lookAt.x])
 		{
 		case broken:
-			if(map[lookAt.y][lookAt.x] == tiles.door || map[lookAt.y][lookAt.x] == tiles.fireSuppression ||
-			map[lookAt.y][lookAt.x] == tiles.terminal)
-				modifiers[lookAt.y][lookAt.x] = mods.none;
+			if(map[lookAt.y][lookAt.x] == Tile.door || map[lookAt.y][lookAt.x] == Tile.fireSuppression ||
+			map[lookAt.y][lookAt.x] == Tile.terminal)
+				modifiers[lookAt.y][lookAt.x] = Modifier.none;
 			break;
 		default:
 			break;
@@ -183,8 +182,8 @@ public class Overworld
 		switch(modifiers[lookAt.y][lookAt.x])
 		{
 		case none:
-			if(map[lookAt.y][lookAt.x] == tiles.door || map[lookAt.y][lookAt.x] == tiles.fireSuppression)
-				modifiers[lookAt.y][lookAt.x] = mods.broken;
+			if(map[lookAt.y][lookAt.x] == Tile.door || map[lookAt.y][lookAt.x] == Tile.fireSuppression)
+				modifiers[lookAt.y][lookAt.x] = Modifier.broken;
 			break;
 		default:
 			break;
@@ -205,10 +204,6 @@ public class Overworld
 	 * A turn that occurs after moving or resting, allows time to progress
 	 */
 	private void turn() {
-		//TODO Remove before finished, for now: NO CLIP
-		if(Gdx.input.isKeyPressed(Keys.END))
-			noClip = !noClip;
-		
 		//check if player is within 5 tiles of fire
 		playFire = false;
 		for(int y = -1 * ((Gdx.graphics.getWidth() / (CELL_SIZE * 2)) + 3);
@@ -217,7 +212,7 @@ public class Overworld
 			for(int x = -1 * ((Gdx.graphics.getHeight() / (CELL_SIZE * 2)) + 3);
 					x < ((Gdx.graphics.getHeight() / (CELL_SIZE * 2)) + 4); x++)
 			{
-				playFire = playFire || modifiers[playerPos.y + y][playerPos.x + x] == mods.fire;
+				playFire = playFire || modifiers[playerPos.y + y][playerPos.x + x] == Modifier.fire;
 			}
 		}
 		
@@ -227,20 +222,20 @@ public class Overworld
 			for(int x = 0; x < modifiers[y].length; x++)
 			{
 				//Spread fire
-				if(modifiers[y][x] == mods.fire)
+				if(modifiers[y][x] == Modifier.fire)
 				{
 					if(Math.random() < FIRE_SPREAD_CHANCE)
 					{
 						int spreadX = (int)(Math.random() * 3) - 1;
 						int spreadY = (int)(Math.random() * 3) - 1;
-						if(map[y + spreadY][x + spreadX] == tiles.floor)//Regular spread
-							modifiers[y + spreadY][x + spreadX] = mods.fire;
-						else if(map[y + spreadY][x + spreadX] == tiles.door && Math.random() < 0.2)//Spread through door
-							modifiers[y + spreadY][x + spreadX] = mods.fire;
+						if(map[y + spreadY][x + spreadX] == Tile.floor)//Regular spread
+							modifiers[y + spreadY][x + spreadX] = Modifier.fire;
+						else if(map[y + spreadY][x + spreadX] == Tile.door && Math.random() < 0.2)//Spread through door
+							modifiers[y + spreadY][x + spreadX] = Modifier.fire;
 					}
 					else if(Math.random() < FIRE_SPREAD_CHANCE / 6)
 					{
-						modifiers[y][x] = mods.none;
+						modifiers[y][x] = Modifier.none;
 						int drawX = (x - playerPos.x) * 32 + Gdx.graphics.getWidth() / 2;
 						int drawY = (y - playerPos.y) * 32 + Gdx.graphics.getHeight() / 2;
 						ParticleSystem.burst("smoke", drawX, drawY, 4);
@@ -248,37 +243,37 @@ public class Overworld
 				}
 				
 				//Fire suppression
-				if(map[y][x] == tiles.fireSuppression && modifiers[y][x] != mods.broken)
+				if(map[y][x] == Tile.fireSuppression && modifiers[y][x] != Modifier.broken)
 					for(int c = 0; c < Math.pow(FIRE_SUPPRESSION_RANGE*2+1, 2) * FIRE_SUPPRESSION_EFFECTIVENESS; c++)
 					{
 						int j = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + y - FIRE_SUPPRESSION_RANGE;
 						int i = (int)(Math.random() * FIRE_SUPPRESSION_RANGE * 2 + 1) + x - FIRE_SUPPRESSION_RANGE;
-						if(modifiers[j][i] == mods.fire)
+						if(modifiers[j][i] == Modifier.fire)
 						{
-							modifiers[j][i] = mods.none;
+							modifiers[j][i] = Modifier.none;
 						}
 					}
 				
 				//Component machine
-				if(map[y][x] == tiles.componentMachine && Math.random() < 0.1)
-					if(y-1 >= 0 && modifiers[y-1][x] == mods.none)
+				if(map[y][x] == Tile.componentMachine && Math.random() < 0.1)
+					if(y-1 >= 0 && modifiers[y-1][x] == Modifier.none)
 					{
-						modifiers[y-1][x] = mods.componentPile;
-						Project8.playSound(Project8.sounds.componentMachine, (float)playerPos.distance(x, y));
+						modifiers[y-1][x] = Modifier.componentPile;
+						App.playSound(App.sounds.componentMachine, (float)playerPos.distance(x, y));
 					}
 			}
 		}
 		
 		//Damage/ death by fire
-		if(modifiers[playerPos.y][playerPos.x]== mods.fire)
+		if(modifiers[playerPos.y][playerPos.x]== Modifier.fire)
 			playerHealth -= 2;
 		if(playerHealth <= 0)
 			app.gameOver();
 		
 		//Pick up bags
-		if(modifiers[playerPos.y][playerPos.x] == mods.componentPile)
+		if(modifiers[playerPos.y][playerPos.x] == Modifier.componentPile)
 		{
-			modifiers[playerPos.y][playerPos.x] = mods.none;
+			modifiers[playerPos.y][playerPos.x] = Modifier.none;
 			inventory.addComponent(CircuitComponent.randomComponent());
 			while(Math.random() < 1.0/3.0)
 				inventory.addComponent(CircuitComponent.randomComponent());
@@ -286,7 +281,7 @@ public class Overworld
 		}
 		
 		//victory
-		if(map[playerPos.y][playerPos.x] == tiles.pod)
+		if(map[playerPos.y][playerPos.x] == Tile.pod)
 			gameWon = true;
 	}
 	
@@ -315,17 +310,17 @@ public class Overworld
 				switch(modifiers[y][x])
 				{
 				case broken:
-					if(map[y][x] == tiles.door)
+					if(map[y][x] == Tile.door)
 						c = new Circuit(getRandom(doorCircuits));
-					else if(map[y][x] == tiles.fireSuppression)
+					else if(map[y][x] == Tile.fireSuppression)
 						c = new Circuit(getRandom(fireSuppression));
-					else if(map[y][x] == tiles.terminal)
-						c = new Circuit(getRandom(terminalCircuits));
+					else if(map[y][x] == Tile.terminal)
+						c = new Circuit(terminalCircuits.remove(0));
 					break;
 				case none:
-					if(map[y][x] == tiles.door)
+					if(map[y][x] == Tile.door)
 						c = new Circuit(getRandom(solvedDoorCircuits));
-					else if(map[y][x] == tiles.fireSuppression)
+					else if(map[y][x] == Tile.fireSuppression)
 						c = new Circuit(getRandom(solvedFireSuppression));
 					break;
 				default:
@@ -334,6 +329,33 @@ public class Overworld
 				if(c != null)
 					worldCircuits.put(new Point(x, y), c);
 			}
+	}
+	
+	private void unblockDoors()
+	{
+		for(int y = 0; y < map.length; y++)
+			for(int x = 0; x < map[y].length; x++)
+				if(map[y][x] == Tile.door)
+					if(map[y+1][x] == Tile.componentMachine || map[y+1][x] == Tile.fireSuppression)
+					{
+						map[y+1][x+1] = map[y+1][x];
+						map[y+1][x] = Tile.floor;
+					}
+					else if(map[y][x+1] == Tile.componentMachine || map[y][x+1] == Tile.fireSuppression)
+					{
+						map[y+1][x+1] = map[y][x+1];
+						map[y][x+1] = Tile.floor;
+					}
+					else if(map[y-1][x] == Tile.componentMachine || map[y-1][x] == Tile.fireSuppression)
+					{
+						map[y-1][x+1] = map[y-1][x];
+						map[y-1][x] = Tile.floor;
+					}
+					else if(map[y][x-1] == Tile.componentMachine || map[y][x-1] == Tile.fireSuppression)
+					{
+						map[y+1][x-1] = map[y][x-1];
+						map[y][x-1] = Tile.floor;
+					}
 	}
 	
 	private <T> T getRandom(List<T> list)
@@ -395,9 +417,9 @@ public class Overworld
 			xOffset = 2;
 			break;
 		}
-		map[y + yOffset][x + xOffset] = tiles.door;
+		map[y + yOffset][x + xOffset] = Tile.door;
 		Door nextDoor = new Door(x + xOffset, y + yOffset, position);
-		modifiers[y + yOffset][x + xOffset] = (Math.random() < 0.2)? mods.broken : mods.none;
+		modifiers[y + yOffset][x + xOffset] = (Math.random() < 0.2)? Modifier.broken : Modifier.none;
 		// Sometimes wall will not generate to make larger connected rooms
 		//Will only knock out wall of first door to ensure it is not opening into space
 		if (Math.random() < 0.25 && !firstDoor)
@@ -406,15 +428,15 @@ public class Overworld
 			{
 			case 0:
 			case 2:
-				map[door.y + 1][door.x] = tiles.floor;
-				map[door.y][door.x] = tiles.floor;
-				map[door.y - 1][door.x] = tiles.floor;
+				map[door.y + 1][door.x] = Tile.floor;
+				map[door.y][door.x] = Tile.floor;
+				map[door.y - 1][door.x] = Tile.floor;
 				break;
 			case 1:
 			case 3:
-				map[door.y][door.x + 1] = tiles.floor;
-				map[door.y][door.x] = tiles.floor;
-				map[door.y][door.x - 1] = tiles.floor;
+				map[door.y][door.x + 1] = Tile.floor;
+				map[door.y][door.x] = Tile.floor;
+				map[door.y][door.x - 1] = Tile.floor;
 				break;
 			}
 		}
@@ -425,21 +447,21 @@ public class Overworld
 			{
 				if (i == x || i == x + 4 || j == y || j == y + 4)
 				{
-					if (map[j][i] == tiles.space)
+					if (map[j][i] == Tile.space)
 					{
-						map[j][i] = tiles.wall;
+						map[j][i] = Tile.wall;
 					}
 				}
 				// Floor
 				else
 				{
-					map[j][i] = tiles.floor;
+					map[j][i] = Tile.floor;
 					if(Math.random() < 0.2)
-						modifiers[j][i] = mods.fire;
+						modifiers[j][i] = Modifier.fire;
 					else if(Math.random() < 0.1)
-						modifiers[j][i] = mods.componentPile;
+						modifiers[j][i] = Modifier.componentPile;
 					else
-						modifiers[j][i] = mods.none;
+						modifiers[j][i] = Modifier.none;
 				}
 			}
 		}
@@ -456,19 +478,19 @@ public class Overworld
 			int y = (int)(Math.random() * map.length);
 			int x = (int)(Math.random() * map[y].length);
 			
-			while(map[y][x] != tiles.floor)
+			while(map[y][x] != Tile.floor)
 			{
 				y = (int)(Math.random() * map.length);
 				x = (int)(Math.random() * map[y].length);
 			}
 			
-			while(map[y][x] == tiles.floor)
+			while(map[y][x] == Tile.floor)
 				y++;
 			
-			if(map[y][x] == tiles.wall)
+			if(map[y][x] == Tile.wall)
 			{
-				map[y][x] = tiles.terminal;
-				modifiers[y][x] = mods.broken;
+				map[y][x] = Tile.terminal;
+				modifiers[y][x] = Modifier.broken;
 			}
 			else
 				t--;
@@ -486,7 +508,7 @@ public class Overworld
 		{
 			for(int x = 0; x < map[y].length; x++)
 			{
-				if(map[y][x] == tiles.terminal && modifiers[y][x] == mods.broken)
+				if(map[y][x] == Tile.terminal && modifiers[y][x] == Modifier.broken)
 					solved = false;
 			}
 		}
@@ -502,11 +524,11 @@ public class Overworld
 		{
 			for(int x = 0; x < map[y].length; x++)
 			{
-				if(map[y][x] == tiles.floor && !(map[y + 1][x] == tiles.door || map[y - 1][x] == tiles.door ||
-						map[y][x - 1] == tiles.door || map[y][x + 1] == tiles.door))
+				if(map[y][x] == Tile.floor && !(map[y + 1][x] == Tile.door || map[y - 1][x] == Tile.door ||
+						map[y][x - 1] == Tile.door || map[y][x + 1] == Tile.door))
 				{
-					map[y][x] = tiles.fireSuppression;
-					modifiers[y][x] = (Math.random() < 0.75)? mods.broken: mods.none;
+					map[y][x] = Tile.fireSuppression;
+					modifiers[y][x] = (Math.random() < 0.75)? Modifier.broken: Modifier.none;
 					x += (Math.random() * (FIRE_SUPPRESSION_RANGE / 2)) + (FIRE_SUPPRESSION_RANGE);
 				}
 			}
@@ -522,9 +544,9 @@ public class Overworld
 		{
 			for(int x = 0; x < map[y].length; x++)
 			{
-				if(map[y][x] == tiles.floor && map[y - 1][x] == tiles.floor && Math.random() < 0.75)
+				if(map[y][x] == Tile.floor && map[y - 1][x] == Tile.floor && Math.random() < 0.75)
 				{
-					map[y][x] = tiles.componentMachine;
+					map[y][x] = Tile.componentMachine;
 					x += (Math.random() * 20) + (20);
 				}
 			}
@@ -544,16 +566,16 @@ public class Overworld
 		{
 			y = (int)(Math.random() * map.length);
 			x = (int)(Math.random() * map[y].length);
-			if(map[y][x] == tiles.wall)
+			if(map[y][x] == Tile.wall)
 			{
 				for(int i = -1; i < 2 && !valid; i++)
 				{
 					for(int j = -1; j < 2 && !valid; j++)
 					{
-						if((i == 0 || j == 0) && (map[y + i][x + j] == tiles.space && map[y + (i * -1)][x + (j * -1)] == tiles.floor))
+						if((i == 0 || j == 0) && (map[y + i][x + j] == Tile.space && map[y + (i * -1)][x + (j * -1)] == Tile.floor))
 						{
-							map[y + i][x + j] = tiles.pod;
-							map[y][x] = tiles.door;
+							map[y + i][x + j] = Tile.pod;
+							map[y][x] = Tile.door;
 							valid = true;
 						}
 					}
@@ -577,23 +599,23 @@ public class Overworld
 		{
 			for (int j = 0; j < map[i].length; j++)
 			{
-				if (map[j][i] == tiles.door)
+				if (map[j][i] == Tile.door)
 				{
 					boolean adjacentWall = false, adjacentSpace = false;
 					for (int x = -1; x < 2; x++)
 					{
 						for (int y = -1; y < 2; y++)
 						{
-							if (map[j + y][i + x] == tiles.space)
+							if (map[j + y][i + x] == Tile.space)
 								adjacentSpace = true;
-							else if (map[j + y][i + x] == tiles.wall)
+							else if (map[j + y][i + x] == Tile.wall)
 								adjacentWall =true;
 						}
 					}
 					if (!adjacentWall)
-						map[j][i] = tiles.floor;
+						map[j][i] = Tile.floor;
 					if(adjacentSpace)
-						map[j][i] = tiles.wall;
+						map[j][i] = Tile.wall;
 				}
 			}
 		}
@@ -610,8 +632,8 @@ public class Overworld
 	 */
 	public boolean isOpen(int x, int y)
 	{
-		return noClip || map[y][x] == tiles.floor || map[y][x] == tiles.door && modifiers[y][x] != mods.broken 
-				|| map[y][x] == tiles.pod && allTerminalsSolved();
+		return noClip || map[y][x] == Tile.floor || map[y][x] == Tile.door && modifiers[y][x] != Modifier.broken 
+				|| map[y][x] == Tile.pod && allTerminalsSolved();
 	}
 
 	private class Door

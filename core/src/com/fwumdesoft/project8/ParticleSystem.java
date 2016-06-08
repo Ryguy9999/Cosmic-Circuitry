@@ -7,7 +7,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
+/**
+ * A class that handles all of the particle interaction 
+ */
 public class ParticleSystem
 {
 	private ParticleSystem() {}
@@ -16,6 +18,10 @@ public class ParticleSystem
 	
 	private static final int MAX_PARTICLE_SIZE = 1_000;
 	
+	/**
+	 * Initialize the particle system and types
+	 * @param assets The AssetManager with all of the assets loaded
+	 */
 	public static void init(AssetManager assets)
 	{
 		addParticleType("spark", p -> {
@@ -50,10 +56,16 @@ public class ParticleSystem
 		});
 	}
 	
+	/**
+	 * Add a particle type
+	 * @param name The name of the particle type
+	 * @param spawner A function that initializes a particle
+	 */
 	public static void addParticleType(String name, Consumer<Particle> spawner)
 	{
 		types.put(name, new ParticleType(spawner, MAX_PARTICLE_SIZE));
 	}
+	
 	
 	public static void burst(String name, float x, float y, int amt)
 	{
@@ -73,15 +85,5 @@ public class ParticleSystem
 	public static void clear()
 	{
 		types.values().forEach(pt -> pt.clear());
-	}
-	
-	public static void displace(float x, float y)
-	{
-		types.values().forEach(pt -> pt.displace(x, y));
-	}
-	
-	public static void clearDisplace()
-	{
-		types.values().forEach(pt -> pt.undisplace());
 	}
 }
